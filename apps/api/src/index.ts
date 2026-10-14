@@ -2,6 +2,9 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { healthRouter } from './routes/health';
+import { sessionRouter } from './routes/session';
+import { consentRouter } from './routes/consent';
+import { meRouter } from './routes/me';
 
 export type Env = {
   ENVIRONMENT: string;
@@ -35,6 +38,10 @@ app.use('*', logger());
 
 // Routes
 app.route('/health', healthRouter);
+app.route('/session', sessionRouter);
+app.route('/consent', consentRouter);
+app.route('/me', meRouter);
+
 
 // 404 handler
 app.notFound((c) => {

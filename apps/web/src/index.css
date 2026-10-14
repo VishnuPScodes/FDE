@@ -483,6 +483,10 @@ pre code {
   100% { background-position: 1000px 0; }
 }
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .animate-fade-in {
   animation: fadeIn var(--transition-slow) both;
 }

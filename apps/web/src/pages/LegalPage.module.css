@@ -1,0 +1,12 @@
+.page { min-height: 100vh; background: var(--bg-base); padding: var(--space-8); }
+.container { max-width: 720px; margin: 0 auto; }
+.backLink { display: inline-block; font-size: var(--text-sm); color: var(--text-brand); margin-bottom: var(--space-8); text-decoration: none; }
+.backLink:hover { text-decoration: underline; }
+.container h1 { font-size: var(--text-3xl); font-weight: 700; margin-bottom: var(--space-2); }
+.lastUpdated { font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-10); }
+.container section { margin-bottom: var(--space-8); }
+.container h2 { font-size: var(--text-xl); font-weight: 700; margin-bottom: var(--space-3); color: var(--text-primary); }
+.container p { font-size: var(--text-sm); color: var(--text-secondary); line-height: var(--leading-relaxed); margin-bottom: var(--space-3); }
+.container ul { list-style: disc; padding-left: var(--space-6); margin-bottom: var(--space-4); }
+.container li { font-size: var(--text-sm); color: var(--text-secondary); line-height: var(--leading-relaxed); margin-bottom: var(--space-2); }
+.container a { color: var(--text-brand); }

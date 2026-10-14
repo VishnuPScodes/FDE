@@ -1,0 +1,13 @@
+.page { max-width: 800px; }
+.heading { font-size: var(--text-3xl); font-weight: 700; margin-bottom: var(--space-2); }
+.subtitle { font-size: var(--text-lg); color: var(--text-secondary); margin-bottom: var(--space-8); }
+.placeholder {
+  text-align: center;
+  padding: var(--space-16) var(--space-8);
+  background: var(--bg-surface);
+  border: 2px dashed var(--border-default);
+  border-radius: var(--radius-2xl);
+}
+.icon { font-size: 3rem; display: block; margin-bottom: var(--space-4); }
+.placeholder p { font-size: var(--text-sm); color: var(--text-secondary); }
+.hint { color: var(--text-muted); margin-top: var(--space-2); font-size: var(--text-xs); }

@@ -1,0 +1,38 @@
+.page { max-width: 700px; }
+.heading { font-size: var(--text-3xl); font-weight: 700; margin-bottom: var(--space-10); }
+.section { margin-bottom: var(--space-10); }
+.sectionTitle { font-size: var(--text-xl); font-weight: 700; margin-bottom: var(--space-2); }
+.sectionDesc { font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-6); line-height: var(--leading-relaxed); }
+
+/* Theme */
+.themeOptions { display: flex; gap: var(--space-3); }
+.themeBtn {
+  display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-6);
+  background: var(--bg-surface); border: 2px solid var(--border-default); border-radius: var(--radius-lg);
+  cursor: pointer; font-family: var(--font-sans); font-size: var(--text-sm); font-weight: 600; color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+.themeBtn:hover { border-color: var(--border-emphasis); }
+.themeBtnActive { border-color: var(--color-brand-500); color: var(--text-primary); background: rgba(85,104,248,0.08); }
+.themeIcon { font-size: var(--text-lg); }
+
+/* AI */
+.aiPlaceholder {
+  display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); background: var(--bg-surface);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); font-size: var(--text-sm); color: var(--text-muted);
+}
+.aiIcon { font-size: 1.5rem; }
+
+/* Data */
+.dataActions { display: flex; flex-direction: column; gap: var(--space-4); align-items: flex-start; }
+.deleteBtn { background: transparent; color: var(--color-error-400); border: 1px solid rgba(239,68,68,0.3); }
+.deleteBtn:hover { background: rgba(239,68,68,0.1); }
+.deleteConfirm { padding: var(--space-5); background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-lg); }
+.deleteWarning { font-size: var(--text-sm); color: var(--color-error-400); margin-bottom: var(--space-4); line-height: var(--leading-relaxed); }
+.deleteActions { display: flex; gap: var(--space-3); }
+.deleteBtnConfirm { background: var(--color-error-500); color: #fff; border: none; }
+.deleteBtnConfirm:hover { background: var(--color-error-600); }
+
+/* Legal */
+.legalLinks { display: flex; gap: var(--space-6); }
+.legalLink { font-size: var(--text-sm); color: var(--text-brand); text-decoration: underline; }
