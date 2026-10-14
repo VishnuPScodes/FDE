@@ -1,0 +1,167 @@
+version: "1.0"
+phases:
+  - id: 0
+    title: "Foundations"
+    weeks:
+      - week: 1
+        title: "Python, Git & Shell"
+        modules:
+          - python-basics
+          - git-basics
+          - shell-basics
+      - week: 2
+        title: "SQL & Data Modelling"
+        modules:
+          - sql-foundations
+          - data-modelling
+    project: "p0-w02-checkpoint"
+
+  - id: 1
+    title: "Backend & Data Integration"
+    weeks:
+      - week: 3
+        title: "REST APIs & FastAPI"
+        modules:
+          - rest-api-design
+          - fastapi-basics
+      - week: 4
+        title: "Auth & Security"
+        modules:
+          - oauth-oidc
+          - jwt-rbac
+          - secrets-management
+      - week: 5
+        title: "TypeScript & React"
+        modules:
+          - typescript-essentials
+          - react-admin-ui
+      - week: 6
+        title: "Messy Data & ETL"
+        modules:
+          - data-ingestion
+          - etl-patterns
+          - legacy-systems
+    project: "p1-w06-project-a"
+
+  - id: 2
+    title: "Cloud & Deployment"
+    weeks:
+      - week: 7
+        title: "Docker & CI/CD"
+        modules:
+          - docker-basics
+          - github-actions-cicd
+      - week: 8
+        title: "AWS, Terraform & Kubernetes"
+        modules:
+          - aws-core
+          - terraform-basics
+          - kubernetes-basics
+      - week: 9
+        title: "Observability & Security"
+        modules:
+          - structured-logging
+          - metrics-tracing
+          - security-posture
+    project: "p2-w09-project-a-deployed"
+
+  - id: 3
+    title: "Applied AI Engineering"
+    weeks:
+      - week: 10
+        title: "LLM APIs & Prompting"
+        modules:
+          - llm-fundamentals
+          - api-patterns
+          - prompt-engineering
+      - week: 11
+        title: "RAG I"
+        modules:
+          - document-parsing
+          - embeddings-vector-search
+          - hybrid-search
+      - week: 12
+        title: "Evals"
+        modules:
+          - golden-datasets
+          - retrieval-metrics
+          - llm-as-judge
+      - week: 13
+        title: "Tool Calling & Agents"
+        modules:
+          - tool-schemas
+          - agent-loops
+          - human-in-the-loop
+      - week: 14
+        title: "MCP & Safety"
+        modules:
+          - mcp-servers
+          - prompt-injection
+          - guardrails
+      - week: 15
+        title: "LLMOps"
+        modules:
+          - tracing-llm
+          - cost-latency
+          - prompt-versioning
+    project: "p3-w15-project-b"
+
+  - id: 4
+    title: "Customer Craft"
+    weeks:
+      - week: 16
+        title: "Discovery"
+        modules:
+          - stakeholder-mapping
+          - discovery-interviews
+      - week: 17
+        title: "Decomposition"
+        modules:
+          - gudcmarr-framework
+          - decomp-drills
+      - week: 18
+        title: "Writing & Scoping"
+        modules:
+          - design-docs
+          - exec-memos
+          - scope-negotiation
+      - week: 19
+        title: "Demos & Adoption"
+        modules:
+          - demo-storytelling
+          - change-management
+          - roi-measurement
+
+  - id: 5
+    title: "Capstone"
+    weeks:
+      - week: 20
+        title: "Land the Customer"
+        modules:
+          - capstone-discovery
+          - capstone-scoping
+      - week: 21
+        title: "Build & Deploy"
+        modules:
+          - capstone-build
+      - week: 22
+        title: "Measure & Hand Over"
+        modules:
+          - capstone-measure
+          - capstone-case-study
+    project: "p5-w22-capstone"
+
+  - id: 6
+    title: "Interview Loop"
+    weeks:
+      - week: 23
+        title: "Drills & Prep"
+        modules:
+          - coding-drills
+          - decomp-mocks
+          - story-bank
+      - week: 24
+        title: "Mock Loop & Apply"
+        modules:
+          - mock-loop
+          - portfolio-polish

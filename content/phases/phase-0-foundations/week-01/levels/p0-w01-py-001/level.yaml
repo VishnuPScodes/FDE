@@ -1,0 +1,47 @@
+id: p0-w01-py-001
+title: "Say my name"
+phase: 0
+week: 1
+module: python-basics
+order: 1
+difficulty: 1
+estimated_minutes: 3
+type: code
+environment: python
+lesson: ../../lessons/01-printing.md
+task: |
+  Print the name **Vishnu** in the terminal.
+
+  Your program should output exactly:
+  ```
+  Vishnu
+  ```
+starter_files:
+  - path: main.py
+    content: |
+      # Your code goes here
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "Vishnu\n"
+    normalize:
+      - trim_trailing_whitespace
+hints:
+  - "Python has a built-in function that shows text on the screen."
+  - "Text in Python goes inside quotes. The function is called `print`."
+  - "Try: print(\"Vishnu\")"
+feedback:
+  - when:
+      stdout_contains: "vishnu"
+    message: "Close! Python is case-sensitive. Check the capital V."
+  - when:
+      stdout_contains: "print"
+    message: "You printed the word 'print' itself instead of running the function. Try: print(\"Vishnu\")"
+solution: solution/
+unlocks:
+  - p0-w01-py-002
+tags:
+  - python
+  - print
+  - basics
+mobile_compatible: true

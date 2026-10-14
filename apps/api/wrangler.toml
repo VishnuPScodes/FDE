@@ -1,0 +1,27 @@
+name: "application/vnd.cloudflare.worker+javascript; module=true"
+
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Cloudflare Pages deployment for frontend
+# [pages_build_output_dir] is configured in the Pages dashboard
+
+# Cron trigger to keep Supabase alive (free tier anti-pause)
+[triggers]
+crons = ["0 8 * * *"]
+
+# Environment variable bindings (values set in Cloudflare dashboard / .dev.vars locally)
+[vars]
+ENVIRONMENT = "development"
+
+# KV namespace for rate limiting counters (free tier)
+# [[kv_namespaces]]
+# binding = "RATE_LIMITS"
+# id = "TODO_after_wrangler_kv_create"
+
+# Secret bindings (set via wrangler secret put):
+# SUPABASE_URL
+# SUPABASE_SERVICE_ROLE_KEY
+# SUPABASE_JWT_SECRET
+# GITHUB_TOKEN (optional, for real-world checks)

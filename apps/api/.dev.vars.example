@@ -1,0 +1,8 @@
+# Local development secrets for Cloudflare Worker
+# Copy this to .dev.vars (not committed to git) and fill in your values.
+
+ENVIRONMENT=development
+SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+SUPABASE_JWT_SECRET=your-jwt-secret-here
+# GITHUB_TOKEN=ghp_optional_for_realworld_checks

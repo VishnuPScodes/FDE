@@ -1,0 +1,33 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-8);
+}
+
+.content {
+  max-width: 400px;
+}
+
+.code {
+  display: block;
+  font-size: 6rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--color-brand-400), var(--color-accent-400));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: var(--space-4);
+  letter-spacing: -0.05em;
+}
+
+.content h1 {
+  margin-bottom: var(--space-4);
+}
+
+.content p {
+  color: var(--text-secondary);
+}
