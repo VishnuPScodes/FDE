@@ -16,6 +16,7 @@ import NotFoundPage from './pages/NotFoundPage';
 // Protected pages
 import DashboardPage from './pages/DashboardPage';
 import LearnPage from './pages/LearnPage';
+import LevelPage from './pages/LevelPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
 
@@ -45,6 +46,8 @@ export default function App() {
             >
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/learn" element={<LearnPage />} />
+              <Route path="/learn/module/:moduleId" element={<LearnPage />} />
+              <Route path="/level/:levelId" element={<LevelPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Route>

@@ -15,9 +15,10 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@fde/ui": "workspace:*",
     "@fde/content-schema": "workspace:*",
+    "@fde/ui": "workspace:*",
     "@supabase/supabase-js": "^2.47.10",
+    "js-yaml": "^4.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.1"
@@ -27,6 +28,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.2",
+    "@types/js-yaml": "^4.0.9",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^8.15.0",

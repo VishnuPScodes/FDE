@@ -1,13 +1,91 @@
-.page { max-width: 800px; }
+.page { max-width: 900px; }
+.headerRow { margin-bottom: var(--space-8); }
 .heading { font-size: var(--text-3xl); font-weight: 700; margin-bottom: var(--space-2); }
-.subtitle { font-size: var(--text-lg); color: var(--text-secondary); margin-bottom: var(--space-8); }
-.placeholder {
-  text-align: center;
-  padding: var(--space-16) var(--space-8);
+.subtitle { font-size: var(--text-lg); color: var(--text-secondary); }
+
+/* Error */
+.errorBox { padding: var(--space-6); background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-xl); }
+.errorBox p { margin-bottom: var(--space-2); }
+.errorHint { font-size: var(--text-xs); color: var(--text-muted); }
+
+/* Skeleton */
+.skeletonList { display: flex; flex-direction: column; gap: var(--space-4); }
+.skeletonCard { height: 80px; border-radius: var(--radius-xl); }
+
+/* Phase list */
+.phaseList { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.phaseCard {
   background: var(--bg-surface);
-  border: 2px dashed var(--border-default);
-  border-radius: var(--radius-2xl);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: all var(--transition-base);
 }
-.icon { font-size: 3rem; display: block; margin-bottom: var(--space-4); }
-.placeholder p { font-size: var(--text-sm); color: var(--text-secondary); }
-.hint { color: var(--text-muted); margin-top: var(--space-2); font-size: var(--text-xs); }
+
+.phaseCard:hover { border-color: color-mix(in srgb, var(--phase-color) 30%, transparent); }
+.phaseCardExpanded { border-color: color-mix(in srgb, var(--phase-color) 40%, transparent); box-shadow: 0 4px 24px color-mix(in srgb, var(--phase-color) 10%, transparent); }
+
+.phaseHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: var(--space-5) var(--space-6);
+  background: none; border: none; cursor: pointer; text-align: left;
+  font-family: var(--font-sans); color: var(--text-primary);
+}
+
+.phaseHeader:hover { background: var(--bg-elevated); }
+
+.phaseHeaderLeft { display: flex; align-items: center; gap: var(--space-4); }
+.phaseIcon { font-size: 1.8rem; }
+.phaseLabel { font-size: var(--text-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.phaseTitle { font-size: var(--text-base); font-weight: 700; margin: 2px 0; }
+.weekCount { font-size: var(--text-xs); color: var(--text-muted); }
+
+.chevron { font-size: var(--text-lg); color: var(--text-muted); transition: transform var(--transition-fast); }
+.chevronOpen { transform: rotate(180deg); }
+
+/* Phase body */
+.phaseBody { padding: 0 var(--space-6) var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
+
+.weekCard {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+}
+
+.weekHeader { margin-bottom: var(--space-3); }
+.weekNumber { font-size: var(--text-xs); color: var(--phase-color, var(--color-brand-400)); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+.weekTitle { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
+
+.moduleList { display: flex; flex-direction: column; gap: var(--space-1); }
+
+.moduleLink {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm); color: var(--text-secondary);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.moduleLink:hover { background: var(--bg-overlay); color: var(--text-primary); }
+
+.moduleDot {
+  width: 6px; height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--phase-color, var(--color-brand-500));
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.projectBadge {
+  padding: var(--space-3) var(--space-4);
+  background: rgba(85,104,248,0.06);
+  border: 1px solid rgba(85,104,248,0.15);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.projectBadge strong { color: var(--color-brand-400); }
