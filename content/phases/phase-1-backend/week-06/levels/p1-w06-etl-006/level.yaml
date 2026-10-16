@@ -1,0 +1,42 @@
+id: p1-w06-etl-006
+title: Read a legacy Excel export
+phase: 1
+week: 6
+module: data-ingestion
+order: 6
+difficulty: 3
+estimated_minutes: 18
+type: code
+environment: python
+lesson: ../../lessons/03-files-spreadsheets-and-pdfs.md
+task: Use `openpyxl` in read-only mode to return worksheet rows as dictionaries. The first row contains headers.
+starter_files:
+  - path: main.py
+    content: |
+      from io import BytesIO
+      from openpyxl import load_workbook
+
+      def read_workbook(data):
+          # Return rows as dictionaries keyed by the first row.
+          pass
+  - path: test_main.py
+    content: |
+      from main import read_workbook
+
+      def test_workbook_rows():
+          # The runtime fixture is supplied as base64 text in workbook.b64.
+          import base64
+          with open("workbook.b64", encoding="utf-8") as source:
+              rows = read_workbook(base64.b64decode(source.read()))
+          assert rows == [{"id": "X-1", "amount": 250}]
+  - path: workbook.b64
+    content: "UEsDBBQAAAAIALx7UF0cdPw42AAAAPYBAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbK2RvU4DMQzHX+WUtWpcGDqgXhfKCgy8gJvz9aLLl2K3XN++uVAYUIGFyUr+Hz9L3rydE3EzeRe4VYNIegBgM5BH1jFRKEofs0cpz3yAhGbEA8H9arUGE4NQkKXMHWq72VGPRyfN01S+2cbQqkyOVfP4YZxZrcKUnDUoRYdT6L5RlleCLsnq4cEmXhSDgpuEWfkZcM29nChn21Hzilme0RcXTA7eYx73MY7695IbW8a+t4a6aI6+RDSnTNjxQCTe6Tq1RxsWf/OrmaGOu39e5Kv/cw+o595eAFBLAwQUAAAACAC8e1Bd/luGcooAAADwAAAACwAAAF9yZWxzLy5yZWxzjc8xDsIwDAXQq1Q+QF0YGFDaiaUr4gImddqqTRw5QZTbk7EgBkbrf70vmyuvlGcJaZpjqja/htTClHM8IyY7sadUS+RQEifqKZdTR4xkFxoZj01zQt0b0Jm9WfVDC9oPB6hur8j/2OLcbPki9uE55B8TX40ik46cW9hWfIoud5GlLihgZ/Djwe4NUEsDBBQAAAAIALx7UF1CgyshkgAAAOQAAAAPAAAAeGwvd29ya2Jvb2sueG1sjY8xDoMwDEWvEvkANXTogICpC1PPkBLTRJA4soPa4xdB2TvZ/3/5fbl9s8xP5tl84pK0A19KbhB19BStXjhT2pKJJdqySXmhZiHr1BOVuOC1qm4YbUhwEBr5h8HTFEa687hGSuWACC22BE7qQ1bo271Bf9MkG6mDhzgSBbN7g+ugBiNN2BYZXA3Yt3ie4flZ/wVQSwMEFAAAAAgAvHtQXbZUqs+OAAAA8QAAABoAAAB4bC9fcmVscy93b3JrYm9vay54bWwucmVsc43PPQ7CMAwF4KtUOUDdMjCgJhNLV8QFotRtojY/so2A2xMxoCIxMFl+lr4nDxfcrISc2IfCzSNuibXyIuUEwM5jtNzmgqle5kzRSl1pgWLdaheEQ9cdgfaGMsPebMZJKxqnXjXXZ8F/7DzPweE5u1vEJD8q4J5pZY8oFbW0oGj1iRjeo2+rqsAM8PWheQFQSwMEFAAAAAgAvHtQXUXPFX2mAAAAOQEAABgAAAB4bC93b3Jrc2hlZXRzL3NoZWV0MS54bWx1UM0OgjAMfhWyuxaW6MGUJRLfwIvXBqYsso1sFXx8BzEEE7n1+/r9pMXRh2dstebsbTsXS9Ey9yeAWLfaUtz7Xru0uftgiRMMD4h90NTMJtuBzPMjWDJOKJy5CzEpDH7MQimKxNbTcC5ExqUwrjNOXzkk3kSFrEyDwAphQlB/1dWWmqx/Of51QOpaCuVSKDcibrviX+NkHJQ85AjDOhdWR8HyLfUBUEsBAhQDFAAAAAgAvHtQXRx0/DjYAAAA9gEAABMAAAAAAAAAAAAAAIABAAAAAFtDb250ZW50X1R5cGVzXS54bWxQSwECFAMUAAAACAC8e1Bd/luGcooAAADwAAAACwAAAAAAAAAAAAAAgAEJAQAAX3JlbHMvLnJlbHNQSwECFAMUAAAACAC8e1BdQoMrIZIAAADkAAAADwAAAAAAAAAAAAAAgAG8AQAAeGwvd29ya2Jvb2sueG1sUEsBAhQDFAAAAAgAvHtQXbZUqs+OAAAA8QAAABoAAAAAAAAAAAAAAIABewIAAHhsL19yZWxzL3dvcmtib29rLnhtbC5yZWxzUEsBAhQDFAAAAAgAvHtQXUXPFX2mAAAAOQEAABgAAAAAAAAAAAAAAIABQQMAAHhsL3dvcmtzaGVldHMvc2hlZXQxLnhtbFBLBQYAAAAABQAFAEUBAAAdBAAAAAA="
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - Load the workbook from `BytesIO(data)` and pass `read_only=True, data_only=True`.
+  - Use the first row as headers; skip fully empty rows.
+solution: solution/
+unlocks: [p1-w06-etl-007]
+tags: [python, excel, ingestion]

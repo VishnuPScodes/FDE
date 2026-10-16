@@ -1,0 +1,35 @@
+id: p1-w06-etl-005
+title: Deduplicate by business key and update time
+phase: 1
+week: 6
+module: etl-patterns
+order: 5
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/02-quality-dedup-and-entities.md
+task: Keep the latest record per GSTIN. Use `updated_at` as the winner rule and return records in stable GSTIN order.
+starter_files:
+  - path: main.py
+    content: |
+      def deduplicate(records):
+          # Return the latest record for each GSTIN in stable order.
+          pass
+  - path: test_main.py
+    content: |
+      from main import deduplicate
+
+      def test_latest_record_wins_deterministically():
+          rows = [{"gstin": "B", "updated_at": "2026-01-02", "name": "new"}, {"gstin": "A", "updated_at": "2026-01-01", "name": "a"}, {"gstin": "B", "updated_at": "2026-01-01", "name": "old"}]
+          assert [r["gstin"] for r in deduplicate(rows)] == ["A", "B"]
+          assert deduplicate(rows)[1]["name"] == "new"
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - Compare each incoming record with the current winner for its GSTIN.
+  - Sort the final winners by GSTIN so file order does not affect output order.
+solution: solution/
+unlocks: [p1-w06-etl-006]
+tags: [python, deduplication, idempotency]

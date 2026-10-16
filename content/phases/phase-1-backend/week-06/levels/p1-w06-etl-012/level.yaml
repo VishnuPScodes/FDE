@@ -1,0 +1,37 @@
+id: p1-w06-etl-012
+title: Handle optional columns during schema drift
+phase: 1
+week: 6
+module: data-ingestion
+order: 12
+difficulty: 2
+estimated_minutes: 12
+type: code
+environment: python
+lesson: ../../lessons/01-messy-csv-and-contracts.md
+task: Map an optional `region` field to `"unknown"` when it is missing, blank, or absent from a row.
+starter_files:
+  - path: main.py
+    content: |
+      def normalize_region(row):
+          # Preserve the other fields and add a normalized region.
+          pass
+  - path: test_main.py
+    content: |
+      from main import normalize_region
+
+      def test_missing_or_blank_region_gets_default():
+          assert normalize_region({"id": "1"}) == {"id": "1", "region": "unknown"}
+          assert normalize_region({"id": "2", "region": " "})["region"] == "unknown"
+
+      def test_real_region_is_trimmed():
+          assert normalize_region({"region": " West "})["region"] == "West"
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - Copy the input row so you do not mutate the caller's data.
+  - Use `row.get("region") or "unknown"`, then trim the value.
+solution: solution/
+unlocks: [p1-w06-etl-013]
+tags: [python, schema-drift, defaults]

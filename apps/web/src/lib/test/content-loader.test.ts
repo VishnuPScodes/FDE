@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadLesson, loadStarterFile } from '../content-loader';
+import { loadLesson, loadLevel, loadSolutionFiles, loadStarterFile } from '../content-loader';
 
 describe('bundled SQL fixtures', () => {
   it('resolves a starter setup file shared from content/shared', async () => {
@@ -20,5 +20,18 @@ describe('bundled lessons', () => {
     );
     expect(lesson).toContain('NULL');
     expect(lesson).toContain('filter');
+  });
+});
+
+describe('Week 6 ETL content', () => {
+  it('loads the capstone level, lesson, and workspace starter files', async () => {
+    const level = await loadLevel('p1-w06-etl-015');
+    const lesson = await loadLesson('phases/phase-1-backend/week-06/lessons/05-project-a-integration-service.md');
+    expect(level.title).toContain('Project A');
+    expect(level.checks[0]?.kind).toBe('pytest_passes');
+    expect(lesson).toContain('enterprise integration service');
+    expect(level.starter_files?.map((file) => file.path)).toEqual(['main.py', 'test_main.py', 'README.md', 'incoming/customers.csv']);
+    const solution = await loadSolutionFiles(level.id, ['main.py']);
+    expect(solution['main.py']).toContain('def run_etl');
   });
 });

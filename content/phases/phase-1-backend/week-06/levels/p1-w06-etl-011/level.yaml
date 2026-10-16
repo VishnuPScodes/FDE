@@ -1,0 +1,37 @@
+id: p1-w06-etl-011
+title: Advance an incremental checkpoint
+phase: 1
+week: 6
+module: etl-patterns
+order: 11
+difficulty: 3
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/04-incremental-loads-and-legacy-feeds.md
+task: Return the greatest valid `updated_at` value as the next checkpoint. An empty batch keeps the existing checkpoint.
+starter_files:
+  - path: main.py
+    content: |
+      def next_checkpoint(records, current=None):
+          # Do not advance for empty input or records with no timestamp.
+          pass
+  - path: test_main.py
+    content: |
+      from main import next_checkpoint
+
+      def test_latest_timestamp_advances_checkpoint():
+          rows = [{"updated_at": "2026-02-03"}, {"updated_at": "2026-02-05"}, {"updated_at": "2026-02-04"}]
+          assert next_checkpoint(rows, "2026-02-01") == "2026-02-05"
+
+      def test_empty_batch_keeps_checkpoint():
+          assert next_checkpoint([], "2026-02-01") == "2026-02-01"
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - Filter out blank timestamps before choosing a maximum.
+  - If there are no timestamps, return `current` unchanged.
+solution: solution/
+unlocks: [p1-w06-etl-012]
+tags: [python, incremental-load, checkpoint]

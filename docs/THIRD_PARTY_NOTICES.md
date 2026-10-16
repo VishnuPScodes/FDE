@@ -17,3 +17,7 @@ The SeaBIOS and VGA BIOS firmware files in `apps/web/src/assets/vm/` are from th
 The browser Git environment uses [isomorphic-git](https://github.com/isomorphic-git/isomorphic-git) and [LightningFS](https://github.com/isomorphic-git/lightning-fs), both distributed under the MIT License. Their license texts are included with their respective packages in `node_modules`.
 
 The Git runtime also uses the [`buffer`](https://github.com/feross/buffer) package under the MIT License to provide the `Buffer` global expected by isomorphic-git in browsers. Its license text is included with the package in `node_modules`.
+
+## Python ETL exercises
+
+The browser Python workspace installs [openpyxl 3.1.5](https://pypi.org/project/openpyxl/), licensed under MIT, and [pypdf 6.20.1](https://pypi.org/project/pypdf/), licensed under BSD-3-Clause, on demand through Pyodide's micropip. Their license texts are distributed with the packages. These parsers execute locally in the browser when a learner opens an exercise that imports them.

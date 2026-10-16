@@ -184,6 +184,18 @@ Format: `## YYYY-MM-DD — Decision title`
 
 **Why:** Vite does not inject Node globals. The Git workspace initialized its filesystem, then failed when isomorphic-git read `Buffer`; the polyfill restores the browser runtime behavior it expects without changing Git storage or adding a server.
 
+## 2026-10-16 — M9: Browser ETL with pinned Python packages
+
+**Decision:** Teach CSV and XML ingestion with Python's standard library. Install `openpyxl==3.1.5` and `pypdf==6.20.1` through Pyodide's `micropip` only when learner files import those packages.
+
+**Why:** CSV, XML, validation, deterministic deduplication, and quarantine need no third-party runtime. Excel and text-based PDF ingestion benefit from established parsers. Lazy, pinned installs avoid adding their download cost to every Python level; all processing stays in the learner's browser.
+
+**Licenses:** openpyxl is MIT licensed; pypdf is BSD-3-Clause. Both are permissive licenses suitable for this project. Their package versions are pinned in the Python worker.
+
+**Limitations:** pypdf extracts text from text-based PDFs and does not provide OCR. The SFTP and SOAP exercises use local fixtures; they do not connect to customer systems. The Phase Project A workspace demonstrates source adaptation and reconciliation but does not provide hosted Postgres/API deployment.
+
+**Verification:** Fifteen Week 6 levels cover CSV contracts, money parsing, validation, deduplication, Excel/PDF parsing, SOAP XML and namespaces, incremental checkpoints, and a CSV/SFTP-drop/SOAP reconciliation project. Content validation, web unit tests, type-check, and a Chromium/Pyodide E2E covering the capstone plus Excel/PDF package installation pass. Production build succeeds. Preview deployment and review remain pending.
+
 ## 2026-10-16 — M8: TypeScript transpilation and isolated UI preview
 
 **Decision:** Compile one active TypeScript/TSX file at a time with MIT-licensed esbuild-wasm in a lazy Web Worker. Execute the generated code in an opaque-origin sandboxed iframe with a small React-compatible element renderer, console output, timeout, and embedded `test`/`expect` checks. Keep learner files in the existing browser workspace store.

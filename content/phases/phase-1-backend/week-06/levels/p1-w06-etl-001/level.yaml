@@ -1,0 +1,37 @@
+id: p1-w06-etl-001
+title: Read a BOM-safe CSV export
+phase: 1
+week: 6
+module: data-ingestion
+order: 1
+difficulty: 1
+estimated_minutes: 10
+type: code
+environment: python
+lesson: ../../lessons/01-messy-csv-and-contracts.md
+task: Read `orders.csv` with `csv.DictReader`, including its UTF-8 BOM, and return the rows as dictionaries.
+starter_files:
+  - path: main.py
+    content: |
+      import csv
+      from io import StringIO
+
+      def read_orders(text):
+          # Handle BOM and parse rows by header name.
+          pass
+  - path: test_main.py
+    content: |
+      from main import read_orders
+
+      def test_bom_header_is_clean():
+          rows = read_orders("\ufefforder_id,amount\nA-1,12\n")
+          assert rows == [{"order_id": "A-1", "amount": "12"}]
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - Use `StringIO(text)` as the file object for `csv.DictReader`.
+  - Strip a leading BOM with `text.lstrip("\\ufeff")` before parsing.
+solution: solution/
+unlocks: [p1-w06-etl-002]
+tags: [python, csv, encoding]

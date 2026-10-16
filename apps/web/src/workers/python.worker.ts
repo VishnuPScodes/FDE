@@ -71,6 +71,18 @@ self.addEventListener('message', async (event: MessageEvent<RunRequest>) => {
       await pyodide.loadPackage('httpx');
     }
 
+    const importsOpenpyxl = Object.values(request.files).some((content) => /\b(?:from|import)\s+openpyxl\b/.test(content));
+    const importsPypdf = Object.values(request.files).some((content) => /\b(?:from|import)\s+pypdf\b/.test(content));
+    const pythonPackages = [
+      ...(importsOpenpyxl ? ['openpyxl==3.1.5'] : []),
+      ...(importsPypdf ? ['pypdf==6.20.1'] : []),
+    ];
+    if (pythonPackages.length) {
+      send({ id: currentId, type: 'status', status: 'Installing spreadsheet and PDF tools (first use only)…' });
+      await pyodide.loadPackage('micropip');
+      await pyodide.runPythonAsync(`import micropip\nawait micropip.install(${JSON.stringify(pythonPackages)})`);
+    }
+
     const [executable, ...args] = commandParts(request.command || 'python main.py');
     let exitCode = 0;
     if (executable === 'python' || executable === 'python3') {

@@ -1,0 +1,36 @@
+id: p1-w06-etl-010
+title: Resolve identity with a stable identifier
+phase: 1
+week: 6
+module: etl-patterns
+order: 10
+difficulty: 2
+estimated_minutes: 12
+type: code
+environment: python
+lesson: ../../lessons/02-quality-dedup-and-entities.md
+task: Match records by normalized GSTIN. Names are a display attribute and must not be used to merge two different GSTINs.
+starter_files:
+  - path: main.py
+    content: |
+      def entity_key(record):
+          # Return a stable normalized GSTIN or None when absent.
+          pass
+  - path: test_main.py
+    content: |
+      from main import entity_key
+
+      def test_identifier_is_normalized():
+          assert entity_key({"gstin": " 27abcde1234f1z5 "}) == "27ABCDE1234F1Z5"
+
+      def test_name_is_not_an_identity_key():
+          assert entity_key({"name": "Acme"}) is None
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - Read the GSTIN field, trim whitespace, and normalize its case.
+  - Return `None` when the identifier is blank so callers can quarantine it.
+solution: solution/
+unlocks: [p1-w06-etl-011]
+tags: [python, entity-resolution, identity]

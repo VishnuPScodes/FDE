@@ -1,0 +1,36 @@
+id: p1-w06-etl-013
+title: Parse namespaced SOAP records
+phase: 1
+week: 6
+module: legacy-systems
+order: 13
+difficulty: 3
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/04-incremental-loads-and-legacy-feeds.md
+task: Parse a SOAP response where its XML elements use a namespace. Return the customer IDs without hard-coding the namespace URL.
+starter_files:
+  - path: main.py
+    content: |
+      import xml.etree.ElementTree as ET
+
+      def parse_customer_ids(xml_text):
+          # Return IDs from all Customer elements.
+          pass
+  - path: test_main.py
+    content: |
+      from main import parse_customer_ids
+
+      def test_namespaced_customer_id():
+          xml = '<Envelope xmlns="urn:legacy"><Body><Customer><Id>c-9</Id></Customer></Body></Envelope>'
+          assert parse_customer_ids(xml) == ["c-9"]
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - ElementTree tags include `{namespace}LocalName` when XML namespaces are present.
+  - Compare the last part of each tag after splitting on `}`.
+solution: solution/
+unlocks: [p1-w06-etl-014]
+tags: [python, xml, namespaces, soap]

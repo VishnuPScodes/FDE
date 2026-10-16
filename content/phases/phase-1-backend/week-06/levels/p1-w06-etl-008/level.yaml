@@ -1,0 +1,36 @@
+id: p1-w06-etl-008
+title: Parse a mocked SOAP XML response
+phase: 1
+week: 6
+module: legacy-systems
+order: 8
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/04-incremental-loads-and-legacy-feeds.md
+task: Parse customer records from the SOAP XML body using the standard library. Ignore the envelope and return each customer ID and name.
+starter_files:
+  - path: main.py
+    content: |
+      import xml.etree.ElementTree as ET
+
+      def parse_soap_customers(xml_text):
+          # Return [{"id": ..., "name": ...}, ...].
+          pass
+  - path: test_main.py
+    content: |
+      from main import parse_soap_customers
+
+      def test_parse_response_body():
+          xml = '<Envelope><Body><Customer><Id>c1</Id><Name>Acme</Name></Customer></Body></Envelope>'
+          assert parse_soap_customers(xml) == [{"id": "c1", "name": "Acme"}]
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - Find each `Customer` element and read its child `Id` and `Name` text.
+  - XML namespaces may require comparing local tag names after the `}`.
+solution: solution/
+unlocks: [p1-w06-etl-009]
+tags: [python, xml, soap, legacy]

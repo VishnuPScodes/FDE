@@ -1,0 +1,40 @@
+id: p1-w06-etl-009
+title: Normalize phone numbers
+phase: 1
+week: 6
+module: etl-patterns
+order: 9
+difficulty: 2
+estimated_minutes: 12
+type: code
+environment: python
+lesson: ../../lessons/02-quality-dedup-and-entities.md
+task: Normalize a customer phone value to its last ten digits. Reject values that do not contain exactly ten digits after normalization.
+starter_files:
+  - path: main.py
+    content: |
+      import re
+
+      def normalize_phone(value):
+          # Return ten digits or raise ValueError.
+          pass
+  - path: test_main.py
+    content: |
+      import pytest
+      from main import normalize_phone
+
+      def test_indian_prefix_and_punctuation():
+          assert normalize_phone("+91 (98765) 43210") == "9876543210"
+
+      def test_bad_length_is_rejected():
+          with pytest.raises(ValueError):
+              normalize_phone("12345")
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - Keep only digits with `re.sub(r"\\D", "", value)`.
+  - Accept the last ten digits only when the total length is ten or twelve with country code 91.
+solution: solution/
+unlocks: [p1-w06-etl-010]
+tags: [python, normalization, validation]

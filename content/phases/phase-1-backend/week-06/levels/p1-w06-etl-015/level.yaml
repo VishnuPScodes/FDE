@@ -1,0 +1,80 @@
+id: p1-w06-etl-015
+title: "Project A: reconcile legacy customer feeds"
+phase: 1
+week: 6
+module: legacy-systems
+order: 15
+difficulty: 4
+estimated_minutes: 45
+type: code
+environment: python
+lesson: ../../lessons/05-project-a-integration-service.md
+task: |
+  Complete the integration job. Read a CSV export, a simulated SFTP drop, and a SOAP XML response. Normalize customer identities, keep the latest update per GSTIN, and quarantine invalid records with reasons. Preserve source provenance and make output order deterministic.
+starter_files:
+  - path: main.py
+    content: |
+      import csv
+      import xml.etree.ElementTree as ET
+
+      def run_etl(csv_text, soap_xml, sftp_csv_text):
+          # Return {"records": [...], "quarantine": [...], "counts": {...}}
+          # Canonical record: {"gstin", "name", "updated_at", "source"}
+          # Duplicate rule: latest updated_at wins; ties are stable by source name.
+          pass
+  - path: test_main.py
+    content: |
+      from main import run_etl
+
+      CSV = "gstin,name,updated_at\n27ABCDE1234F1Z5, Acme ,2026-02-02\n,No GSTIN,2026-02-03\n"
+      SOAP = '<Envelope><Body><Customer><GSTIN>27ABCDE1234F1Z5</GSTIN><Name>Acme Updated</Name><UpdatedAt>2026-02-05</UpdatedAt></Customer></Body></Envelope>'
+      with open("incoming/customers.csv", encoding="utf-8-sig") as source:
+          SFTP = source.read()
+
+      def test_reconciles_and_quarantines():
+          result = run_etl(CSV, SOAP, SFTP)
+          assert [row["gstin"] for row in result["records"]] == ["27ABCDE1234F1Z5", "29ABCDE1234F1Z1"]
+          assert result["records"][0]["name"] == "Acme Updated"
+          assert result["records"][0]["source"] == "soap"
+          assert result["checkpoint"] == "2026-02-05"
+          assert result["quarantine"][0]["reason"] == "gstin is required"
+          assert result["counts"] == {"read": 4, "accepted": 2, "duplicates": 1, "rejected": 1}
+
+      def test_empty_feeds_are_safe():
+          result = run_etl("gstin,name,updated_at\n", "<Envelope/>", "gstin,name,updated_at\n")
+          assert result["records"] == []
+          assert result["counts"]["read"] == 0
+          assert result["checkpoint"] is None
+
+      def test_rerun_is_deterministic():
+          assert run_etl(CSV, SOAP, SFTP) == run_etl(CSV, SOAP, SFTP)
+  - path: README.md
+    content: |
+      # Customer feed reconciliation
+
+      ## Problem
+      TODO: Describe the operational problem and user.
+
+      ## Data flow
+      TODO: Document CSV, simulated SFTP drop, SOAP XML, validation, deduplication, and quarantine.
+
+      ## Quality rules and limitations
+      TODO: State identity, winner, checkpoint, and review rules.
+
+      ## Production next steps
+      TODO: Describe authentication, retries, persistence, monitoring, and customer sign-off.
+  - path: incoming/customers.csv
+    content: "gstin,name,updated_at\n29ABCDE1234F1Z1,Southwind,2026-02-04\n"
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+    expected: 0
+    label: ETL reconciliation and quality tests pass
+hints:
+  - Parse CSV inputs with `csv.DictReader`; tag rows with source names.
+  - Parse SOAP records by local XML tag name so namespaces do not break the adapter.
+  - Validate required fields before deduplication. Count each rejected input row.
+  - Choose one record per normalized GSTIN by `(updated_at, source)` and sort the final keys.
+solution: solution/
+unlocks: []
+tags: [project, etl, csv, xml, data-quality, integration]

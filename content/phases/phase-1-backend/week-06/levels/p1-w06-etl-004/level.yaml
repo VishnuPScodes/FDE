@@ -1,0 +1,35 @@
+id: p1-w06-etl-004
+title: Normalize records and quarantine invalid rows
+phase: 1
+week: 6
+module: etl-patterns
+order: 4
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/02-quality-dedup-and-entities.md
+task: Normalize whitespace in customer names, accept only rows with an `id` and `name`, and return rejected rows with a reason.
+starter_files:
+  - path: main.py
+    content: |
+      def partition_rows(rows):
+          # Return (accepted, rejected); rejected items include original row and reason.
+          pass
+  - path: test_main.py
+    content: |
+      from main import partition_rows
+
+      def test_rows_are_normalized_or_quarantined():
+          accepted, rejected = partition_rows([{"id": " 7 ", "name": "  Acme  "}, {"id": "8", "name": "  "}])
+          assert accepted == [{"id": "7", "name": "Acme"}]
+          assert rejected == [{"row": {"id": "8", "name": "  "}, "reason": "name is required"}]
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - Trim both identifier and name before validation.
+  - Keep the original row in the rejection record so it can be repaired.
+solution: solution/
+unlocks: [p1-w06-etl-005]
+tags: [python, validation, quarantine]

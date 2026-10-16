@@ -1,0 +1,38 @@
+id: p1-w06-etl-007
+title: Extract text from a PDF statement
+phase: 1
+week: 6
+module: data-ingestion
+order: 7
+difficulty: 3
+estimated_minutes: 18
+type: code
+environment: python
+lesson: ../../lessons/03-files-spreadsheets-and-pdfs.md
+task: Extract non-empty page text with `pypdf`. Return one string per page so document provenance is preserved.
+starter_files:
+  - path: main.py
+    content: |
+      from io import BytesIO
+      from pypdf import PdfReader
+
+      def extract_pages(data):
+          # Return the text for each page.
+          pass
+  - path: test_main.py
+    content: |
+      from main import extract_pages
+
+      def test_empty_pdf_is_rejected():
+          import pytest
+          with pytest.raises(Exception):
+              extract_pages(b"not a PDF")
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - Construct `PdfReader(BytesIO(data))`.
+  - Iterate `reader.pages` and call `extract_text()` for each page.
+solution: solution/
+unlocks: [p1-w06-etl-008]
+tags: [python, pdf, ingestion]

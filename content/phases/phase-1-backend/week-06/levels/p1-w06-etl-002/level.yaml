@@ -1,0 +1,34 @@
+id: p1-w06-etl-002
+title: Validate a CSV contract
+phase: 1
+week: 6
+module: data-ingestion
+order: 2
+difficulty: 1
+estimated_minutes: 10
+type: code
+environment: python
+lesson: ../../lessons/01-messy-csv-and-contracts.md
+task: Implement `validate_headers` so required columns are enforced while unknown optional columns remain allowed.
+starter_files:
+  - path: main.py
+    content: |
+      def validate_headers(headers, required):
+          # Return the missing required column names.
+          pass
+  - path: test_main.py
+    content: |
+      from main import validate_headers
+
+      def test_required_and_optional_columns():
+          assert validate_headers(["id", "amount", "new_field"], ["id", "amount"]) == []
+          assert validate_headers(["id"], ["id", "amount"]) == ["amount"]
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - Return required names that do not occur in `headers`.
+  - A list comprehension preserves the order of `required`.
+solution: solution/
+unlocks: [p1-w06-etl-003]
+tags: [python, csv, schema]

@@ -42,7 +42,7 @@ phases:
           - data-ingestion
           - etl-patterns
           - legacy-systems
-    project: "p1-w06-project-a"
+    project: "p1-w06-etl-015"
 
   - id: 2
     title: "Cloud & Deployment"

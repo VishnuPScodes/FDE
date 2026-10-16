@@ -1,0 +1,38 @@
+id: p1-w06-etl-014
+title: Reconcile quality counts
+phase: 1
+week: 6
+module: etl-patterns
+order: 14
+difficulty: 2
+estimated_minutes: 12
+type: code
+environment: python
+lesson: ../../lessons/02-quality-dedup-and-entities.md
+task: Calculate duplicate count from input, accepted, and rejected counts. If the figures do not reconcile, raise `ValueError`.
+starter_files:
+  - path: main.py
+    content: |
+      def quality_counts(read, accepted, rejected):
+          # Return the four counts including duplicates.
+          pass
+  - path: test_main.py
+    content: |
+      import pytest
+      from main import quality_counts
+
+      def test_counts_reconcile():
+          assert quality_counts(10, 7, 1) == {"read": 10, "accepted": 7, "duplicates": 2, "rejected": 1}
+
+      def test_impossible_counts_are_rejected():
+          with pytest.raises(ValueError):
+              quality_counts(2, 3, 0)
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - Duplicates are the rows read minus accepted and rejected rows.
+  - Reject negative counts and any result where accepted plus duplicates plus rejected differs from read.
+solution: solution/
+unlocks: [p1-w06-etl-015]
+tags: [python, data-quality, reporting]

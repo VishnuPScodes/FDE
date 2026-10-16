@@ -1,0 +1,40 @@
+id: p1-w06-etl-003
+title: Parse rupee amounts safely
+phase: 1
+week: 6
+module: etl-patterns
+order: 3
+difficulty: 2
+estimated_minutes: 12
+type: code
+environment: python
+lesson: ../../lessons/02-quality-dedup-and-entities.md
+task: Convert values such as `₹1,234.50` to integer paise. Reject blanks and malformed amounts instead of silently using zero.
+starter_files:
+  - path: main.py
+    content: |
+      from decimal import Decimal
+
+      def rupees_to_paise(value):
+          # Return an integer; raise ValueError for invalid input.
+          pass
+  - path: test_main.py
+    content: |
+      import pytest
+      from main import rupees_to_paise
+
+      def test_currency_and_precision():
+          assert rupees_to_paise("₹1,234.50") == 123450
+
+      def test_blank_is_rejected():
+          with pytest.raises(ValueError):
+              rupees_to_paise(" ")
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_main.py
+hints:
+  - Remove the rupee sign and grouping commas, then parse with `Decimal`.
+  - Multiply by 100 and convert to `int`; check for an empty string first.
+solution: solution/
+unlocks: [p1-w06-etl-004]
+tags: [python, data-quality, money]
