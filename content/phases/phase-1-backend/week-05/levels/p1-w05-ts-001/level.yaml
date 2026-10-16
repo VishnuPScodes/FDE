@@ -1,0 +1,37 @@
+id: p1-w05-ts-001
+title: Total unpaid invoices
+phase: 1
+week: 5
+module: typescript-essentials
+order: 1
+difficulty: 1
+estimated_minutes: 8
+type: code
+environment: ts
+lesson: ../../lessons/01-types-and-functions.md
+task: Write a typed function named `outstandingTotal` that accepts invoice records and returns the sum of `amountPaise` for records whose `paid` field is false. Print the total for the sample records.
+starter_files:
+  - path: main.ts
+    content: |-
+      type Invoice = { id: string; amountPaise: number; paid: boolean };
+      const invoices: Invoice[] = [
+        { id: 'INV-10', amountPaise: 125050, paid: false },
+        { id: 'INV-11', amountPaise: 20000, paid: true },
+        { id: 'INV-12', amountPaise: 40000, paid: false },
+      ];
+
+      // Add outstandingTotal and print its result.
+checks:
+  - kind: stdout_equals
+    expected: "165050"
+    label: Unpaid amounts are totalled in paise
+  - kind: file_contains
+    path: main.ts
+    expected: "function outstandingTotal"
+    label: Calculation is in a named function
+hints:
+  - Filter out invoices where `paid` is true before adding amounts.
+  - Use `reduce` to add each remaining `amountPaise` value.
+solution: solution/
+unlocks: [p1-w05-ts-002]
+tags: [typescript, functions, data]

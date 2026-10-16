@@ -1,4 +1,7 @@
 import { PGlite } from '@electric-sql/pglite';
+import pgliteWasmUrl from '../../node_modules/@electric-sql/pglite/dist/pglite.wasm?url';
+import initdbWasmUrl from '../../node_modules/@electric-sql/pglite/dist/initdb.wasm?url';
+import fsBundleUrl from '../../node_modules/@electric-sql/pglite/dist/pglite.data?url';
 import type { SqlColumn, SqlQueryResult, SqlTable } from '../lib/sql-runtime';
 
 type SqlRequest =
@@ -37,12 +40,29 @@ async function inspectSchema(db: PGlite): Promise<SqlTable[]> {
   return tables;
 }
 
+async function loadPGliteAssets(): Promise<{ pgliteWasmModule: WebAssembly.Module; initdbWasmModule: WebAssembly.Module; fsBundle: Blob }> {
+  const [pgliteWasmModule, initdbWasmModule, fsBundleResponse] = await Promise.all([
+    fetch(pgliteWasmUrl).then(async (response) => {
+      if (!response.ok) throw new Error(`Could not load PostgreSQL WASM (${response.status}).`);
+      return WebAssembly.compile(await response.arrayBuffer());
+    }),
+    fetch(initdbWasmUrl).then(async (response) => {
+      if (!response.ok) throw new Error(`Could not load database setup WASM (${response.status}).`);
+      return WebAssembly.compile(await response.arrayBuffer());
+    }),
+    fetch(fsBundleUrl),
+  ]);
+  if (!fsBundleResponse.ok) throw new Error(`Could not load the SQL dataset (${fsBundleResponse.status}).`);
+  return { pgliteWasmModule, initdbWasmModule, fsBundle: await fsBundleResponse.blob() };
+}
+
 workerScope.addEventListener('message', async (event: MessageEvent<SqlRequest>) => {
   const request = event.data;
   try {
     if (request.type === 'init') {
       send({ type: 'status', status: 'Starting PostgreSQL in your browser…' });
-      database = await PGlite.create();
+      const assets = await loadPGliteAssets();
+      database = await PGlite.create(assets);
       if (request.setupSql.trim()) await database.exec(request.setupSql);
       send({ id: request.id, type: 'ready' });
       return;

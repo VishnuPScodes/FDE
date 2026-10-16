@@ -119,7 +119,7 @@ pnpm build
 
 ## Milestones
 
-Current: **M7 complete; M8 JS/TS sandbox is next** 🚧
+Current: **M8 implementation is locally validated; Cloudflare preview deployment and review are pending** 🚧
 
 | # | Milestone | Status |
 |---|---|---|
@@ -131,7 +131,7 @@ Current: **M7 complete; M8 JS/TS sandbox is next** 🚧
 | M5 | Linux shell | ✅ Shell checks pass; v86 VM boots and accepts commands; checks run in simulator |
 | M6 | Git environment | ✅ Git runtime, six levels, and browser `git status` smoke check passed |
 | M7 | HTTP & integration | ✅ HTTP health, signed webhook, OAuth PKCE/OIDC, and FastAPI-in-Pyodide browser checks passed |
-| M8 | JS/TS sandbox | 🚧 Next: browser TypeScript runner, checks, and minimal React preview |
+| M8 | JS/TS sandbox | 🚧 Implemented locally: TypeScript runner, embedded behavior checks, isolated React-style preview, and four Week 5 levels. Preview deployment/review pending. |
 | ... | ... | |
 
 ---

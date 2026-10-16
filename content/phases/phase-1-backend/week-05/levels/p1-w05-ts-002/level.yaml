@@ -1,0 +1,40 @@
+id: p1-w05-ts-002
+title: Handle a delayed API result
+phase: 1
+week: 5
+module: typescript-essentials
+order: 2
+difficulty: 2
+estimated_minutes: 8
+type: code
+environment: ts
+lesson: ../../lessons/02-async-and-ui.md
+task: Complete `loadCustomerName` as an async function. Await the provided local request and return the customer's name. Print the result.
+starter_files:
+  - path: main.ts
+    content: |-
+      type Customer = { id: string; name: string };
+      async function requestCustomer(): Promise<Customer> {
+        return { id: 'C-17', name: 'Asha Rao' };
+      }
+
+      async function loadCustomerName(): Promise<string> {
+        // Await requestCustomer and return its name.
+        return '';
+      }
+
+      void loadCustomerName().then(console.log);
+checks:
+  - kind: stdout_equals
+    expected: "Asha Rao"
+    label: Async result is returned and printed
+  - kind: file_contains
+    path: main.ts
+    expected: "async function loadCustomerName"
+    label: Function keeps an explicit Promise return type
+hints:
+  - "`await requestCustomer()` gives you a Customer object."
+  - "Return the `name` property from that object."
+solution: solution/
+unlocks: [p1-w05-ts-003]
+tags: [typescript, async, api]

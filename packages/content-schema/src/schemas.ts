@@ -65,6 +65,7 @@ export const CheckKindSchema = z.enum([
   'json_equals',
   'pytest_passes',
   'vitest_passes',
+  'preview_contains',
   'sql_result_equals',
   'sql_plan_uses_index',
   'git_state',

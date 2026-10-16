@@ -5,6 +5,18 @@ import path from 'path';
 
 export default defineConfig({
   publicDir: false,
+  // Content lives beside apps/, outside Vite's app root. Explicitly allow the
+  // monorepo root so on-demand raw Markdown/YAML modules work in dev mode too.
+  server: {
+    fs: {
+      allow: [path.resolve(__dirname, '../..')],
+    },
+  },
+  // PGlite resolves its WASM and database bundle relative to import.meta.url.
+  // Vite's dependency pre-bundling breaks those asset URLs in the SQL worker.
+  optimizeDeps: {
+    exclude: ['@electric-sql/pglite'],
+  },
   worker: { format: 'es' },
   plugins: [
     react(),

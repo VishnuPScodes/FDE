@@ -1,0 +1,30 @@
+id: p1-w05-ts-004
+title: Preview a small invoice admin panel
+phase: 1
+week: 5
+module: react-admin-ui
+order: 1
+difficulty: 2
+estimated_minutes: 12
+type: code
+environment: ts
+lesson: ../../lessons/02-async-and-ui.md
+task: Build a small React-style component named `InvoiceAdmin` that shows a heading and the provided customer name. Render it into the preview root. The preview supports basic text and layout elements.
+starter_files:
+  - path: main.tsx
+    content: |-
+      const customerName = 'Asha Rao';
+
+      // Define InvoiceAdmin and render it with ReactDOM.createRoot.
+checks:
+  - kind: preview_contains
+    expected: "Invoice admin"
+    label: Preview includes an admin heading
+  - kind: preview_contains
+    expected: "Asha Rao"
+    label: Preview shows the customer
+hints:
+  - Return JSX with an `h1` and a paragraph.
+  - Render `<InvoiceAdmin />` into `document.getElementById('root')`.
+solution: solution/
+tags: [react, tsx, ui]

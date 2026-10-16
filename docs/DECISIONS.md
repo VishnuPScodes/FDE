@@ -145,6 +145,8 @@ Format: `## YYYY-MM-DD — Decision title`
 
 **Trade-off:** The database itself is ephemeral per level session; the query file persists locally, but changes made by SQL statements reset when the learner leaves and reopens a level. PGlite adds a multi-megabyte runtime that is loaded only when an SQL level opens.
 
+**Vite asset handling:** Exclude `@electric-sql/pglite` from dependency optimization. Import its WASM and `pglite.data` files as Vite URL assets, fetch and compile them in the SQL worker, then pass the modules and bundle to `PGlite.create`. This avoids incorrect dependency-optimized URLs and MIME types in the worker.
+
 
 ## 2026-10-15 — Shell practice: isolated TypeScript simulator first
 
@@ -181,3 +183,13 @@ Format: `## YYYY-MM-DD — Decision title`
 **Decision:** Install the MIT `buffer` package as `globalThis.Buffer` before isomorphic-git runs in the browser.
 
 **Why:** Vite does not inject Node globals. The Git workspace initialized its filesystem, then failed when isomorphic-git read `Buffer`; the polyfill restores the browser runtime behavior it expects without changing Git storage or adding a server.
+
+## 2026-10-16 — M8: TypeScript transpilation and isolated UI preview
+
+**Decision:** Compile one active TypeScript/TSX file at a time with MIT-licensed esbuild-wasm in a lazy Web Worker. Execute the generated code in an opaque-origin sandboxed iframe with a small React-compatible element renderer, console output, timeout, and embedded `test`/`expect` checks. Keep learner files in the existing browser workspace store.
+
+**Why:** This provides a no-server TypeScript practice loop and a lightweight preview for basic admin UI components without pulling in a browser IDE or production React runtime.
+
+**Limitations:** esbuild strips TypeScript syntax but does not type-check it. The preview supports static text and basic elements, not a full React DOM, event system, imports, or a Node runtime. The timeout reloads the sandbox after five seconds. Levels should teach that type-checking limitation and keep exercises within the supported preview surface.
+
+**Verification:** Web type-check, Vitest (22 tests), content validation, and production build pass. Four Week 5 levels cover typed calculations, async data, embedded behavior checks, and a basic TSX admin panel. Preview deployment remains pending because the current deploy workflow targets production on pushes to `main`; no preview deployment was triggered.

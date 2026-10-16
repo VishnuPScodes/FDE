@@ -1,0 +1,34 @@
+id: p1-w05-ts-003
+title: Test a discount function
+phase: 1
+week: 5
+module: typescript-essentials
+order: 3
+difficulty: 2
+estimated_minutes: 10
+type: code
+environment: ts
+lesson: ../../lessons/01-types-and-functions.md
+task: Implement `discountedPaise` so the included tests pass. Apply a 10 percent discount using integer paise and round to the nearest paise.
+starter_files:
+  - path: main.ts
+    content: |-
+      function discountedPaise(amountPaise: number): number {
+        return amountPaise;
+      }
+
+      test('discounts an invoice', () => {
+        expect(discountedPaise(10000)).toBe(9000);
+      });
+      test('rounds to a paise', () => {
+        expect(discountedPaise(105)).toBe(95);
+      });
+checks:
+  - kind: vitest_passes
+    label: Both behaviour checks pass
+hints:
+  - Keep the 90 percent left after the discount.
+  - Use `Math.round` because paise are whole units.
+solution: solution/
+unlocks: [p1-w05-ts-004]
+tags: [typescript, testing, money]
