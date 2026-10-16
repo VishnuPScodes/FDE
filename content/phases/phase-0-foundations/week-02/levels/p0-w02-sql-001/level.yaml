@@ -1,0 +1,33 @@
+id: p0-w02-sql-001
+title: "Read the customer list"
+phase: 0
+week: 2
+module: sql-foundations
+order: 1
+difficulty: 1
+estimated_minutes: 5
+type: sql
+environment: sql
+lesson: ../../lessons/01-selecting-data.md
+task: |
+  List each customer's name and city. Sort the rows by customer name.
+starter_files:
+  - path: main.sql
+    content: "-- Select customer_name and city from customers\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    expected:
+      - {customer_name: "Asha Rao", city: Bengaluru}
+      - {customer_name: "Arjun Das", city: Kolkata}
+      - {customer_name: "Dev Patel", city: Ahmedabad}
+      - {customer_name: "Kabir Shah", city: Mumbai}
+      - {customer_name: "Meera Nair", city: Kochi}
+      - {customer_name: "Sara Khan", city: Hyderabad}
+hints:
+  - "Start with SELECT and name only the two columns requested."
+  - "Use ORDER BY customer_name to sort the result."
+solution: solution/
+unlocks: [p0-w02-sql-002]
+tags: [sql, select, order-by]

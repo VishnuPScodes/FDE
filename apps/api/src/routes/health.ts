@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
-import type { Env } from '../index';
+import type { AppEnv } from '../index';
 
-export const healthRouter = new Hono<{ Bindings: Env }>();
+export const healthRouter = new Hono<AppEnv>();
 
 healthRouter.get('/', (c) => {
   return c.json({

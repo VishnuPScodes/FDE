@@ -1,0 +1,34 @@
+id: p0-w01-gt-001
+title: Read repository status
+phase: 0
+week: 1
+module: git-basics
+order: 1
+difficulty: 1
+estimated_minutes: 3
+type: terminal
+environment: git
+lesson: ../../lessons/07-git-basics.md
+task: 'Run `git status` and inspect the starter repository. It is already initialized on the `main` branch. Learn to distinguish the current branch from untracked files.'
+starter_files:
+  - path: README.md
+    content: |
+      # FDE notes
+
+      Practice repository for Git basics.
+checks:
+  - kind: git_state
+    state: current_branch
+    expected: main
+    label: Current branch is main
+  - kind: git_state
+    state: file_contains
+    path: README.md
+    text: Practice repository
+    expected: true
+    label: Starter file is present
+hints:
+  - '`git status` shows the current branch and working tree changes.'
+  - 'The branch name appears after the words `On branch`.'
+unlocks: [p0-w01-gt-002]
+tags: [git, status, repository]

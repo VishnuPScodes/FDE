@@ -1,9 +1,16 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { useParams, useNavigate, NavLink } from 'react-router-dom';
 import { loadLevel, loadLesson } from '../lib/content-loader';
 import type { LevelMeta } from '../lib/content-loader';
 import LessonRenderer from '../components/LessonRenderer';
 import styles from './LevelPage.module.css';
+
+const PythonWorkspace = lazy(() => import('../components/PythonWorkspace'));
+const SqlWorkspace = lazy(() => import('../components/SqlWorkspace'));
+const ShellWorkspace = lazy(() => import('../components/ShellWorkspace'));
+const GitWorkspace = lazy(() => import('../components/GitWorkspace'));
+const HttpWorkspace = lazy(() => import('../components/HttpWorkspace'));
 
 export default function LevelPage() {
   const { levelId } = useParams<{ levelId: string }>();
@@ -13,6 +20,7 @@ export default function LevelPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hintsRevealed, setHintsRevealed] = useState(0);
+  const [passed, setPassed] = useState(false);
   const [splitPos, setSplitPos] = useState(50); // percentage for left pane
 
   useEffect(() => {
@@ -21,6 +29,10 @@ export default function LevelPage() {
     const load = async () => {
       setLoading(true);
       setError(null);
+      setLevel(null);
+      setLesson(null);
+      setHintsRevealed(0);
+      setPassed(false);
       try {
         const levelData = await loadLevel(levelId);
         setLevel(levelData);
@@ -41,6 +53,7 @@ export default function LevelPage() {
     void load();
   }, [levelId]);
 
+  const markPassed = useCallback(() => setPassed(true), []);
   const revealNextHint = useCallback(() => {
     if (level && hintsRevealed < level.hints.length) {
       setHintsRevealed((prev) => prev + 1);
@@ -160,35 +173,36 @@ export default function LevelPage() {
         </div>
 
         {/* Splitter */}
-        <div className={styles.splitter} onMouseDown={handleMouseDown}>
+        <div className={styles.splitter} role="separator" aria-orientation="vertical" aria-label="Resize lesson and workspace panes" tabIndex={0} onMouseDown={handleMouseDown}>
           <div className={styles.splitterHandle} />
         </div>
 
-        {/* Right: Editor + Terminal (placeholder for M3) */}
+        {/* Right: lazy-loaded level workspace */}
         <div className={styles.rightPane} style={{ width: `${100 - splitPos}%` }}>
-          <div className={styles.editorPlaceholder}>
-            <span className={styles.editorIcon}>⌨️</span>
-            <h3>Code Editor</h3>
-            <p>Monaco editor and terminal will be built in Milestone M3.</p>
-            <p className={styles.editorHint}>
-              Environment: <code>{level.environment}</code> · Type: <code>{level.type}</code>
-            </p>
-            {level.starter_files && level.starter_files.length > 0 && (
-              <div className={styles.starterFiles}>
-                <h4>Starter files:</h4>
-                {level.starter_files.map((f) => (
-                  <div key={f.path} className={styles.starterFile}>
-                    <code>{f.path}</code>
-                    {f.content && (
-                      <pre className={styles.starterContent}>{f.content}</pre>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {level.environment === 'python' && level.type === 'code' ? (
+            <Suspense fallback={<div className={styles.editorPlaceholder}>Loading editor…</div>}>
+              <PythonWorkspace level={level} hintsUsed={hintsRevealed} onPassed={markPassed} />
+            </Suspense>
+          ) : level.environment === 'sql' && level.type === 'sql' ? (
+            <Suspense fallback={<div className={styles.editorPlaceholder}>Loading SQL environment…</div>}>
+              <SqlWorkspace level={level} hintsUsed={hintsRevealed} onPassed={markPassed} />
+            </Suspense>
+          ) : level.environment === 'shell' && level.type === 'terminal' ? (
+            <Suspense fallback={<div className={styles.editorPlaceholder}>Loading Linux shell…</div>}>
+              <ShellWorkspace level={level} hintsUsed={hintsRevealed} onPassed={markPassed} />
+            </Suspense>
+          ) : level.environment === 'git' && level.type === 'terminal' ? (
+            <Suspense fallback={<div className={styles.editorPlaceholder}>Loading Git workspace…</div>}>
+              <GitWorkspace level={level} hintsUsed={hintsRevealed} onPassed={markPassed} />
+            </Suspense>
+          ) : level.environment === 'http' && (level.type === 'console' || level.type === 'terminal') ? (
+            <Suspense fallback={<div className={styles.editorPlaceholder}>Loading mock API client…</div>}>
+              <HttpWorkspace level={level} hintsUsed={hintsRevealed} onPassed={markPassed} />
+            </Suspense>
+          ) : <div className={styles.editorPlaceholder}><span className={styles.editorIcon}>⌨️</span><h3>Workspace coming soon</h3><p>Environment: <code>{level.environment}</code> · Type: <code>{level.type}</code></p></div>}
         </div>
       </div>
+      {passed && level.unlocks?.[0] && <div className={styles.nextLevel}><span>Level passed</span><NavLink className="btn btn-primary" to={`/level/${level.unlocks[0]}`}>Continue to next level →</NavLink></div>}
     </div>
   );
 }

@@ -1,0 +1,30 @@
+id: p0-w02-sql-005
+title: "Filter grouped customers"
+phase: 0
+week: 2
+module: sql-foundations
+order: 5
+difficulty: 2
+estimated_minutes: 8
+type: sql
+environment: sql
+lesson: ../../lessons/03-aggregates.md
+task: |
+  Find customers who have placed at least two delivered orders. Return the customer ID and count.
+starter_files:
+  - path: main.sql
+    content: "-- Use HAVING to filter customer order counts\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    expected:
+      - {customer_id: 1, delivered_orders: 2}
+      - {customer_id: 2, delivered_orders: 2}
+      - {customer_id: 3, delivered_orders: 2}
+hints:
+  - "Filter to delivered rows before grouping by customer."
+  - "HAVING filters the count after GROUP BY."
+solution: solution/
+unlocks: [p0-w02-sql-006]
+tags: [sql, having, group-by]

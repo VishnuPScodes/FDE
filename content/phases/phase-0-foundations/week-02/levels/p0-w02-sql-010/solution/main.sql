@@ -1,0 +1,12 @@
+WITH ranked_orders AS (
+  SELECT customer_id, order_id, order_date,
+         ROW_NUMBER() OVER (
+           PARTITION BY customer_id
+           ORDER BY order_date DESC, order_id DESC
+         ) AS row_number
+  FROM orders
+)
+SELECT customer_id, order_id
+FROM ranked_orders
+WHERE row_number = 1
+ORDER BY customer_id;

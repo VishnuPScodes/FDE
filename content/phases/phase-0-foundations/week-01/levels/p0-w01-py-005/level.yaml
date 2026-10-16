@@ -1,0 +1,26 @@
+id: p0-w01-py-005
+title: "Format a receipt line"
+phase: 0
+week: 1
+module: python-basics
+order: 5
+difficulty: 1
+estimated_minutes: 5
+type: code
+environment: python
+lesson: ../../lessons/02-values-and-strings.md
+task: |
+  Use an f-string to print exactly `Meera: ₹1200` from the variables `customer` and `amount`.
+starter_files:
+  - path: main.py
+    content: "customer = 'Meera'\namount = 1200\n# Print the receipt line\n"
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "Meera: ₹1200\n"
+hints:
+  - "Start the string with `f` before its quote."
+  - "Put `{customer}` and `{amount}` where their values should appear."
+solution: solution/
+unlocks: [p0-w01-py-006]
+tags: [python, f-strings, formatting]

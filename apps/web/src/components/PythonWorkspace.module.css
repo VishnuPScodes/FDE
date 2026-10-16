@@ -1,0 +1,20 @@
+.workspace { height: 100%; min-height: 0; display: grid; grid-template-rows: auto minmax(160px, 1fr) auto minmax(120px, 34%); background: #090a12; color: #e6e8ef; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; min-height: 48px; gap: 12px; padding: 6px 12px; border-bottom: 1px solid #242633; background: #11131d; }
+.fileTabs, .actions { display: flex; align-items: center; gap: 8px; }
+.tab, .activeTab { padding: 7px 10px; border: 0; border-radius: 6px; color: #a7adbd; background: transparent; cursor: pointer; font: inherit; }
+.activeTab { background: #242633; color: #f0f1f6; }
+.editor { min-height: 160px; }
+.terminalHeader { display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; border-top: 1px solid #242633; color: #a7adbd; font-size: 12px; }
+.terminalHeader progress { width: 84px; height: 7px; vertical-align: middle; accent-color: #7c8cff; }
+.terminal { min-height: 100px; overflow: hidden; padding: 4px 10px; }
+.results { max-height: 220px; overflow: auto; padding: 12px 16px; border-top: 1px solid #242633; background: #11131d; }
+.results h3 { margin: 0 0 8px; font-size: 14px; }
+.passed h3 { color: #4ade80; }
+.failed h3 { color: #fbbf24; }
+.checkRow { padding: 7px 0; border-top: 1px solid #242633; font-size: 13px; }
+.checkRow pre, .solution pre { max-width: 100%; overflow: auto; white-space: pre-wrap; color: #c6cada; font: 12px/1.5 var(--font-mono); }
+.checkRow p, .progressMessage { color: #c6cada; font-size: 13px; }
+.loading { padding: 24px; color: var(--text-muted); }
+.solution { max-height: 200px; overflow: auto; padding: 12px; background: #171927; border: 1px solid #373b50; border-radius: 8px; }
+.solution h3 { margin: 0 0 8px; font-size: 14px; }
+@media (max-width: 768px) { .workspace { grid-template-rows: auto minmax(180px, 1fr) auto minmax(140px, 35%); } .toolbar { flex-wrap: wrap; } .terminalHeader span { max-width: 60%; text-align: right; } }

@@ -157,3 +157,11 @@
   border-color: var(--color-error-500);
 }
 .callout_caution strong { color: var(--color-error-400); }
+
+.diagram { overflow-x: auto; margin: var(--space-4) 0; }
+.diagram svg { display: block; min-width: 100%; height: 150px; }
+.diagram rect { fill: var(--bg-elevated); stroke: var(--border-default); stroke-width: 1.5; }
+.diagram text { fill: var(--text-primary); text-anchor: middle; font: 14px var(--font-sans); }
+.diagram path { fill: none; stroke: var(--color-brand-500); stroke-width: 2; }
+.diagram marker path { fill: var(--color-brand-500); stroke: none; }
+.diagramFallback { overflow-x: auto; padding: var(--space-4); background: var(--bg-elevated); border-radius: var(--radius-md); }

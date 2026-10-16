@@ -1,0 +1,27 @@
+id: p0-w01-py-002
+title: "Print a greeting"
+phase: 0
+week: 1
+module: python-basics
+order: 2
+difficulty: 1
+estimated_minutes: 3
+type: code
+environment: python
+lesson: ../../lessons/01-printing.md
+task: |
+  Print the greeting **Hello, Pune!** on one line.
+starter_files:
+  - path: main.py
+    content: "# Write your code here\n"
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "Hello, Pune!\n"
+hints:
+  - "Use Python's `print` function to show text."
+  - "Put the greeting inside quotes: `print(\"Hello, Pune!\")`."
+solution: solution/
+tags: [python, print, strings]
+mobile_compatible: true
+unlocks: [p0-w01-py-003]

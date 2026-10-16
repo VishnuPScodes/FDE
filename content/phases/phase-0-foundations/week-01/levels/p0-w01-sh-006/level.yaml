@@ -1,0 +1,31 @@
+id: p0-w01-sh-006
+title: 'Count urgent tickets'
+phase: 0
+week: 1
+module: shell-basics
+order: 6
+difficulty: 3
+estimated_minutes: 6
+type: terminal
+environment: shell
+lesson: ../../lessons/06-shell-basics.md
+task: 'Count the high-priority rows in `tickets.csv` by piping `cat` into `grep`, then into `wc -l`. The header does not contain `high`.'
+starter_files:
+  - path: tickets.csv
+    content: |
+      id,team,subject,priority
+      101,billing,Payment failed,high
+      102,ops,Update contact details,low
+      103,support,Login issue,high
+checks:
+  - kind: sim_command_used
+    command: cat tickets.csv | grep high | wc -l
+  - kind: sim_state
+    assert: contains
+    path: __stdout__
+    contains: ' 2 '
+hints:
+  - 'A pipe (`|`) sends the output of one command into the next command.'
+  - 'Use `cat tickets.csv | grep high | wc -l`.'
+solution: solution/
+tags: [shell, pipes, grep, wc]

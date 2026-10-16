@@ -1,5 +1,5 @@
 import type { Context, Next } from 'hono';
-import type { Env } from '../index';
+import type { AppEnv } from '../index';
 
 /**
  * JWT verification middleware for Supabase Auth.
@@ -8,7 +8,7 @@ import type { Env } from '../index';
  *
  * Uses Supabase JWT secret (HMAC HS256) for verification.
  */
-export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) {
+export async function authMiddleware(c: Context<AppEnv>, next: Next) {
   const authHeader = c.req.header('Authorization');
   if (!authHeader?.startsWith('Bearer ')) {
     return c.json({ error: 'Missing or malformed Authorization header' }, 401);
@@ -24,19 +24,19 @@ export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) 
 
   try {
     const payload = await verifyJWT(token, jwtSecret);
-    if (!payload.sub) {
+    if (typeof payload.sub !== 'string' || !payload.sub) {
       return c.json({ error: 'Invalid token: missing subject' }, 401);
     }
 
     // Check expiration
-    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+    if (typeof payload.exp === 'number' && payload.exp < Math.floor(Date.now() / 1000)) {
       return c.json({ error: 'Token expired' }, 401);
     }
 
     // Set user info on context
     c.set('userId', payload.sub);
-    c.set('userEmail', payload.email ?? '');
-    c.set('userRole', payload.role ?? 'authenticated');
+    c.set('userEmail', typeof payload.email === 'string' ? payload.email : '');
+    c.set('userRole', typeof payload.role === 'string' ? payload.role : 'authenticated');
 
     await next();
   } catch (err) {

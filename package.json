@@ -18,7 +18,7 @@
     "test:e2e": "turbo run test:e2e",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean && rm -rf node_modules",
-    "validate-content": "turbo run validate-content"
+    "validate-content": "pnpm --filter @fde/content-schema validate-content"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.15.0",

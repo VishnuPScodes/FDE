@@ -1,0 +1,28 @@
+id: p0-w01-sh-004
+title: 'Find high-priority tickets'
+phase: 0
+week: 1
+module: shell-basics
+order: 4
+difficulty: 2
+estimated_minutes: 4
+type: terminal
+environment: shell
+lesson: ../../lessons/06-shell-basics.md
+task: 'Search `tickets.csv` for the word `high`. Use `grep` to find the matching rows.'
+starter_files:
+  - path: tickets.csv
+    content: |
+      id,team,subject,priority
+      101,billing,Payment failed,high
+      102,ops,Update contact details,low
+      103,support,Login issue,high
+checks:
+  - kind: sim_command_used
+    command: grep high tickets.csv
+hints:
+  - '`grep WORD FILE` prints lines containing WORD.'
+  - 'Try `grep high tickets.csv`.'
+solution: solution/
+unlocks: [p0-w01-sh-005]
+tags: [shell, grep, csv]

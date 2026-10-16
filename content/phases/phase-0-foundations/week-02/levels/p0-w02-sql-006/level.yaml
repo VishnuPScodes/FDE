@@ -1,0 +1,28 @@
+id: p0-w02-sql-006
+title: "Join orders to customers"
+phase: 0
+week: 2
+module: sql-foundations
+order: 6
+difficulty: 2
+estimated_minutes: 7
+type: sql
+environment: sql
+lesson: ../../lessons/04-joins-and-cte.md
+task: |
+  Show order 101 with the customer's name and the order total. Join the two tables by their customer ID.
+starter_files:
+  - path: main.sql
+    content: "-- Join orders and customers\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    expected:
+      - {order_id: 101, customer_name: "Asha Rao", total_amount: "820.00"}
+hints:
+  - "Both tables store customer_id."
+  - "Join customers to orders, then filter to order 101."
+solution: solution/
+unlocks: [p0-w02-sql-007]
+tags: [sql, join, inner-join]

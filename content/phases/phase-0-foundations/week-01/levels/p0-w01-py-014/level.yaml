@@ -1,0 +1,29 @@
+id: p0-w01-py-014
+title: "Add a typed function"
+phase: 0
+week: 1
+module: python-basics
+order: 14
+difficulty: 3
+estimated_minutes: 8
+type: code
+environment: python
+lesson: ../../lessons/04-collections-and-functions.md
+task: |
+  Add type hints to `invoice_total`. It accepts a list of integer amounts and returns their integer sum. Print **2400**.
+starter_files:
+  - path: main.py
+    content: "def invoice_total(amounts):\n    return sum(amounts)\n\nprint(invoice_total([900, 1500]))\n"
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "2400\n"
+  - kind: file_contains
+    path: main.py
+    expected: "list[int]"
+hints:
+  - "The parameter annotation goes after `amounts` and a colon."
+  - "Use `list[int]` for the input and `-> int` before the function's colon."
+solution: solution/
+unlocks: [p0-w01-py-015]
+tags: [python, type-hints]

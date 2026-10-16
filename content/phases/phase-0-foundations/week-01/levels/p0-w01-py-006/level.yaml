@@ -1,0 +1,26 @@
+id: p0-w01-py-006
+title: "Choose a review label"
+phase: 0
+week: 1
+module: python-basics
+order: 6
+difficulty: 2
+estimated_minutes: 5
+type: code
+environment: python
+lesson: ../../lessons/03-control-flow.md
+task: |
+  Print `review` when `amount` is greater than 1000. Otherwise print `standard`. The starter amount is 1200.
+starter_files:
+  - path: main.py
+    content: "amount = 1200\n# Add an if/else decision\n"
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "review\n"
+hints:
+  - "Compare the amount with `1000` using `>`."
+  - "Put one `print` in the `if` block and the other in `else`."
+solution: solution/
+unlocks: [p0-w01-py-007]
+tags: [python, conditions]

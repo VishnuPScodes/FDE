@@ -27,7 +27,7 @@ describe('JWT auth middleware', () => {
     };
 
     const result = await authMiddleware(
-      mockC as Parameters<typeof authMiddleware>[0],
+      mockC as unknown as Parameters<typeof authMiddleware>[0],
       async () => {},
     );
 
@@ -58,7 +58,7 @@ describe('JWT auth middleware', () => {
     };
 
     await authMiddleware(
-      mockC as Parameters<typeof authMiddleware>[0],
+      mockC as unknown as Parameters<typeof authMiddleware>[0],
       async () => {},
     );
 

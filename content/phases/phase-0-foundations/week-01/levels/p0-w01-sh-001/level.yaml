@@ -1,0 +1,29 @@
+id: p0-w01-sh-001
+title: 'Find your location'
+phase: 0
+week: 1
+module: shell-basics
+order: 1
+difficulty: 1
+estimated_minutes: 3
+type: terminal
+environment: shell
+lesson: ../../lessons/06-shell-basics.md
+task: 'Find the full path of your current working directory, then list its files. The workspace starts in `/workspace` and includes `tickets.csv`.'
+starter_files:
+  - path: tickets.csv
+    content: |
+      id,team,subject,priority
+      101,billing,Payment failed,high
+      102,ops,Update contact details,low
+checks:
+  - kind: sim_command_used
+    command: pwd
+  - kind: sim_command_used
+    command: ls
+hints:
+  - 'The command for the current directory is short: `pwd`.'
+  - 'Use `ls` to list files in the current directory.'
+solution: solution/
+unlocks: [p0-w01-sh-002]
+tags: [shell, pwd, ls]

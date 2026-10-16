@@ -119,14 +119,17 @@ pnpm build
 
 ## Milestones
 
-Current: **M0 — Repo scaffold** ✅
+Current: **M6 — Git environment** 🚧
 
 | # | Milestone | Status |
 |---|---|---|
 | M0 | Repo scaffold | ✅ Done |
-| M1 | Auth & shell | ⬜ Next |
-| M2 | Content system | ⬜ |
-| M3 | Python editor + grader | ⬜ |
+| M1 | Auth & shell | ✅ Implemented; Google provider setup remains in Supabase |
+| M2 | Content system | ✅ Done |
+| M3 | Python editor + grader | ✅ Done |
+| M4 | SQL environment | ✅ Done |
+| M5 | Linux shell | ✅ Shell checks pass; v86 VM boots and accepts commands; checks run in simulator |
+| M6 | Git environment | 🚧 Git runtime and six Git levels validated; browser smoke test pending |
 | ... | ... | |
 
 ---

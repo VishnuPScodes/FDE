@@ -1,0 +1,26 @@
+id: p0-w01-py-004
+title: "Add GST to an invoice"
+phase: 0
+week: 1
+module: python-basics
+order: 4
+difficulty: 1
+estimated_minutes: 5
+type: code
+environment: python
+lesson: ../../lessons/02-values-and-strings.md
+task: |
+  An invoice is **₹1000** before tax. Add **₹180** GST and print the total as a number.
+starter_files:
+  - path: main.py
+    content: "subtotal = 1000\ngst = 180\n# Print the invoice total\n"
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "1180\n"
+hints:
+  - "The total is the subtotal plus the GST amount."
+  - "Add the two variables, then pass the result to `print`."
+solution: solution/
+unlocks: [p0-w01-py-005]
+tags: [python, arithmetic, variables]

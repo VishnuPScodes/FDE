@@ -1,0 +1,1 @@
+-- Compare the supplied IDs to customers with a FULL OUTER JOIN

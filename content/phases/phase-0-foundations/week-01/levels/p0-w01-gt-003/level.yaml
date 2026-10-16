@@ -1,0 +1,39 @@
+id: p0-w01-gt-003
+title: Create a feature branch
+phase: 0
+week: 1
+module: git-basics
+order: 3
+difficulty: 2
+estimated_minutes: 5
+type: terminal
+environment: git
+lesson: ../../lessons/07-git-basics.md
+task: 'Create and switch to a branch named `feature/welcome`. Add a welcome line to `README.md`, then stage and commit the change on that branch.'
+starter_files:
+  - path: README.md
+    content: |
+      # FDE notes
+
+      Project setup is complete.
+checks:
+  - kind: git_state
+    state: current_branch
+    expected: feature/welcome
+    label: You are on the feature branch
+  - kind: git_state
+    state: branch_exists
+    branch: feature/welcome
+    expected: true
+    label: Feature branch exists
+  - kind: git_state
+    state: file_contains
+    path: README.md
+    text: Welcome to the project
+    expected: true
+    label: Welcome note is committed in the working tree
+hints:
+  - 'Use `git switch -c feature/welcome` to create and enter the branch.'
+  - 'Edit README.md, then stage and commit your update.'
+unlocks: [p0-w01-gt-004]
+tags: [git, branch, switch]

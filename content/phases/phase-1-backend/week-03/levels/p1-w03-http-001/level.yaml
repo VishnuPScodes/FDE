@@ -1,0 +1,31 @@
+id: p1-w03-http-001
+title: Inspect an HTTP response
+phase: 1
+week: 3
+module: rest-api-design
+order: 1
+difficulty: 1
+estimated_minutes: 5
+type: console
+environment: http
+lesson: ../../lessons/01-http-fundamentals.md
+task: Send a GET request to `/api/health`. Inspect the `200 OK` status, JSON body, and content-type response header, then submit the check.
+checks:
+  - kind: http_response
+    action: request_exists
+    method: GET
+    path: /api/health
+    status: 200
+    label: Health endpoint returns 200
+  - kind: http_response
+    action: request_exists
+    method: GET
+    path: /api/health
+    status: 200
+    body_contains: '"status":"ok"'
+    label: Response body reports service status
+hints:
+  - Send `GET /api/health` with the Send request button.
+  - Read the JSON response body and confirm its status field is `ok`.
+unlocks: [p1-w03-http-002]
+tags: [http, rest, status-codes]

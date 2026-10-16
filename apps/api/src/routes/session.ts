@@ -1,9 +1,9 @@
 import { Hono } from 'hono';
-import type { Env } from '../index';
+import type { AppEnv } from '../index';
 import { authMiddleware } from '../middleware/auth';
 import { getSupabaseAdmin } from '../lib/supabase';
 
-export const sessionRouter = new Hono<{ Bindings: Env }>();
+export const sessionRouter = new Hono<AppEnv>();
 
 /**
  * POST /session/login-event
@@ -85,12 +85,14 @@ sessionRouter.post('/login-event', authMiddleware, async (c) => {
   // If it conflicted, we need to increment login_count and update last_seen.
   if (!deviceError) {
     // Try to increment login_count for existing devices
-    await supabase.rpc('increment_device_login', {
-      p_user_id: userId,
-      p_device_hash: deviceHash,
-    }).catch(() => {
+    try {
+      await supabase.rpc('increment_device_login', {
+        p_user_id: userId,
+        p_device_hash: deviceHash,
+      });
+    } catch {
       // RPC may not exist yet — that's fine, the upsert still works
-    });
+    }
   }
 
   return c.json({ ok: true });

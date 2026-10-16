@@ -1,0 +1,1 @@
+-- Find rows where shipping_note is missing

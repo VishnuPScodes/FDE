@@ -1,0 +1,26 @@
+id: p0-w01-py-009
+title: "Read a customer record"
+phase: 0
+week: 1
+module: python-basics
+order: 9
+difficulty: 2
+estimated_minutes: 5
+type: code
+environment: python
+lesson: ../../lessons/04-collections-and-functions.md
+task: |
+  Read the customer name from the `invoice` dictionary and print `Asha`.
+starter_files:
+  - path: main.py
+    content: "invoice = {'customer': 'Asha', 'amount': 950}\n# Print the customer field\n"
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "Asha\n"
+hints:
+  - "Dictionary values are read by key inside square brackets."
+  - "The key you need is the string `'customer'`."
+solution: solution/
+unlocks: [p0-w01-py-010]
+tags: [python, dictionaries]

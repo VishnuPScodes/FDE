@@ -1,0 +1,24 @@
+id: p0-w01-sh-005
+title: 'Set a team variable'
+phase: 0
+week: 1
+module: shell-basics
+order: 5
+difficulty: 2
+estimated_minutes: 4
+type: terminal
+environment: shell
+lesson: ../../lessons/06-shell-basics.md
+task: 'Set the environment variable `TEAM` to `billing`, then print it with `echo $TEAM`.'
+checks:
+  - kind: sim_state
+    assert: equals
+    path: __env__:TEAM
+    expected: billing
+  - kind: sim_command_used
+    command: echo $TEAM
+hints:
+  - 'Use `export NAME=value` to set a variable.'
+  - 'Run `export TEAM=billing`, then `echo $TEAM`.'
+solution: solution/
+tags: [shell, environment, variables]

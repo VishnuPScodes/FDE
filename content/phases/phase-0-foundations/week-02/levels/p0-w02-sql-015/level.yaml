@@ -1,0 +1,28 @@
+id: p0-w02-sql-015
+title: "Roll back a draft order change"
+phase: 0
+week: 2
+module: data-modelling
+order: 2
+difficulty: 4
+estimated_minutes: 12
+type: sql
+environment: sql
+lesson: ../../lessons/06-models-indexes-transactions.md
+task: |
+  Test a ₹100 adjustment to order 112 inside a transaction, then roll it back. Return the stored total after the rollback.
+starter_files:
+  - path: main.sql
+    content: "-- Begin a transaction, try the change, roll it back, then read the stored amount\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    expected:
+      - {order_id: 112, total_amount: "825.00"}
+hints:
+  - "BEGIN starts the transaction and ROLLBACK discards the update."
+  - "Use UPDATE ... RETURNING to inspect a change before rolling it back."
+solution: solution/
+unlocks: []
+tags: [sql, transaction, rollback]

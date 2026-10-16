@@ -1,0 +1,28 @@
+id: p0-w01-py-013
+title: "Import a helper module"
+phase: 0
+week: 1
+module: python-basics
+order: 13
+difficulty: 3
+estimated_minutes: 8
+type: code
+environment: python
+lesson: ../../lessons/04-collections-and-functions.md
+task: |
+  Use the supplied `totals.py` module to calculate 18% GST on ₹500 and print **590**.
+starter_files:
+  - path: main.py
+    content: "from totals import with_gst\n\nprint(round(with_gst(500, 0.18)))\n"
+  - path: totals.py
+    content: "def with_gst(amount, rate):\n    # Return the amount including tax\n    pass\n"
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "590\n"
+hints:
+  - "The import statement is already in `main.py`; implement the function in `totals.py`."
+  - "Return the amount multiplied by `1 + rate`."
+solution: solution/
+unlocks: [p0-w01-py-014]
+tags: [python, modules, imports]

@@ -7,6 +7,8 @@
  */
 
 import yaml from 'js-yaml';
+import { validateCurriculum, validateLevel } from '@fde/content-schema';
+import type { Check, FeedbackRule } from '@fde/content-schema';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -42,9 +44,9 @@ export interface LevelMeta {
   lesson?: string;
   task: string;
   starter_files?: { path: string; content?: string; from?: string }[];
-  checks: Record<string, unknown>[];
+  checks: Check[];
   hints: string[];
-  feedback?: { when: Record<string, unknown>; message: string }[];
+  feedback?: FeedbackRule[];
   solution?: string;
   unlocks?: string[];
   tags?: string[];
@@ -60,7 +62,13 @@ const lessonCache = new Map<string, string>();
 
 // ─── Loaders ──────────────────────────────────────────────────────────────────
 
-const CONTENT_BASE = '/content';
+const yamlFiles = import.meta.glob('../../../../content/**/*.yaml', { query: '?raw', import: 'default' }) as Record<string, () => Promise<string>>;
+const markdownFiles = import.meta.glob('../../../../content/**/*.md', { query: '?raw', import: 'default' }) as Record<string, () => Promise<string>>;
+const workspaceFiles = import.meta.glob('../../../../content/**/*.{py,csv,txt,json,sql}', { query: '?raw', import: 'default' }) as Record<string, () => Promise<string>>;
+
+function findContentFile(files: Record<string, unknown>, suffix: string): string | undefined {
+  return Object.keys(files).find((path) => path.endsWith(suffix));
+}
 
 /**
  * Load the curriculum.yaml file.
@@ -69,11 +77,12 @@ const CONTENT_BASE = '/content';
 export async function loadCurriculum(): Promise<Curriculum> {
   if (curriculumCache) return curriculumCache;
 
-  const res = await fetch(`${CONTENT_BASE}/curriculum.yaml`);
-  if (!res.ok) throw new Error(`Failed to load curriculum: ${res.status}`);
-
-  const text = await res.text();
-  const data = yaml.load(text) as Curriculum;
+  const file = findContentFile(yamlFiles, '/content/curriculum.yaml');
+  if (!file) throw new Error('curriculum.yaml is missing from bundled content.');
+  const text = await yamlFiles[file]!();
+  const parsed = validateCurriculum(yaml.load(text));
+  if (!parsed.success) throw new Error(`Invalid curriculum: ${parsed.errors.join('; ')}`);
+  const data = parsed.data;
 
   curriculumCache = data;
   return data;
@@ -88,13 +97,12 @@ export async function loadLevel(levelId: string): Promise<LevelMeta> {
   const cached = levelCache.get(levelId);
   if (cached) return cached;
 
-  // Derive the file path from the level ID
-  const path = levelIdToPath(levelId);
-  const res = await fetch(`${CONTENT_BASE}/${path}/level.yaml`);
-  if (!res.ok) throw new Error(`Failed to load level ${levelId}: ${res.status}`);
-
-  const text = await res.text();
-  const data = yaml.load(text) as LevelMeta;
+  const file = findContentFile(yamlFiles, `/levels/${levelId}/level.yaml`);
+  if (!file) throw new Error(`Level ${levelId} was not found in bundled content.`);
+  const text = await yamlFiles[file]!();
+  const parsed = validateLevel(yaml.load(text));
+  if (!parsed.success) throw new Error(`Invalid level ${levelId}: ${parsed.errors.join('; ')}`);
+  const data = parsed.data as LevelMeta;
 
   levelCache.set(levelId, data);
   return data;
@@ -110,10 +118,9 @@ export async function loadLesson(lessonPath: string): Promise<string> {
 
   // Normalize path — remove leading ./
   const normalized = lessonPath.replace(/^\.\//, '').replace(/^\//, '');
-  const res = await fetch(`${CONTENT_BASE}/${normalized}`);
-  if (!res.ok) throw new Error(`Failed to load lesson: ${res.status}`);
-
-  const text = await res.text();
+  const file = findContentFile(markdownFiles, `/${normalized}`);
+  if (!file) throw new Error(`Lesson ${normalized} was not found in bundled content.`);
+  const text = await markdownFiles[file]!();
   lessonCache.set(lessonPath, text);
   return text;
 }
@@ -121,14 +128,31 @@ export async function loadLesson(lessonPath: string): Promise<string> {
 /**
  * Load a starter file for a level.
  */
-export async function loadStarterFile(levelId: string, filePath: string): Promise<string> {
-  const levelPath = levelIdToPath(levelId);
-  const res = await fetch(`${CONTENT_BASE}/${levelPath}/starter/${filePath}`);
-  if (!res.ok) {
-    // Try from content field in level.yaml
-    return '';
+export async function loadStarterFile(levelId: string, filePath: string, from?: string): Promise<string> {
+  const suffix = from ? resolveContentReference(levelIdToPath(levelId), from) : `${levelIdToPath(levelId)}/starter/${filePath}`;
+  const file = findContentFile(workspaceFiles, `/${suffix}`);
+  return file ? workspaceFiles[file]!() : '';
+}
+
+function resolveContentReference(basePath: string, reference: string): string {
+  const segments = basePath.split('/');
+  for (const segment of reference.replaceAll('\\', '/').split('/')) {
+    if (!segment || segment === '.') continue;
+    if (segment === '..') segments.pop();
+    else segments.push(segment);
   }
-  return res.text();
+  return segments.join('/');
+}
+
+export async function loadSolutionFiles(levelId: string, filePaths: string[]): Promise<Record<string, string>> {
+  const result: Record<string, string> = {};
+  for (const filePath of filePaths) {
+    const suffix = `/levels/${levelId}/solution/${filePath}`;
+    const file = findContentFile(workspaceFiles, suffix);
+    if (!file) throw new Error(`Solution file ${filePath} is not available.`);
+    result[filePath] = await workspaceFiles[file]!();
+  }
+  return result;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -175,6 +199,20 @@ export function getWeekModules(curriculum: Curriculum, weekNum: number): string[
     }
   }
   return [];
+}
+
+export async function loadModuleLevels(moduleId: string): Promise<LevelMeta[]> {
+  const levels = await loadAllLevels();
+  return levels.filter((level) => level.module === moduleId).sort((a, b) => a.order - b.order);
+}
+
+export async function loadAllLevels(): Promise<LevelMeta[]> {
+  const paths = Object.keys(yamlFiles).filter((path) => path.includes('/levels/') && path.endsWith('/level.yaml'));
+  const levels = await Promise.all(paths.map(async (file) => {
+    const parsed = validateLevel(yaml.load(await yamlFiles[file]!()));
+    return parsed.success ? parsed.data as LevelMeta : null;
+  }));
+  return levels.filter((level): level is LevelMeta => level !== null);
 }
 
 /**

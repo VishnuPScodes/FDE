@@ -1,0 +1,38 @@
+id: p0-w01-gt-002
+title: Stage and commit a change
+phase: 0
+week: 1
+module: git-basics
+order: 2
+difficulty: 1
+estimated_minutes: 5
+type: terminal
+environment: git
+lesson: ../../lessons/07-git-basics.md
+task: 'Add one short line to `README.md`, save the file, stage it with `git add README.md`, and commit it with a clear message.'
+starter_files:
+  - path: README.md
+    content: |
+      # FDE notes
+
+      A small project for Git practice.
+checks:
+  - kind: git_state
+    state: commit_count
+    at_least: 1
+    label: At least one commit exists
+  - kind: git_state
+    state: working_tree_clean
+    expected: true
+    label: The committed work is clean
+  - kind: git_state
+    state: file_contains
+    path: README.md
+    text: My first commit
+    expected: true
+    label: Your README change is present
+hints:
+  - 'Save the editor change first. `git status` should show README.md as modified.'
+  - 'Run `git add README.md`, then `git commit -m "Add project note"`.'
+unlocks: [p0-w01-gt-003]
+tags: [git, add, commit]

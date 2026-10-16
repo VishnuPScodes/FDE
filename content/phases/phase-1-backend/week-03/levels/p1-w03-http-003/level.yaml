@@ -1,0 +1,23 @@
+id: p1-w03-http-003
+title: Respect a rate limit
+phase: 1
+week: 3
+module: rest-api-design
+order: 3
+difficulty: 2
+estimated_minutes: 6
+type: console
+environment: http
+lesson: ../../lessons/01-http-fundamentals.md
+task: Request `/api/rate-limited`. The first response is `429 Too Many Requests` with a `Retry-After` header. Wait for the suggested interval, retry, and inspect the successful response.
+checks:
+  - kind: http_response
+    action: statuses_include
+    path: /api/rate-limited
+    statuses: [429, 200]
+    label: Observed the rate limit and a successful retry
+hints:
+  - 'The response includes `retry-after: 1` when the API throttles you.'
+  - Send the same GET request again after the first 429 response.
+unlocks: [p1-w03-http-004]
+tags: [http, rate-limits, retries]

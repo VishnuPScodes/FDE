@@ -1,5 +1,5 @@
 import type { ZodError } from 'zod';
-import { LevelSchema, CurriculumSchema } from './schemas';
+import { LevelSchema, CurriculumSchema, type Level, type Curriculum } from './schemas';
 
 export type ValidationResult<T> =
   | { success: true; data: T }
@@ -9,7 +9,7 @@ export type ValidationResult<T> =
  * Validates a parsed level.yaml object.
  * Returns typed data on success, or a list of human-readable error messages.
  */
-export function validateLevel(raw: unknown): ValidationResult<import('./schemas').Level> {
+export function validateLevel(raw: unknown): ValidationResult<Level> {
   const result = LevelSchema.safeParse(raw);
   if (result.success) {
     return { success: true, data: result.data };
@@ -22,13 +22,14 @@ export function validateLevel(raw: unknown): ValidationResult<import('./schemas'
  */
 export function validateCurriculum(
   raw: unknown,
-): ValidationResult<import('./schemas').Curriculum> {
+): ValidationResult<Curriculum> {
   const result = CurriculumSchema.safeParse(raw);
   if (result.success) {
     return { success: true, data: result.data };
   }
   return { success: false, errors: formatZodErrors(result.error) };
 }
+
 
 function formatZodErrors(error: ZodError): string[] {
   return error.errors.map((e) => {

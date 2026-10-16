@@ -1,0 +1,26 @@
+id: p0-w01-py-008
+title: "Count large invoices"
+phase: 0
+week: 1
+module: python-basics
+order: 8
+difficulty: 2
+estimated_minutes: 6
+type: code
+environment: python
+lesson: ../../lessons/03-control-flow.md
+task: |
+  Count how many values in `invoices` are greater than 1000. Print the count.
+starter_files:
+  - path: main.py
+    content: "invoices = [900, 1200, 500, 1800]\n# Count invoices over 1000\n"
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "2\n"
+hints:
+  - "Use a loop and an `if` condition inside it."
+  - "Increase a counter by one each time an amount is above 1000."
+solution: solution/
+unlocks: [p0-w01-py-009]
+tags: [python, loops, conditions]

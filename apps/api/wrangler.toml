@@ -1,4 +1,4 @@
-name: "application/vnd.cloudflare.worker+javascript; module=true"
+name = "fde-api"
 
 main = "src/index.ts"
 compatibility_date = "2024-12-01"

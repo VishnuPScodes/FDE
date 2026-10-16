@@ -1,0 +1,33 @@
+id: p0-w02-sql-008
+title: "Reconcile two customer lists"
+phase: 0
+week: 2
+module: sql-foundations
+order: 8
+difficulty: 3
+estimated_minutes: 9
+type: sql
+environment: sql
+lesson: ../../lessons/04-joins-and-cte.md
+task: |
+  A partner sent customer IDs 1 and 99. Use a full join to find the unmatched ID from either list.
+starter_files:
+  - path: main.sql
+    content: "-- Compare the supplied IDs to customers with a FULL OUTER JOIN\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    expected:
+      - {customer_id: 99, customer_name: null}
+      - {customer_id: null, customer_name: "Kabir Shah"}
+      - {customer_id: null, customer_name: "Meera Nair"}
+      - {customer_id: null, customer_name: "Arjun Das"}
+      - {customer_id: null, customer_name: "Sara Khan"}
+      - {customer_id: null, customer_name: "Dev Patel"}
+hints:
+  - "Put the supplied IDs in a small CTE using VALUES."
+  - "A FULL OUTER JOIN preserves unmatched rows from both sides."
+solution: solution/
+unlocks: [p0-w02-sql-009]
+tags: [sql, full-outer-join, reconciliation]

@@ -1,0 +1,27 @@
+id: p0-w02-sql-014
+title: "Add an index and inspect the plan"
+phase: 0
+week: 2
+module: sql-foundations
+order: 14
+difficulty: 4
+estimated_minutes: 12
+type: sql
+environment: sql
+lesson: ../../lessons/06-models-indexes-transactions.md
+task: |
+  Create an index on event_log.customer_id, then use EXPLAIN on a lookup for customer 77. The plan should use your index.
+starter_files:
+  - path: main.sql
+    content: "-- Create an index, then inspect a selective lookup with EXPLAIN\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_plan_uses_index
+    expected: idx_event_log_customer_id
+hints:
+  - "Use CREATE INDEX IF NOT EXISTS so the query can be run more than once."
+  - "EXPLAIN SELECT ... shows the plan without running the lookup."
+solution: solution/
+unlocks: [p0-w02-sql-015]
+tags: [sql, index, explain, performance]

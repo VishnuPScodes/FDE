@@ -1,0 +1,31 @@
+id: p0-w02-sql-009
+title: "Build a city summary with a CTE"
+phase: 0
+week: 2
+module: sql-foundations
+order: 9
+difficulty: 3
+estimated_minutes: 9
+type: sql
+environment: sql
+lesson: ../../lessons/04-joins-and-cte.md
+task: |
+  Use a CTE to calculate delivered order revenue by city. Include the city and revenue, sorted by city.
+starter_files:
+  - path: main.sql
+    content: "-- Use WITH to name your delivered-order summary\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    expected:
+      - {city: Bengaluru, revenue: "1190.00"}
+      - {city: Hyderabad, revenue: "330.00"}
+      - {city: Kochi, revenue: "1830.00"}
+      - {city: Mumbai, revenue: "1365.00"}
+hints:
+  - "The CTE can join orders to customers and group by city."
+  - "Filter delivered orders before summing total_amount."
+solution: solution/
+unlocks: [p0-w02-sql-010]
+tags: [sql, cte, aggregate, join]

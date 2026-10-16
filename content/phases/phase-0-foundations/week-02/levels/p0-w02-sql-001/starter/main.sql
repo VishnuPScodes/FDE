@@ -1,0 +1,1 @@
+-- Select customer_name and city from customers

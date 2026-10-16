@@ -1,0 +1,1 @@
+-- Begin a transaction, try the change, roll it back, then read the stored amount

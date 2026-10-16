@@ -4,12 +4,17 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 export default defineConfig({
+  publicDir: false,
+  worker: { format: 'es' },
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      showMaximumFileSizeToCacheInBytesWarning: true,
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+        globPatterns: ['**/*.{css,html,ico,png,svg,woff2}'],
+        globIgnores: ['**/*.js', '**/assets/PythonWorkspace-*.js'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -17,6 +22,23 @@ export default defineConfig({
             options: {
               cacheName: 'google-fonts-cache',
               expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/pyodide\/v314\.0\.7\/full\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'pyodide-runtime-v314',
+              expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 180 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            urlPattern: /\/assets\/.*\.(?:js|wasm|data|iso|bin)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'app-code-chunks',
+              expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 },
             },
           },
         ],

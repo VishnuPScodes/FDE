@@ -43,15 +43,18 @@ const MAX_BOLD_PHRASES = 3;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type LintWarning = {
+export interface LintWarning {
   line: number | null;
   message: string;
 };
 
-export type LintResult = {
+export interface LintResult {
   warnings: LintWarning[];
   wordCount: number;
-};
+  readingLevel: number;
+}
+
+export interface StyleLintOptions { bannedWords?: readonly string[] }
 
 // ─── Linter implementation ────────────────────────────────────────────────────
 
@@ -60,7 +63,7 @@ export type LintResult = {
  * @param markdown Raw lesson markdown content
  * @param filename For error messages
  */
-export function lintLesson(markdown: string, filename = 'lesson.md'): LintResult {
+export function lintLesson(markdown: string, filename = 'lesson.md', options: StyleLintOptions = {}): LintResult {
   const warnings: LintWarning[] = [];
   const lines = markdown.split('\n');
 
@@ -68,23 +71,24 @@ export function lintLesson(markdown: string, filename = 'lesson.md'): LintResult
   const withoutCode = stripCodeBlocks(markdown);
   const words = withoutCode.trim().split(/\s+/).filter(Boolean);
   const wordCount = words.length;
+  const readingLevel = estimateReadingLevel(withoutCode);
 
   // Word count check
   if (wordCount > MAX_WORDS) {
     warnings.push({
       line: null,
-      message: `${filename}: Lesson is ${wordCount} words (limit: ${MAX_WORDS}). Keep it short; depth comes from levels.`,
+      message: `${filename}: Lesson is ${String(wordCount)} words (limit: ${String(MAX_WORDS)}). Keep it short; depth comes from levels.`,
     });
   }
 
   // Banned words
   for (const [lineIndex, line] of lines.entries()) {
     const lower = line.toLowerCase();
-    for (const banned of BANNED_WORDS) {
+    for (const banned of options.bannedWords ?? BANNED_WORDS) {
       if (lower.includes(banned)) {
         warnings.push({
           line: lineIndex + 1,
-          message: `${filename}:${lineIndex + 1}: Banned word/phrase found: "${banned}"`,
+          message: `${filename}:${String(lineIndex + 1)}: Banned word/phrase found: "${banned}"`,
         });
       }
     }
@@ -111,7 +115,7 @@ export function lintLesson(markdown: string, filename = 'lesson.md'): LintResult
     if (paraWords.length > MAX_PARAGRAPH_WORDS) {
       warnings.push({
         line: null,
-        message: `${filename}: Paragraph is ${paraWords.length} words (limit: ${MAX_PARAGRAPH_WORDS}). Break it up.`,
+        message: `${filename}: Paragraph is ${String(paraWords.length)} words (limit: ${String(MAX_PARAGRAPH_WORDS)}). Break it up.`,
       });
     }
   }
@@ -121,7 +125,7 @@ export function lintLesson(markdown: string, filename = 'lesson.md'): LintResult
   if (bulletListCount > MAX_BULLET_LISTS) {
     warnings.push({
       line: null,
-      message: `${filename}: ${bulletListCount} bullet lists found (limit: ${MAX_BULLET_LISTS}). Use prose instead.`,
+      message: `${filename}: ${String(bulletListCount)} bullet lists found (limit: ${String(MAX_BULLET_LISTS)}). Use prose instead.`,
     });
   }
 
@@ -130,11 +134,27 @@ export function lintLesson(markdown: string, filename = 'lesson.md'): LintResult
   if (boldCount > MAX_BOLD_PHRASES) {
     warnings.push({
       line: null,
-      message: `${filename}: ${boldCount} bold phrases found (limit: ${MAX_BOLD_PHRASES}). Use bold sparingly.`,
+      message: `${filename}: ${String(boldCount)} bold phrases found (limit: ${String(MAX_BOLD_PHRASES)}). Use bold sparingly.`,
     });
   }
 
-  return { warnings, wordCount };
+  return { warnings, wordCount, readingLevel };
+}
+
+function estimateReadingLevel(text: string): number {
+  const prose = text.replace(/[#>*_`]/g, ' ');
+  const words = prose.match(/[a-z]+(?:['’][a-z]+)?/gi) ?? [];
+  if (words.length === 0) return 0;
+  const sentences = Math.max(1, (prose.match(/[.!?]+/g) ?? []).length);
+  const syllables = words.reduce((total, word) => total + countSyllables(word), 0);
+  return Math.max(0, Math.round((0.39 * (words.length / sentences) + 11.8 * (syllables / words.length) - 15.59) * 10) / 10);
+}
+
+function countSyllables(word: string): number {
+  const normalized = word.toLowerCase().replace(/[^a-z]/g, '');
+  if (!normalized) return 1;
+  const groups = normalized.match(/[aeiouy]+/g)?.length ?? 1;
+  return Math.max(1, groups - (normalized.endsWith('e') && groups > 1 ? 1 : 0));
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

@@ -1,0 +1,1 @@
+-- Add a windowed SUM for the running total

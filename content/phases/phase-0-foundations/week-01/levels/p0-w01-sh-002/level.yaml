@@ -1,0 +1,24 @@
+id: p0-w01-sh-002
+title: 'Make a reports folder'
+phase: 0
+week: 1
+module: shell-basics
+order: 2
+difficulty: 1
+estimated_minutes: 4
+type: terminal
+environment: shell
+lesson: ../../lessons/06-shell-basics.md
+task: 'Create a directory named `reports`, then move into it. Use `pwd` to check where you are.'
+checks:
+  - kind: sim_state
+    assert: exists
+    path: /workspace/reports
+  - kind: sim_command_used
+    command: cd reports
+hints:
+  - 'Use `mkdir` to create a directory.'
+  - 'After `mkdir reports`, run `cd reports`.'
+solution: solution/
+unlocks: [p0-w01-sh-003]
+tags: [shell, mkdir, cd, paths]

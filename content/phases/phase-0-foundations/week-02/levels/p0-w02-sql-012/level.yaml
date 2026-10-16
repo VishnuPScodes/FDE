@@ -1,0 +1,31 @@
+id: p0-w02-sql-012
+title: "Calculate a running total"
+phase: 0
+week: 2
+module: sql-foundations
+order: 12
+difficulty: 3
+estimated_minutes: 8
+type: sql
+environment: sql
+lesson: ../../lessons/05-window-functions.md
+task: |
+  Show customer 1's orders in date order with a running total of their order amounts.
+starter_files:
+  - path: main.sql
+    content: "-- Add a windowed SUM for the running total\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    order_sensitive: true
+    expected:
+      - {order_id: 101, running_total: "820.00"}
+      - {order_id: 103, running_total: "1460.00"}
+      - {order_id: 108, running_total: "1830.00"}
+hints:
+  - "Use SUM(total_amount) as a window function."
+  - "Set the window order to the order date and ID."
+solution: solution/
+unlocks: [p0-w02-sql-013]
+tags: [sql, window-function, running-total]

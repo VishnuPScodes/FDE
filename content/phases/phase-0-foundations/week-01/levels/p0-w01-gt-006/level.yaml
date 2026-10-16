@@ -1,0 +1,37 @@
+id: p0-w01-gt-006
+title: Open and merge a pull request
+phase: 0
+week: 1
+module: git-basics
+order: 6
+difficulty: 2
+estimated_minutes: 6
+type: terminal
+environment: git
+lesson: ../../lessons/07-git-basics.md
+task: 'Create `feature/docs`, add a documentation note, and commit it. Run `git push origin`, open a pull request in the simulated remote panel, approve it, and merge it into main.'
+starter_files:
+  - path: README.md
+    content: |
+      # Service guide
+
+      Run the app locally with the dev command.
+checks:
+  - kind: git_state
+    state: pull_request_approved
+    branch: feature/docs
+    expected: true
+    label: Pull request was reviewed
+  - kind: git_state
+    state: pull_request_merged
+    branch: feature/docs
+    expected: true
+    label: Pull request was merged
+  - kind: git_state
+    state: current_branch
+    expected: main
+    label: Main branch is checked out after merge
+hints:
+  - 'A pull request is available after you create a feature branch and commit work.'
+  - 'The simulated remote panel has separate Approve and Merge buttons.'
+tags: [git, remote, pull-request, merge]

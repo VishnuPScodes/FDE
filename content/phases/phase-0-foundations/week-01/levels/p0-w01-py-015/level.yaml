@@ -1,0 +1,27 @@
+id: p0-w01-py-015
+title: "Test an invoice helper"
+phase: 0
+week: 1
+module: python-basics
+order: 15
+difficulty: 3
+estimated_minutes: 12
+type: code
+environment: python
+lesson: ../../lessons/05-files-and-tests.md
+task: |
+  Implement `invoice_total` so the supplied pytest test passes for a list of invoice amounts.
+starter_files:
+  - path: main.py
+    content: "def invoice_total(amounts: list[int]) -> int:\n    # Return the sum of the amounts\n    pass\n"
+  - path: test_invoice.py
+    content: "from main import invoice_total\n\ndef test_invoice_total_adds_amounts():\n    assert invoice_total([900, 1500]) == 2400\n"
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_invoice.py
+hints:
+  - "The function should return one value, not print it."
+  - "Python's `sum` function accepts the list of amounts."
+solution: solution/
+tags: [python, pytest, functions]
+unlocks: [p0-w02-sql-001]

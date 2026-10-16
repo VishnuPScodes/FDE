@@ -1,0 +1,22 @@
+id: p1-w03-http-004
+title: Retry a temporary server failure
+phase: 1
+week: 3
+module: rest-api-design
+order: 4
+difficulty: 2
+estimated_minutes: 6
+type: console
+environment: http
+lesson: ../../lessons/01-http-fundamentals.md
+task: Request `/api/flaky`. The first attempt returns a temporary `500`; retry the safe GET request and inspect the `200` response.
+checks:
+  - kind: http_response
+    action: statuses_include
+    path: /api/flaky
+    statuses: [500, 200]
+    label: Observed the failure and successful retry
+hints:
+  - A 500 response can represent a temporary upstream problem.
+  - Retry this GET request once and compare the response status and body.
+tags: [http, retries, status-codes]

@@ -1,0 +1,28 @@
+id: p0-w01-sh-003
+title: 'Write a handoff note'
+phase: 0
+week: 1
+module: shell-basics
+order: 3
+difficulty: 2
+estimated_minutes: 5
+type: terminal
+environment: shell
+lesson: ../../lessons/06-shell-basics.md
+task: 'Create `handoff.txt` in `/workspace/reports` with the exact line `Owner: Asha`. Use shell redirection, then inspect the file with `cat`.'
+checks:
+  - kind: sim_state
+    assert: exists
+    path: /workspace/reports
+  - kind: sim_state
+    assert: equals
+    path: /workspace/reports/handoff.txt
+    expected: "Owner: Asha\n"
+  - kind: sim_command_used
+    command: cat handoff.txt
+hints:
+  - 'First change into `/workspace/reports`.'
+  - '`echo "Owner: Asha" > handoff.txt` writes a line to a file.'
+solution: solution/
+unlocks: [p0-w01-sh-004]
+tags: [shell, echo, redirection, cat]

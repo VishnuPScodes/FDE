@@ -1,0 +1,26 @@
+id: p0-w01-py-003
+title: "Store a customer name"
+phase: 0
+week: 1
+module: python-basics
+order: 3
+difficulty: 1
+estimated_minutes: 4
+type: code
+environment: python
+lesson: ../../lessons/02-values-and-strings.md
+task: |
+  Store the name **Meera** in a variable called `customer`, then print the variable.
+starter_files:
+  - path: main.py
+    content: "# Create customer, then print it\n"
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "Meera\n"
+hints:
+  - "An assignment uses `=` between a variable name and a value."
+  - "The value is text, so put it in quotes before calling `print(customer)`."
+solution: solution/
+unlocks: [p0-w01-py-004]
+tags: [python, variables, strings]

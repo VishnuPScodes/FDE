@@ -1,0 +1,26 @@
+id: p0-w01-py-011
+title: "Handle a bad quantity"
+phase: 0
+week: 1
+module: python-basics
+order: 11
+difficulty: 2
+estimated_minutes: 7
+type: code
+environment: python
+lesson: ../../lessons/04-collections-and-functions.md
+task: |
+  Convert the text in `quantity_text` to an integer. If it is invalid, print `Quantity must be a whole number.`
+starter_files:
+  - path: main.py
+    content: "quantity_text = 'two'\n# Convert safely and handle ValueError\n"
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "Quantity must be a whole number.\n"
+hints:
+  - "Put `int(quantity_text)` inside a `try` block."
+  - "Catch `ValueError` and print the requested message in `except`."
+solution: solution/
+unlocks: [p0-w01-py-012]
+tags: [python, errors, exceptions]

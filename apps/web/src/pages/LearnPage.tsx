@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { loadCurriculum } from '../lib/content-loader';
-import type { Curriculum, CurriculumPhase } from '../lib/content-loader';
+import { NavLink, useParams } from 'react-router-dom';
+import { loadCurriculum, loadModuleLevels } from '../lib/content-loader';
+import type { Curriculum, CurriculumPhase, LevelMeta } from '../lib/content-loader';
+import { useAuth } from '../contexts/AuthContext';
+import { getProgress } from '../lib/progress';
 import styles from './LearnPage.module.css';
 
 const PHASE_COLORS: Record<number, string> = {
@@ -23,9 +25,12 @@ const PHASE_ICONS: Record<number, string> = {
   5: '🚀',
   6: '🎯',
 };
-
 export default function LearnPage() {
+  const { moduleId } = useParams<{ moduleId: string }>();
+  const { session } = useAuth();
   const [curriculum, setCurriculum] = useState<Curriculum | null>(null);
+  const [moduleLevels, setModuleLevels] = useState<LevelMeta[]>([]);
+  const [passedLevels, setPassedLevels] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedPhase, setExpandedPhase] = useState<number | null>(0);
@@ -36,6 +41,21 @@ export default function LearnPage() {
       .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    // Module links render their overview in this page; reset scroll so the
+    // newly selected module and its level links are visible immediately.
+    window.scrollTo(0, 0);
+    if (moduleId) loadModuleLevels(moduleId).then(setModuleLevels).catch((err: Error) => setError(err.message));
+    else setModuleLevels([]);
+  }, [moduleId]);
+
+  useEffect(() => {
+    setPassedLevels(new Set());
+    if (session?.access_token) {
+      void getProgress(session.access_token).then((rows) => setPassedLevels(new Set(rows.filter((row) => row.status === 'passed').map((row) => row.level_id)))).catch(() => setPassedLevels(new Set()));
+    }
+  }, [session?.access_token]);
 
   if (loading) {
     return (
@@ -75,6 +95,23 @@ export default function LearnPage() {
           </p>
         </div>
       </div>
+
+      {moduleId && (
+        <section aria-label={`${formatModuleName(moduleId)} levels`}>
+          <h2>{formatModuleName(moduleId)}</h2>
+          {moduleLevels.length === 0 ? <p>No levels are published in this module yet.</p> : (
+            <div className={styles.moduleList}>
+              {moduleLevels.map((level) => {
+                const passed = passedLevels.has(level.id);
+                return <NavLink key={level.id} to={`/level/${level.id}`} className={styles.moduleLink}>
+                  <span className={styles.moduleDot} /><span>{level.order}. {level.title}</span><small>{passed ? '✓ Passed' : `~${level.estimated_minutes} min`}</small>
+                </NavLink>;
+              })}
+            </div>
+          )}
+          <NavLink to="/learn">← Back to curriculum</NavLink>
+        </section>
+      )}
 
       <div className={styles.phaseList}>
         {curriculum.phases.map((phase) => (

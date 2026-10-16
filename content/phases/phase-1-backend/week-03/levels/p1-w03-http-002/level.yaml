@@ -1,0 +1,23 @@
+id: p1-w03-http-002
+title: Fetch every page
+phase: 1
+week: 3
+module: rest-api-design
+order: 2
+difficulty: 2
+estimated_minutes: 8
+type: console
+environment: http
+lesson: ../../lessons/01-http-fundamentals.md
+task: The items API returns two records per page. Request pages 1, 2, and 3 from `/api/items` and inspect `next_page` to see when pagination is complete.
+checks:
+  - kind: http_response
+    action: pages_seen
+    path: /api/items
+    pages: [1, 2, 3]
+    label: All three result pages were requested
+hints:
+  - Start with `/api/items?page=1&per_page=2`.
+  - Increase the `page` query parameter and continue until `next_page` is null.
+unlocks: [p1-w03-http-003]
+tags: [http, pagination, rest]

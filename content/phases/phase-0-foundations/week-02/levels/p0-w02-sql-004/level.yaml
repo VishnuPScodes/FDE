@@ -1,0 +1,32 @@
+id: p0-w02-sql-004
+title: "Count orders by status"
+phase: 0
+week: 2
+module: sql-foundations
+order: 4
+difficulty: 2
+estimated_minutes: 7
+type: sql
+environment: sql
+lesson: ../../lessons/03-aggregates.md
+task: |
+  Return one row per order status and count how many orders have that status. Sort by status.
+starter_files:
+  - path: main.sql
+    content: "-- Group orders by status\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    expected:
+      - {status: cancelled, order_count: 1}
+      - {status: delivered, order_count: 7}
+      - {status: processing, order_count: 1}
+      - {status: returned, order_count: 1}
+      - {status: shipped, order_count: 2}
+hints:
+  - "COUNT(*) counts rows in each group."
+  - "Group by status, then sort the output by status."
+solution: solution/
+unlocks: [p0-w02-sql-005]
+tags: [sql, group-by, count]

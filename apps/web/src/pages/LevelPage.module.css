@@ -125,6 +125,8 @@
   font-size: var(--text-sm); white-space: pre-wrap;
 }
 
+.nextLevel { position: fixed; z-index: 2; right: 24px; bottom: 20px; display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid var(--border-default); border-radius: var(--radius-lg); background: var(--bg-surface); box-shadow: var(--shadow-md); }
+
 /* Mobile */
 @media (max-width: 768px) {
   .workspace { flex-direction: column; }

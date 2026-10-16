@@ -1,1 +1,1 @@
-print("vishnu")  # wrong case — should fail
+print("vishnu")

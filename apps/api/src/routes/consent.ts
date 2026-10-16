@@ -1,9 +1,9 @@
 import { Hono } from 'hono';
-import type { Env } from '../index';
+import type { AppEnv } from '../index';
 import { authMiddleware } from '../middleware/auth';
 import { getSupabaseAdmin } from '../lib/supabase';
 
-export const consentRouter = new Hono<{ Bindings: Env }>();
+export const consentRouter = new Hono<AppEnv>();
 
 /**
  * POST /consent

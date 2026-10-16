@@ -1,0 +1,1 @@
+-- Join the normalized order_items and products tables

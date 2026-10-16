@@ -1,0 +1,1 @@
+-- Keep all customers in the result

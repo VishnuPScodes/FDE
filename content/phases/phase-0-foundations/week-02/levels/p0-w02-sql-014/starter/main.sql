@@ -1,0 +1,1 @@
+-- Create an index, then inspect a selective lookup with EXPLAIN

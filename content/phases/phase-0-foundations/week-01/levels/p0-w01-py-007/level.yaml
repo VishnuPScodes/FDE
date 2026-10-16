@@ -1,0 +1,26 @@
+id: p0-w01-py-007
+title: "Sum three invoices"
+phase: 0
+week: 1
+module: python-basics
+order: 7
+difficulty: 2
+estimated_minutes: 6
+type: code
+environment: python
+lesson: ../../lessons/03-control-flow.md
+task: |
+  Add the amounts in the `invoices` list and print the total: **₹2600**.
+starter_files:
+  - path: main.py
+    content: "invoices = [900, 1200, 500]\n# Add each amount to a running total\n"
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "2600\n"
+hints:
+  - "Start with `total = 0`."
+  - "Loop over `invoices` and add each `amount` to `total`."
+solution: solution/
+unlocks: [p0-w01-py-008]
+tags: [python, loops, lists]

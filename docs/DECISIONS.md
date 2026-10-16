@@ -77,13 +77,13 @@ Format: `## YYYY-MM-DD — Decision title`
 
 ---
 
-## 2026-10-14 — Linux shell: v86 vs WebVM (OPEN — license check required)
+## 2026-10-14 — Linux shell: v86 vs WebVM
 
-**Decision (tentative):** Use v86 (BSD-2-Clause licensed) running a minimal Alpine Linux image.
+**Decision:** Use v86 (BSD-2-Clause licensed) for an optional browser Linux VM alongside the simulated shell. The current bundled guest is the small Buildroot image distributed by the v86 project; it is not Alpine.
 
 **Why:** v86 is clearly free/open-source with a permissive license. WebVM/CheerpX has an unclear license for commercial/production use — the build prompt explicitly flags this for checking.
 
-**Action required:** Confirm v86 can run the shell commands needed for Week 1 levels before M5. If not, evaluate the lightweight simulated shell fallback.
+**Implementation:** Load v86 lazily when the learner selects Linux VM. The guest has no configured network device and is independent of the simulated shell's files and level grader. The simulated shell remains the graded environment. Firmware and guest image attribution are documented in `docs/THIRD_PARTY_NOTICES.md`.
 
 ---
 
@@ -114,3 +114,56 @@ Format: `## YYYY-MM-DD — Decision title`
 **Why:** Learner progress is tiny (a few KB per user). Lesson content can be gigabytes. Keeping content in Git means: version history, PR review workflow, CI validation, CDN caching, zero database cost.
 
 **Rejected:** Storing lessons in Postgres (expensive queries, no CDN caching, hard to diff/review).
+
+## 2026-10-14 — Bundle static lesson content with Vite
+
+**Decision:** Load curriculum, level YAML and lesson Markdown through Vite's static asset glob imports. Validate YAML with the shared Zod schemas in the browser, and run a Node-only CLI in CI for cross-file checks.
+
+**Why:** Content stays versioned in Git and gets emitted as static assets by the existing Pages build. Learners do not need a content API, and Node filesystem code stays out of the browser bundle.
+
+**Trade-off:** Content changes require a site build and deployment. Vite emits content as separate assets so the browser only downloads a lesson when its loader requests it.
+
+**Markdown diagrams:** Render the curriculum's simple Mermaid flowchart syntax locally as SVG. This covers labeled nodes and directed arrows without adding a runtime dependency; unsupported syntax is shown as a readable code block.
+
+## 2026-10-14 — Python workspace: Monaco, xterm.js and Pyodide
+
+**Decision:** Use Monaco Editor and xterm.js for the Python workspace, run Pyodide 0.314.0.7 in a module Web Worker, and persist learner files in IndexedDB (with a localStorage fallback). Load the Python runtime on demand and cache it with the service worker.
+
+**Why:** This follows the agreed M3 stack and keeps Python execution off the UI thread. Monaco's ESM entry points are imported directly so unrelated language support is not bundled. Pyodide and pytest run entirely in the browser; level checks are local, while pass status and progress are sent to the authenticated progress API.
+
+**Licenses:** Monaco Editor and xterm.js are MIT; Pyodide is MPL-2.0. These licenses permit use on the public website. The Pyodide version is pinned in the worker URL so runtime updates are deliberate.
+
+**Trade-off:** The editor's lazy-loaded code chunk is several megabytes, and the first Pyodide run downloads a larger runtime. Neither is part of the initial app load; both are cached by the browser/service worker.
+
+## 2026-10-15 — SQL practice: PGlite in a dedicated worker
+
+**Decision:** Run PGlite 0.5.10 directly inside a module Web Worker. Initialize an isolated in-memory PostgreSQL database for each opened level from its checked-in SQL fixture. Store the learner's query in the existing IndexedDB workspace, and load the database again from the fixture when the level is reopened.
+
+**Why:** This gives learners real PostgreSQL parsing, joins, window functions, transactions and query plans without a hosted database or account. The worker keeps query execution off the UI thread. The same fixture and query checks run in the local test suite against PGlite.
+
+**License:** PGlite is dual licensed under Apache-2.0 or the PostgreSQL License, both suitable for this public website.
+
+**Trade-off:** The database itself is ephemeral per level session; the query file persists locally, but changes made by SQL statements reset when the learner leaves and reopens a level. PGlite adds a multi-megabyte runtime that is loaded only when an SQL level opens.
+
+
+## 2026-10-15 — Shell practice: isolated TypeScript simulator first
+
+**Decision:** Implement the fallback shell as an isolated TypeScript state machine, with a terminal UI and IndexedDB persistence. Keep the simulator available even if a Linux VM fails to load.
+
+**Why:** It gives learners a lightweight shell workspace with no access to the host machine or network and provides a fast way to validate Week 1 practice content.
+
+**Update:** The optional v86 runtime is now integrated and lazy-loaded beside the simulator. The simulator remains the graded workspace; broader VM-backed lesson grading and a curated guest image remain follow-up work.
+
+**Verification:** A learner confirmed the VM boots in the browser, displays a shell, and responds to `ls`. Automated shell-level checks continue to grade the simulator.
+
+## 2026-10-15 — Git practice: isomorphic-git with LightningFS
+
+**Decision:** Run isomorphic-git against @isomorphic-git/lightning-fs in IndexedDB. Give each learner and level an isolated persistent repository. Provide a local simulated remote with pull-request review and merge controls; do not push learner data over the network.
+
+**Why:** Learners can use real Git object, index, branch, commit, merge, and cherry-pick behavior inside the browser. LightningFS persists repository history across reloads. The simulated remote supports the PR workflow without requiring a GitHub account or exposing learner repositories.
+
+**Trade-off:** Rebase is a supported local subset built by replaying commits. It does not implement every Git edge case or connect to GitHub. Git levels grade repository state through explicit `git_state` checks.
+
+**Diff behavior:** `git diff` shows a compact whole-file patch against the current `HEAD`; it does not implement Git's context hunking or staged-only `--cached` view.
+
+**Licenses:** isomorphic-git and LightningFS are MIT licensed.

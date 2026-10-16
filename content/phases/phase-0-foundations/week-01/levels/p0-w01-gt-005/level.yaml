@@ -1,0 +1,44 @@
+id: p0-w01-gt-005
+title: Rebase a feature branch
+phase: 0
+week: 1
+module: git-basics
+order: 5
+difficulty: 3
+estimated_minutes: 7
+type: terminal
+environment: git
+lesson: ../../lessons/07-git-basics.md
+task: 'The starter files are committed on `main`. Create `feature/metrics`, update `metrics.txt`, then stage and commit. Return to `main`, update `service.txt`, and commit. Switch back to the feature branch and run `git rebase main`.'
+starter_files:
+  - path: README.md
+    content: |
+      # Service notes
+
+      Service: tickets
+  - path: metrics.txt
+    content: |
+      Metrics: disabled
+  - path: service.txt
+    content: |
+      Owner: platform
+checks:
+  - kind: git_state
+    state: current_branch
+    expected: feature/metrics
+    label: Feature branch remains checked out
+  - kind: git_state
+    state: file_contains
+    path: metrics.txt
+    text: "Metrics: enabled"
+    expected: true
+    label: Feature work is present after rebase
+  - kind: git_state
+    state: commit_count
+    at_least: 3
+    label: Replayed history contains the branch commits
+hints:
+  - 'Change a different file on each branch so the rebase can replay cleanly.'
+  - 'After switching back to feature/metrics, run `git rebase main`.'
+unlocks: [p0-w01-gt-006]
+tags: [git, rebase, history]

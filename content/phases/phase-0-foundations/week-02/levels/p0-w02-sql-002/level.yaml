@@ -1,0 +1,31 @@
+id: p0-w02-sql-002
+title: "Filter delivered orders"
+phase: 0
+week: 2
+module: sql-foundations
+order: 2
+difficulty: 1
+estimated_minutes: 6
+type: sql
+environment: sql
+lesson: ../../lessons/02-filters-and-null.md
+task: |
+  Show the ID and total for delivered orders worth at least ₹500. Sort by order ID.
+starter_files:
+  - path: main.sql
+    content: "-- Filter orders by status and total_amount\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    expected:
+      - {order_id: 101, total_amount: "820.00"}
+      - {order_id: 104, total_amount: "550.00"}
+      - {order_id: 106, total_amount: "915.00"}
+      - {order_id: 109, total_amount: "1280.00"}
+hints:
+  - "Use WHERE to keep delivered orders."
+  - "Combine the status and amount conditions with AND."
+solution: solution/
+unlocks: [p0-w02-sql-003]
+tags: [sql, where, filters]

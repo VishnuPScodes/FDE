@@ -5,15 +5,21 @@ import { healthRouter } from './routes/health';
 import { sessionRouter } from './routes/session';
 import { consentRouter } from './routes/consent';
 import { meRouter } from './routes/me';
+import { progressRouter } from './routes/progress';
 
-export type Env = {
+export type Bindings = {
   ENVIRONMENT: string;
   SUPABASE_URL: string;
   SUPABASE_SERVICE_ROLE_KEY: string;
   SUPABASE_JWT_SECRET: string;
 };
 
-const app = new Hono<{ Bindings: Env }>();
+export type AppEnv = {
+  Bindings: Bindings;
+  Variables: { userId: string; userEmail: string; userRole: string };
+};
+
+const app = new Hono<AppEnv>();
 
 // Middleware
 app.use(
@@ -41,6 +47,7 @@ app.route('/health', healthRouter);
 app.route('/session', sessionRouter);
 app.route('/consent', consentRouter);
 app.route('/me', meRouter);
+app.route('/progress', progressRouter);
 
 
 // 404 handler

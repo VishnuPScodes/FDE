@@ -1,0 +1,26 @@
+id: p0-w01-py-010
+title: "Calculate a taxed total"
+phase: 0
+week: 1
+module: python-basics
+order: 10
+difficulty: 2
+estimated_minutes: 7
+type: code
+environment: python
+lesson: ../../lessons/04-collections-and-functions.md
+task: |
+  Write `with_gst(amount, rate)` to return the amount plus GST. For ₹1000 at 18%, print `1180`.
+starter_files:
+  - path: main.py
+    content: "def with_gst(amount, rate):\n    # Return the amount including tax\n    pass\n\nprint(round(with_gst(1000, 0.18)))\n"
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "1180\n"
+hints:
+  - "A function starts with `def` and ends its header with a colon."
+  - "Return `amount * (1 + rate)`."
+solution: solution/
+unlocks: [p0-w01-py-011]
+tags: [python, functions]

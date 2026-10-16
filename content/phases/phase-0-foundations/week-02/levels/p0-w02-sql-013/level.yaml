@@ -1,0 +1,31 @@
+id: p0-w02-sql-013
+title: "Summarise items by product category"
+phase: 0
+week: 2
+module: data-modelling
+order: 1
+difficulty: 3
+estimated_minutes: 10
+type: sql
+environment: sql
+lesson: ../../lessons/06-models-indexes-transactions.md
+task: |
+  Join order items to products and total the units sold in each category. Sort by category.
+starter_files:
+  - path: main.sql
+    content: "-- Join the normalized order_items and products tables\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    expected:
+      - {category: Accessories, units_sold: 3}
+      - {category: Beverages, units_sold: 10}
+      - {category: Kitchen, units_sold: 8}
+      - {category: Stationery, units_sold: 3}
+hints:
+  - "Join on product_id, then group by category."
+  - "Sum quantity rather than counting order item rows."
+solution: solution/
+unlocks: [p0-w02-sql-014]
+tags: [sql, normalization, join, aggregate]

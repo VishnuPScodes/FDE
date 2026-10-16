@@ -1,0 +1,28 @@
+id: p0-w01-py-012
+title: "Read invoice rows from CSV"
+phase: 0
+week: 1
+module: python-basics
+order: 12
+difficulty: 3
+estimated_minutes: 10
+type: code
+environment: python
+lesson: ../../lessons/05-files-and-tests.md
+task: |
+  Read `orders.csv` with `csv.DictReader` and print the total of its two invoice amounts: **1500**.
+starter_files:
+  - path: main.py
+    content: "import csv\n\n# Read orders.csv and sum the amount column\n"
+  - path: orders.csv
+    content: "customer,amount\nAsha,900\nMeera,600\n"
+checks:
+  - kind: stdout_equals
+    run: python main.py
+    expected: "1500\n"
+hints:
+  - "Open `orders.csv` with mode `'r'` and `newline=''`."
+  - "Each `DictReader` row has an `amount` value; convert it with `int`."
+solution: solution/
+unlocks: [p0-w01-py-013]
+tags: [python, csv, files]

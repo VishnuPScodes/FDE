@@ -49,7 +49,12 @@ function renderMarkdown(md: string): string {
         i++;
       }
       i++; // skip closing ```
-      const code = escapeHtml(codeLines.join('\n'));
+      const source = codeLines.join('\n');
+      if (lang.toLowerCase() === 'mermaid') {
+        out.push(renderFlowchart(source));
+        continue;
+      }
+      const code = escapeHtml(source);
       const langAttr = lang ? ` data-lang="${escapeHtml(lang)}"` : '';
       const langLabel = lang ? `<span class="${styles.codeLang}">${escapeHtml(lang)}</span>` : '';
       out.push(`<div class="${styles.codeBlock}"${langAttr}>${langLabel}<pre><code>${code}</code></pre></div>`);
@@ -172,7 +177,9 @@ function processInline(text: string): string {
   result = result.replace(/`([^`]+)`/g, '<code>$1</code>');
 
   // Links: [text](url)
-  result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, label: string, href: string) => {
+    return `<a href="${escapeHtml(safeHref(href))}" target="_blank" rel="noopener">${label}</a>`;
+  });
 
   // Line breaks within blockquotes
   result = result.replace(/\n/g, '<br />');
@@ -186,4 +193,40 @@ function escapeHtml(text: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+function safeHref(raw: string): string {
+  try {
+    const url = new URL(raw, window.location.origin);
+    if (['http:', 'https:', 'mailto:'].includes(url.protocol)) return raw;
+  } catch { /* Invalid URLs render as inert links. */ }
+  return '#';
+}
+
+function renderFlowchart(source: string): string {
+  const lines = source.split('\n').map((line) => line.trim()).filter((line) => line && !/^(flowchart|graph)\s/.test(line));
+  const nodes = new Map<string, string>();
+  const edges: Array<[string, string]> = [];
+  for (const line of lines) {
+    const match = line.match(/^([\w-]+)(?:\[(.*?)\])?\s*-->\s*([\w-]+)(?:\[(.*?)\])?$/);
+    if (!match) continue;
+    const [, from, fromLabel, to, toLabel] = match;
+    if (!from || !to) continue;
+    nodes.set(from, fromLabel ?? from);
+    nodes.set(to, toLabel ?? to);
+    edges.push([from, to]);
+  }
+  if (nodes.size === 0) return `<pre class="${styles.diagramFallback}"><code>${escapeHtml(source)}</code></pre>`;
+  const ids = [...nodes.keys()];
+  const width = Math.max(420, ids.length * 170);
+  const positions = new Map(ids.map((id, index) => [id, { x: 30 + index * (width - 150) / Math.max(ids.length - 1, 1), y: 45 }]));
+  const arrows = edges.map(([from, to]) => {
+    const a = positions.get(from)!; const b = positions.get(to)!;
+    return `<path d="M ${a.x + 130} ${a.y + 28} L ${b.x} ${b.y + 28}" marker-end="url(#fde-arrow)" />`;
+  }).join('');
+  const boxes = ids.map((id) => {
+    const point = positions.get(id)!;
+    return `<g><rect x="${point.x}" y="${point.y}" width="130" height="56" rx="8"/><text x="${point.x + 65}" y="${point.y + 34}">${escapeHtml(nodes.get(id)!)}</text></g>`;
+  }).join('');
+  return `<div class="${styles.diagram}" role="img" aria-label="Flowchart"><svg viewBox="0 0 ${width} 150" xmlns="http://www.w3.org/2000/svg"><defs><marker id="fde-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z"/></marker></defs>${arrows}${boxes}</svg></div>`;
 }

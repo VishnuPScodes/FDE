@@ -1,0 +1,35 @@
+id: p0-w02-sql-003
+title: "Find missing delivery notes"
+phase: 0
+week: 2
+module: sql-foundations
+order: 3
+difficulty: 1
+estimated_minutes: 5
+type: sql
+environment: sql
+lesson: ../../lessons/02-filters-and-null.md
+task: |
+  Find orders that have no shipping note. Return only their IDs in ascending order.
+starter_files:
+  - path: main.sql
+    content: "-- Find rows where shipping_note is missing\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    expected:
+      - {order_id: 102}
+      - {order_id: 103}
+      - {order_id: 105}
+      - {order_id: 106}
+      - {order_id: 108}
+      - {order_id: 109}
+      - {order_id: 111}
+      - {order_id: 112}
+hints:
+  - "A missing value is NULL, not an empty string."
+  - "Use IS NULL in the WHERE clause."
+solution: solution/
+unlocks: [p0-w02-sql-004]
+tags: [sql, 'null', filters]

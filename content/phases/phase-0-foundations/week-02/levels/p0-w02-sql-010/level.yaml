@@ -1,0 +1,32 @@
+id: p0-w02-sql-010
+title: "Find each customer's latest order"
+phase: 0
+week: 2
+module: sql-foundations
+order: 10
+difficulty: 3
+estimated_minutes: 9
+type: sql
+environment: sql
+lesson: ../../lessons/05-window-functions.md
+task: |
+  Use ROW_NUMBER to return the latest order for each customer who has orders. Break date ties with order ID.
+starter_files:
+  - path: main.sql
+    content: "-- Rank each customer's orders from newest to oldest\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    expected:
+      - {customer_id: 1, order_id: 108}
+      - {customer_id: 2, order_id: 112}
+      - {customer_id: 3, order_id: 109}
+      - {customer_id: 4, order_id: 110}
+      - {customer_id: 5, order_id: 111}
+hints:
+  - "Partition the window by customer_id."
+  - "Order the window by order_date descending, then order_id descending."
+solution: solution/
+unlocks: [p0-w02-sql-011]
+tags: [sql, window-function, row-number]

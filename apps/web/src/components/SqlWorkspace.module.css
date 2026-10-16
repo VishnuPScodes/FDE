@@ -1,0 +1,43 @@
+.workspace { height: 100%; min-height: 0; display: grid; grid-template-rows: auto minmax(180px, 42%) minmax(190px, 1fr); background: #090a12; color: #e6e8ef; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; min-height: 48px; gap: 10px; padding: 6px 12px; border-bottom: 1px solid #242633; background: #11131d; }
+.title, .actions { display: flex; align-items: center; gap: 8px; }
+.title { min-width: 0; color: #a7adbd; font-size: 12px; }
+.title > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prompt { color: #9aa9ff; font: 700 12px var(--font-mono); }
+.actions { flex-shrink: 0; }
+.actions button { padding: 6px 9px; font-size: 12px; }
+.editor { min-height: 180px; }
+.lowerPane { min-height: 0; display: grid; grid-template-columns: minmax(150px, 28%) minmax(0, 1fr); border-top: 1px solid #242633; }
+.schema { min-width: 0; overflow: auto; padding: 8px; border-right: 1px solid #242633; background: #10121a; }
+.panelTitle { padding: 4px 4px 8px; color: #a7adbd; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.tableButton, .selectedTable { display: block; width: 100%; padding: 6px; border: 0; border-radius: 4px; background: transparent; color: #d7d9e0; text-align: left; cursor: pointer; font: 12px var(--font-mono); }
+.selectedTable { background: #25283a; color: #fff; }
+.columns { margin: 2px 0 8px; padding: 0 4px 0 12px; list-style: none; }
+.columns li { display: flex; flex-direction: column; gap: 1px; padding: 3px 0; color: #8990a4; font-size: 10px; }
+.columns code { color: #d7d9e0; font: 11px var(--font-mono); }
+.outputArea { min-width: 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; padding: 8px; }
+.tableWrap { min-height: 0; overflow: auto; flex: 1; }
+.tableWrap table { width: 100%; border-collapse: collapse; font: 11px var(--font-mono); }
+.tableWrap th, .tableWrap td { max-width: 240px; overflow: hidden; padding: 5px 8px; border: 1px solid #2a2d3a; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
+.tableWrap th { position: sticky; top: 0; background: #1d2030; color: #c6cada; }
+.tableWrap td { color: #d7d9e0; }
+.empty { padding: 8px 4px; color: #858b9f; font-size: 11px; }
+.messages { height: 58px; flex: 0 0 58px; overflow: hidden; border-top: 1px solid #242633; }
+.checks { max-height: 190px; overflow: auto; padding: 10px 14px; border-top: 1px solid #242633; background: #11131d; }
+.checks h3 { margin: 0 0 6px; font-size: 13px; }
+.passed h3 { color: #4ade80; }
+.failed h3 { color: #fbbf24; }
+.checkRow { padding: 6px 0; border-top: 1px solid #242633; font-size: 12px; }
+.checkRow pre, .solution pre { max-height: 100px; overflow: auto; white-space: pre-wrap; color: #c6cada; font: 11px/1.45 var(--font-mono); }
+.checks p, .progressMessage { color: #c6cada; font-size: 12px; }
+.progressMessage { margin: 6px 12px; }
+.solution { max-height: 180px; overflow: auto; padding: 10px; background: #171927; border: 1px solid #373b50; border-radius: 8px; }
+.solution h3 { margin: 0 0 6px; font-size: 13px; }
+.loading { padding: 24px; color: var(--text-muted); }
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+@media (max-width: 900px) {
+  .toolbar { flex-wrap: wrap; }
+  .title { width: 100%; }
+  .lowerPane { grid-template-columns: minmax(120px, 30%) minmax(0, 1fr); }
+  .actions button { padding-inline: 6px; font-size: 11px; }
+}

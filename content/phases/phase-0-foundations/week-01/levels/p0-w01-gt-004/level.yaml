@@ -1,0 +1,37 @@
+id: p0-w01-gt-004
+title: Resolve a merge conflict
+phase: 0
+week: 1
+module: git-basics
+order: 4
+difficulty: 3
+estimated_minutes: 8
+type: terminal
+environment: git
+lesson: ../../lessons/07-git-basics.md
+task: 'Create `feature/status`. Change `status: draft` in `app.txt` to `status: ready` and commit. Switch to `main`, change the same line to `status: reviewed` and commit. Merge the feature branch, resolve the conflict so the file says `status: ready and reviewed`, then stage and commit the resolution.'
+starter_files:
+  - path: app.txt
+    content: |
+      service: tickets
+      status: draft
+checks:
+  - kind: git_state
+    state: has_conflicts
+    expected: false
+    label: No conflict markers remain
+  - kind: git_state
+    state: file_contains
+    path: app.txt
+    text: "status: ready and reviewed"
+    expected: true
+    label: Both branch changes are preserved
+  - kind: git_state
+    state: commit_count
+    at_least: 3
+    label: Conflict resolution is committed
+hints:
+  - 'Make a separate commit on each branch before you run `git merge feature/status`.'
+  - 'Remove all three conflict marker lines, keep the combined status, then add and commit app.txt.'
+unlocks: [p0-w01-gt-005]
+tags: [git, merge, conflict]

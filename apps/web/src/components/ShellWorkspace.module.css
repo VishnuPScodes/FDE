@@ -1,0 +1,81 @@
+.workspace {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 28rem;
+  background: #090a12;
+  color: #d7d9e0;
+  font: 12px var(--font-mono, monospace);
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid #292c3b;
+  background: #11131d;
+}
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  color: #afb4c6;
+}
+.prompt {
+  color: #8ba1ff;
+  font-weight: 700;
+}
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.terminal {
+  flex: 1;
+  min-height: 14rem;
+  padding: 0.6rem;
+}
+.modeContent {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+.hidden {
+  display: none;
+}
+.help {
+  padding: 0.65rem 0.9rem;
+  border-top: 1px solid #292c3b;
+  color: #969bad;
+}
+.checks {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #292c3b;
+}
+.checks h3 {
+  margin: 0 0 0.5rem;
+  font: 600 14px var(--font-sans, sans-serif);
+}
+.checks p {
+  margin: 0.25rem 0;
+}
+.passed {
+  color: #68d391;
+}
+.failed {
+  color: #feb2b2;
+}
+.status {
+  margin: 0;
+  padding: 0.5rem 0.9rem;
+  color: #b5bdd0;
+  border-top: 1px solid #292c3b;
+}
+.loading {
+  display: grid;
+  min-height: 24rem;
+  place-items: center;
+  color: #aab0c2;
+}

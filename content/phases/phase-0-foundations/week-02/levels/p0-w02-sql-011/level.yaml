@@ -1,0 +1,30 @@
+id: p0-w02-sql-011
+title: "Compare an order to the previous one"
+phase: 0
+week: 2
+module: sql-foundations
+order: 11
+difficulty: 3
+estimated_minutes: 8
+type: sql
+environment: sql
+lesson: ../../lessons/05-window-functions.md
+task: |
+  For customer 1, list each order and the previous order's total. Keep the first order with a NULL previous total.
+starter_files:
+  - path: main.sql
+    content: "-- Use LAG over customer 1's order history\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    expected:
+      - {order_id: 101, previous_total: null}
+      - {order_id: 103, previous_total: "820.00"}
+      - {order_id: 108, previous_total: "640.00"}
+hints:
+  - "LAG(total_amount) reads a value from an earlier row."
+  - "Order the window by order_date and filter to customer_id 1."
+solution: solution/
+unlocks: [p0-w02-sql-012]
+tags: [sql, window-function, lag]
