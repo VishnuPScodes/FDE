@@ -1,0 +1,28 @@
+id: p1-w04-sm-002
+title: Minimize personal data in logs
+phase: 1
+week: 4
+module: secrets-management
+order: 2
+difficulty: 2
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/03-secrets-and-pii.md
+task: A support team needs an error log to debug failed sign-ins. Choose the response that helps support while protecting personal data.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: Which log entry is safest and still useful?
+    options:
+      - "Sign-in failed: reason=invalid_token, request_id=req-84f2"
+      - "Sign-in failed for vishnu@example.com with token eyJhbGciOi..."
+      - "Sign-in failed; full request headers and body attached"
+      - "Sign-in failed; include the user's password to reproduce it"
+    expected: "Sign-in failed: reason=invalid_token, request_id=req-84f2"
+    label: Choose a useful redacted log entry
+hints:
+  - Logs should help find and trace a failure without copying credentials or direct identifiers.
+  - A request ID and a short error category help support investigate safely.
+unlocks: [p1-w04-sm-003]
+tags: [pii, privacy, logging]

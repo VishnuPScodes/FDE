@@ -24,6 +24,7 @@ phases:
         modules:
           - rest-api-design
           - fastapi-basics
+          - webhook-security
       - week: 4
         title: "Auth & Security"
         modules:

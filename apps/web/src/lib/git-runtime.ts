@@ -1,5 +1,11 @@
+import { Buffer } from 'buffer';
 import git from 'isomorphic-git';
 import LightningFS from '@isomorphic-git/lightning-fs';
+
+// isomorphic-git reads Buffer as a browser global. Vite does not inject Node
+// globals, so install the lightweight browser implementation before Git runs.
+const browserGlobals = globalThis as typeof globalThis & { Buffer?: typeof Buffer };
+browserGlobals.Buffer ??= Buffer;
 
 export interface GitFile { path: string; content: string }
 export interface GitStatusRow { path: string; head: number; workdir: number; stage: number }

@@ -1,0 +1,25 @@
+id: p1-w03-wh-001
+title: Sign a webhook payload
+phase: 1
+week: 3
+module: webhook-security
+order: 1
+difficulty: 2
+estimated_minutes: 7
+type: console
+environment: http
+lesson: ../../lessons/02-webhooks-and-signatures.md
+task: Send the prepared `order.created` payload to `/api/webhooks/orders`. Generate an HMAC-SHA256 signature for its exact body, then send the request and confirm the receiver accepts it with status 202.
+checks:
+  - kind: http_response
+    action: request_exists
+    method: POST
+    path: /api/webhooks/orders
+    status: 202
+    body_contains: '"received":true'
+    label: Receiver accepted the signed event
+hints:
+  - Use the Generate HMAC signature button after confirming the request body.
+  - If you edit the body after signing, generate a new signature before sending.
+unlocks: [p1-w03-wh-002]
+tags: [webhooks, hmac, http, security]

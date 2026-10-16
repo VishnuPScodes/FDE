@@ -167,3 +167,17 @@ Format: `## YYYY-MM-DD — Decision title`
 **Diff behavior:** `git diff` shows a compact whole-file patch against the current `HEAD`; it does not implement Git's context hunking or staged-only `--cached` view.
 
 **Licenses:** isomorphic-git and LightningFS are MIT licensed.
+
+## 2026-10-16 — M7: local HTTP fixtures, OAuth provider, and FastAPI tests in Pyodide
+
+**Decision:** Keep mock API scenarios and OAuth/OIDC flows inside the browser with no public network calls. Load the official FastAPI, HTTPX, and pytest packages from the pinned Pyodide distribution only for FastAPI levels. Test FastAPI applications through HTTPX `ASGITransport`; declare app routes with `async def`, and await async test functions on Pyodide's event loop.
+
+**Why:** Pyodide 0.314.0.7 includes FastAPI, Pydantic, HTTPX, and pytest. Its WebAssembly runtime does not support Python threads. FastAPI's sync `TestClient`, sync route handlers, and pytest-asyncio's loop runner can start threads, so these levels use async routes and HTTPX's in-process ASGI transport. The worker awaits plain async `test_*` functions directly; regular synchronous tests continue to use pytest.
+
+**Security boundary:** The OAuth provider uses demo-only visible client credentials and an HS256 key. Its tokens are for protocol exercises and must never be accepted by a production API. Production clients verify tokens against keys published by a trusted issuer.
+
+## 2026-10-16 — Browser Buffer for isomorphic-git
+
+**Decision:** Install the MIT `buffer` package as `globalThis.Buffer` before isomorphic-git runs in the browser.
+
+**Why:** Vite does not inject Node globals. The Git workspace initialized its filesystem, then failed when isomorphic-git read `Buffer`; the polyfill restores the browser runtime behavior it expects without changing Git storage or adding a server.

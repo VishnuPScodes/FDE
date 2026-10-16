@@ -1,0 +1,27 @@
+id: p1-w04-sm-003
+title: Grant only required permissions
+phase: 1
+week: 4
+module: secrets-management
+order: 3
+difficulty: 2
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/03-secrets-and-pii.md
+task: Choose the safest way to give a background reporting service access to API data.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: Which credential setup follows least privilege?
+    options:
+      - A separate service identity with only read access to the required API
+      - A shared administrator key used by every service
+      - A learner's personal token copied into the background job
+      - One permanent key with every available scope
+    expected: A separate service identity with only read access to the required API
+    label: Select a least-privilege service credential
+hints:
+  - Give each service its own identity so it can be revoked without breaking unrelated systems.
+  - A reporting job that reads data does not need write or administrator access.
+tags: [secrets, service-accounts, least-privilege]

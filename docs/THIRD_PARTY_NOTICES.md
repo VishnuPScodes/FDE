@@ -15,3 +15,5 @@ The SeaBIOS and VGA BIOS firmware files in `apps/web/src/assets/vm/` are from th
 ## Git runtime
 
 The browser Git environment uses [isomorphic-git](https://github.com/isomorphic-git/isomorphic-git) and [LightningFS](https://github.com/isomorphic-git/lightning-fs), both distributed under the MIT License. Their license texts are included with their respective packages in `node_modules`.
+
+The Git runtime also uses the [`buffer`](https://github.com/feross/buffer) package under the MIT License to provide the `Buffer` global expected by isomorphic-git in browsers. Its license text is included with the package in `node_modules`.

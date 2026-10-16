@@ -16,4 +16,8 @@ An API may return only a small page of a larger collection. Read fields such as 
 
 For a `429`, follow the `Retry-After` header. For a temporary `5xx`, use a bounded retry policy with backoff. Avoid retrying a non-idempotent operation such as creating a payment unless the API supports an idempotency key.
 
+## Make retries safe
+
+For a write such as creating a payment, send an `Idempotency-Key`. If the same request is retried with the same key, the API should return the original result instead of creating a second payment.
+
 The practice API at `api.fde.test` runs entirely in this browser. It never sends requests to the public internet.

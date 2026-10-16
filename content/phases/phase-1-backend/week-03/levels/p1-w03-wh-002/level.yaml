@@ -1,0 +1,22 @@
+id: p1-w03-wh-002
+title: Reject a replayed webhook
+phase: 1
+week: 3
+module: webhook-security
+order: 2
+difficulty: 3
+estimated_minutes: 7
+type: console
+environment: http
+lesson: ../../lessons/02-webhooks-and-signatures.md
+task: Send the same signed order event twice. Confirm the receiver accepts the first delivery and rejects the duplicate delivery ID with status 409.
+checks:
+  - kind: http_response
+    action: statuses_include
+    path: /api/webhooks/orders
+    statuses: [202, 409]
+    label: Duplicate delivery was rejected
+hints:
+  - The same event body and delivery ID produce the same valid signature.
+  - A successful first delivery should be remembered; send that exact request again.
+tags: [webhooks, replay-protection, security]

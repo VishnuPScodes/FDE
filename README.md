@@ -119,7 +119,7 @@ pnpm build
 
 ## Milestones
 
-Current: **M6 — Git environment** 🚧
+Current: **M7 complete; M8 JS/TS sandbox is next** 🚧
 
 | # | Milestone | Status |
 |---|---|---|
@@ -129,7 +129,9 @@ Current: **M6 — Git environment** 🚧
 | M3 | Python editor + grader | ✅ Done |
 | M4 | SQL environment | ✅ Done |
 | M5 | Linux shell | ✅ Shell checks pass; v86 VM boots and accepts commands; checks run in simulator |
-| M6 | Git environment | 🚧 Git runtime and six Git levels validated; browser smoke test pending |
+| M6 | Git environment | ✅ Git runtime, six levels, and browser `git status` smoke check passed |
+| M7 | HTTP & integration | ✅ HTTP health, signed webhook, OAuth PKCE/OIDC, and FastAPI-in-Pyodide browser checks passed |
+| M8 | JS/TS sandbox | 🚧 Next: browser TypeScript runner, checks, and minimal React preview |
 | ... | ... | |
 
 ---

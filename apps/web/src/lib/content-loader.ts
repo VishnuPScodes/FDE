@@ -64,7 +64,7 @@ const lessonCache = new Map<string, string>();
 
 const yamlFiles = import.meta.glob('../../../../content/**/*.yaml', { query: '?raw', import: 'default' }) as Record<string, () => Promise<string>>;
 const markdownFiles = import.meta.glob('../../../../content/**/*.md', { query: '?raw', import: 'default' }) as Record<string, () => Promise<string>>;
-const workspaceFiles = import.meta.glob('../../../../content/**/*.{py,csv,txt,json,sql}', { query: '?raw', import: 'default' }) as Record<string, () => Promise<string>>;
+const workspaceFiles = import.meta.glob('../../../../content/**/*.{py,ts,tsx,js,jsx,csv,txt,json,sql}', { query: '?raw', import: 'default' }) as Record<string, () => Promise<string>>;
 
 function findContentFile(files: Record<string, unknown>, suffix: string): string | undefined {
   return Object.keys(files).find((path) => path.endsWith(suffix));

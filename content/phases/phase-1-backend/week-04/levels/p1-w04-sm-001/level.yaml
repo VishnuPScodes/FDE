@@ -1,0 +1,28 @@
+id: p1-w04-sm-001
+title: Store a client secret safely
+phase: 1
+week: 4
+module: secrets-management
+order: 1
+difficulty: 1
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/03-secrets-and-pii.md
+task: Choose a safe place for an OAuth client secret used by a backend service.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: Where should a production OAuth client secret live?
+    options:
+      - In a server-side secret manager, injected at runtime
+      - In a browser JavaScript bundle, because it is minified
+      - In a public Git repository, next to the source code
+      - In a URL query parameter so support can inspect it
+    expected: In a server-side secret manager, injected at runtime
+    label: Select secure secret storage
+hints:
+  - A browser bundle and a public repository are visible to other people.
+  - Keep production credentials on a server and out of source control.
+unlocks: [p1-w04-sm-002]
+tags: [secrets, oauth, security]

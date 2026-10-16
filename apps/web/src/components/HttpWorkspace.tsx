@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { gradeHttpLevel } from '../lib/http-grader';
-import { mockHttpRequest, scenarioForHttpLevel, type MockHttpExchange } from '../lib/http-simulator';
+import { MOCK_WEBHOOK_SECRET, mockHttpRequest, scenarioForHttpLevel, signWebhookBody, type MockHttpExchange } from '../lib/http-simulator';
 import { getProgress, saveProgress } from '../lib/progress';
 import { loadWorkspaceFiles, saveWorkspaceFiles } from '../lib/virtual-files';
 import type { LevelMeta } from '../lib/content-loader';
@@ -11,20 +11,29 @@ interface HttpWorkspaceProps { level: LevelMeta; hintsUsed: number; onPassed: ()
 const historyPrefix = 'fde-http-workspace:';
 
 function initialPath(levelId: string): string {
+  const scenario = scenarioForHttpLevel(levelId);
+  if (scenario === 'webhook') return '/api/webhooks/orders';
+  if (scenario === 'idempotency') return '/api/payments';
   if (levelId.endsWith('002')) return '/api/items?page=1&per_page=2';
   if (levelId.endsWith('003')) return '/api/rate-limited';
   if (levelId.endsWith('004')) return '/api/flaky';
   return '/api/health';
 }
 
+function initialBody(levelId: string): string {
+  if (scenarioForHttpLevel(levelId) === 'webhook') return JSON.stringify({ event: 'order.created', delivery_id: 'delivery-demo-001', order_id: 'ord-1042' }, null, 2);
+  if (scenarioForHttpLevel(levelId) === 'idempotency') return JSON.stringify({ amount: 49.99, currency: 'USD' }, null, 2);
+  return '';
+}
+
 export default function HttpWorkspace({ level, hintsUsed, onPassed }: HttpWorkspaceProps) {
   const { user, session } = useAuth();
   const key = `${historyPrefix}${user?.id ?? 'guest'}:${level.id}`;
   const scenario = useMemo(() => scenarioForHttpLevel(level.id), [level.id]);
-  const [method, setMethod] = useState('GET');
+  const [method, setMethod] = useState(() => ['webhook', 'idempotency'].includes(scenarioForHttpLevel(level.id)) ? 'POST' : 'GET');
   const [path, setPath] = useState(() => initialPath(level.id));
   const [headersText, setHeadersText] = useState('{}');
-  const [body, setBody] = useState('');
+  const [body, setBody] = useState(() => initialBody(level.id));
   const [history, setHistory] = useState<MockHttpExchange[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -33,10 +42,11 @@ export default function HttpWorkspace({ level, hintsUsed, onPassed }: HttpWorksp
   const [attempts, setAttempts] = useState(0);
 
   useEffect(() => {
-    setMethod('GET');
+    const postRequest = ['webhook', 'idempotency'].includes(scenarioForHttpLevel(level.id));
+    setMethod(postRequest ? 'POST' : 'GET');
     setPath(initialPath(level.id));
     setHeadersText('{}');
-    setBody('');
+    setBody(initialBody(level.id));
     setChecks(null);
   }, [level.id]);
 
@@ -94,6 +104,14 @@ export default function HttpWorkspace({ level, hintsUsed, onPassed }: HttpWorksp
   }, [attempts, hintsUsed, history, level.checks, level.id, onPassed, session?.access_token]);
 
   const latest = history.at(-1);
+  const signCurrentWebhook = useCallback(async () => {
+    try {
+      const signature = await signWebhookBody(body);
+      const parsed = JSON.parse(headersText || '{}') as Record<string, unknown>;
+      setHeadersText(JSON.stringify({ ...parsed, 'X-FDE-Signature': signature }, null, 2));
+      setMessage('Signature generated for this exact body. Changing the body invalidates it.');
+    } catch (error) { setMessage((error as Error).message || 'Could not sign this payload.'); }
+  }, [body, headersText]);
 
   return (
     <section className={styles.workspace} aria-label="HTTP practice workspace">
@@ -109,7 +127,7 @@ export default function HttpWorkspace({ level, hintsUsed, onPassed }: HttpWorksp
         <button className="btn btn-secondary" disabled={!loaded || busy || !path.trim()} onClick={() => void sendRequest()}>{busy ? 'Sending…' : 'Send request'}</button>
       </div>
       <div className={styles.editors}>
-        <label>Headers (JSON)<textarea value={headersText} onChange={(event) => setHeadersText(event.target.value)} spellCheck={false} /></label>
+        <label>Headers (JSON)<textarea value={headersText} onChange={(event) => setHeadersText(event.target.value)} spellCheck={false} />{scenario === 'webhook' && <><small>Demo signing secret: <code>{MOCK_WEBHOOK_SECRET}</code></small><button type="button" className="btn btn-secondary" onClick={() => void signCurrentWebhook()}>Generate HMAC signature</button></>}{scenario === 'idempotency' && <small>Set an <code>Idempotency-Key</code> header before sending a payment request.</small>}</label>
         <label>Request body<textarea value={body} onChange={(event) => setBody(event.target.value)} placeholder={'{"example": true}'} spellCheck={false} /></label>
       </div>
       <div className={styles.response} aria-live="polite">

@@ -1,0 +1,51 @@
+id: p1-w03-fa-002
+title: Validate a path parameter
+phase: 1
+week: 3
+module: fastapi-basics
+order: 2
+difficulty: 2
+estimated_minutes: 10
+type: code
+environment: python
+lesson: ../../lessons/03-fastapi-in-process.md
+task: Finish `GET /items/{item_id}`. Return the matching item for ID 7 and use `HTTPException` with status 404 when the ID is not found. Verify both responses with the in-process test client.
+starter_files:
+  - path: main.py
+    content: |
+      from fastapi import FastAPI, HTTPException
+
+      app = FastAPI()
+      ITEMS = {7: {"id": 7, "name": "Field Kit"}}
+
+      @app.get("/items/{item_id}")
+      async def read_item(item_id: int):
+          return {"id": item_id, "name": "TODO"}
+  - path: test_api.py
+    content: |
+      import pytest
+      from httpx import ASGITransport, AsyncClient
+      from main import app
+
+      @pytest.mark.asyncio
+      async def test_existing_item():
+          async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+              response = await client.get("/items/7")
+          assert response.status_code == 200
+          assert response.json() == {"id": 7, "name": "Field Kit"}
+
+      @pytest.mark.asyncio
+      async def test_unknown_item():
+          async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+              response = await client.get("/items/99")
+          assert response.status_code == 404
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_api.py
+    expected: 0
+    label: Path parameter and not-found tests pass
+hints:
+  - Use `item_id` to look up the item in the `ITEMS` dictionary.
+  - Raise `HTTPException(status_code=404, detail="Item not found")` when the key is missing.
+unlocks: [p1-w03-fa-003]
+tags: [fastapi, path-parameters, status-codes]

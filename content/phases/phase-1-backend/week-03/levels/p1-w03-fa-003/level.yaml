@@ -1,0 +1,54 @@
+id: p1-w03-fa-003
+title: Validate a JSON request body
+phase: 1
+week: 3
+module: fastapi-basics
+order: 3
+difficulty: 3
+estimated_minutes: 12
+type: code
+environment: python
+lesson: ../../lessons/03-fastapi-in-process.md
+task: Define the `Product` request model and finish `POST /items`. Return the submitted name and price with status 201. FastAPI and Pydantic should reject a missing or invalid price.
+starter_files:
+  - path: main.py
+    content: |
+      from fastapi import FastAPI
+      from pydantic import BaseModel
+
+      app = FastAPI()
+
+      class Product(BaseModel):
+          name: str
+          price: float
+
+      @app.post("/items")
+      async def create_item(product: Product):
+          return {"name": product.name, "price": product.price}
+  - path: test_api.py
+    content: |
+      import pytest
+      from httpx import ASGITransport, AsyncClient
+      from main import app
+
+      @pytest.mark.asyncio
+      async def test_create_product():
+          async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+              response = await client.post("/items", json={"name": "Sensor", "price": 19.5})
+          assert response.status_code == 201
+          assert response.json() == {"name": "Sensor", "price": 19.5}
+
+      @pytest.mark.asyncio
+      async def test_invalid_price_is_rejected():
+          async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+              response = await client.post("/items", json={"name": "Sensor", "price": "unknown"})
+          assert response.status_code == 422
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_api.py
+    expected: 0
+    label: Request body validation tests pass
+hints:
+  - FastAPI uses the `Product` type annotation to validate incoming JSON.
+  - Add `status_code=201` to the `@app.post` decorator. Keep `price` typed as `float`; validation errors return status 422 automatically.
+tags: [fastapi, pydantic, request-validation]

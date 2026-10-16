@@ -1,0 +1,22 @@
+id: p1-w03-http-005
+title: Retry a payment safely
+phase: 1
+week: 3
+module: rest-api-design
+order: 5
+difficulty: 3
+estimated_minutes: 7
+type: console
+environment: http
+lesson: ../../lessons/01-http-fundamentals.md
+task: Set `Idempotency-Key` to `order-1042`, send the payment request twice, and confirm both successful responses return the same payment ID.
+checks:
+  - kind: http_response
+    action: idempotent_replay
+    path: /api/payments
+    minimum_requests: 2
+    label: Repeated request did not create a duplicate payment
+hints:
+  - Add the same `Idempotency-Key` header to both requests.
+  - A safe retry returns the result saved for the first request, including its payment ID.
+tags: [http, idempotency, retries, payments]

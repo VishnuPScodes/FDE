@@ -1,0 +1,31 @@
+id: p1-w04-oa-001
+title: Sign in with authorization code and PKCE
+phase: 1
+week: 4
+module: oauth-oidc
+order: 1
+difficulty: 3
+estimated_minutes: 10
+type: console
+environment: http
+lesson: ../../lessons/01-oauth-and-oidc.md
+task: Complete the simulated Authorization Code flow. Start authorization, inspect the returned state and PKCE challenge, exchange the code using its verifier, and verify the OIDC ID token and nonce.
+checks:
+  - kind: sim_state
+    action: pkce_flow_complete
+    expected: true
+    label: Authorization code was exchanged with PKCE and matching state
+  - kind: sim_state
+    action: token_verified
+    expected: true
+    label: ID token signature, issuer, expiry, and nonce are valid
+  - kind: sim_state
+    action: claim_present
+    claim: email
+    expected: true
+    label: ID token contains an email identity claim
+hints:
+  - Start authorization first; keep the generated verifier in the client.
+  - Exchange the one-time code, then verify the ID token. Changing state, verifier, or redirect URI should cause validation to fail.
+unlocks: [p1-w04-oa-002]
+tags: [oauth, oidc, pkce, authorization-code]

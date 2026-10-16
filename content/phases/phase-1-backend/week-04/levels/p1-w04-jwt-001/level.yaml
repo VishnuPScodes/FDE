@@ -1,0 +1,27 @@
+id: p1-w04-jwt-001
+title: Verify a JWT before trusting claims
+phase: 1
+week: 4
+module: jwt-rbac
+order: 1
+difficulty: 2
+estimated_minutes: 7
+type: console
+environment: http
+lesson: ../../lessons/02-jwt-and-access-control.md
+task: Issue a demo service token and verify its signature. Inspect the claims and confirm the token came from the expected issuer before trusting its scope.
+checks:
+  - kind: sim_state
+    action: token_verified
+    expected: true
+    label: Token signature, issuer, and expiry are valid
+  - kind: sim_state
+    action: claim_equals
+    claim: iss
+    expected: https://login.fde.test
+    label: Token issuer matches the trusted provider
+hints:
+  - Decoding a JWT is not verification; use the Verify token action.
+  - Check `iss` and `exp` after cryptographic signature verification.
+unlocks: [p1-w04-jwt-002]
+tags: [jwt, verification, security]

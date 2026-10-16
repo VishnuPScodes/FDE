@@ -1,0 +1,46 @@
+id: p1-w03-fa-001
+title: Create a health endpoint
+phase: 1
+week: 3
+module: fastapi-basics
+order: 1
+difficulty: 2
+estimated_minutes: 9
+type: code
+environment: python
+lesson: ../../lessons/03-fastapi-in-process.md
+task: >-
+  Complete the FastAPI `GET /health` route so the in-process test client receives status 200
+  and the JSON body `{"status": "ok"}`. Run the tests and submit.
+starter_files:
+  - path: main.py
+    content: |
+      from fastapi import FastAPI
+
+      app = FastAPI()
+
+      @app.get("/health")
+      async def read_health():
+          return {"status": "TODO"}
+  - path: test_api.py
+    content: |
+      import pytest
+      from httpx import ASGITransport, AsyncClient
+      from main import app
+
+      @pytest.mark.asyncio
+      async def test_health_endpoint():
+          async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+              response = await client.get("/health")
+          assert response.status_code == 200
+          assert response.json() == {"status": "ok"}
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_api.py
+    expected: 0
+    label: In-process health endpoint tests pass
+hints:
+  - The route is already registered at `/health`; update the returned dictionary.
+  - 'Return `{"status": "ok"}` from `read_health`.'
+unlocks: [p1-w03-fa-002]
+tags: [fastapi, http, testing, api]

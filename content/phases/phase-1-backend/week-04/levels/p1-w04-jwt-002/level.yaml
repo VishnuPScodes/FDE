@@ -1,0 +1,25 @@
+id: p1-w04-jwt-002
+title: Apply least-privilege scopes
+phase: 1
+week: 4
+module: jwt-rbac
+order: 2
+difficulty: 2
+estimated_minutes: 6
+type: console
+environment: http
+lesson: ../../lessons/02-jwt-and-access-control.md
+task: Request only the `api:read` permission, then inspect the granted scope in the signed access token. Do not request write access when this task only reads data.
+checks:
+  - kind: sim_state
+    action: scope_exact
+    expected: api:read
+    label: Token contains only the required read permission
+  - kind: sim_state
+    action: token_verified
+    expected: true
+    label: Least-privilege token is cryptographically valid
+hints:
+  - Remove `api:write` from the requested scopes.
+  - A client should request the minimum permission set needed for its operation.
+tags: [jwt, scopes, rbac, least-privilege]

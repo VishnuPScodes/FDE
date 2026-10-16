@@ -64,6 +64,13 @@ self.addEventListener('message', async (event: MessageEvent<RunRequest>) => {
       pyodide.FS.writeFile(path, content);
     }
 
+    const usesFastApi = Object.values(request.files).some((content) => /(?:from|import)\s+(?:fastapi|starlette|httpx)\b/.test(content));
+    if (usesFastApi) {
+      send({ id: currentId, type: 'status', status: 'Loading FastAPI, HTTPX, and their Pyodide packages…' });
+      await pyodide.loadPackage('fastapi');
+      await pyodide.loadPackage('httpx');
+    }
+
     const [executable, ...args] = commandParts(request.command || 'python main.py');
     let exitCode = 0;
     if (executable === 'python' || executable === 'python3') {
@@ -71,10 +78,49 @@ self.addEventListener('message', async (event: MessageEvent<RunRequest>) => {
       const path = normalizePath(file);
       await pyodide.runPythonAsync(`import runpy\nrunpy.run_path(${JSON.stringify(path)}, run_name="__main__")`);
     } else if (executable === 'pytest') {
+      const usesAsyncApiTests = Object.values(request.files).some((content) => /pytest\.mark\.asyncio|pytest_asyncio/.test(content));
       await pyodide.loadPackage('pytest');
-      const pythonArgs = JSON.stringify(args.length ? args : ['-q']);
-      const result = await pyodide.runPythonAsync(`import pytest\npytest.main(${pythonArgs})`);
-      exitCode = typeof result === 'number' ? result : 0;
+      if (usesAsyncApiTests) {
+        // pytest-asyncio starts threads to manage event loops, which Pyodide
+        // cannot do. Pyodide provides asyncio through runPythonAsync instead,
+        // so invoke the marked async test functions on its browser event loop.
+        const testFiles = JSON.stringify(args.filter((arg) => !arg.startsWith('-') && arg.endsWith('.py')));
+        const asyncTestRunner = `
+import asyncio, glob, importlib, inspect, os, traceback
+import pytest
+_fde_test_files = ${testFiles}
+if not _fde_test_files:
+    _fde_test_files = glob.glob('test_*.py')
+async def _fde_run_tests():
+    _fde_passed = 0
+    _fde_failed = 0
+    for _fde_file in _fde_test_files:
+        _fde_module = importlib.import_module(os.path.splitext(os.path.basename(_fde_file))[0])
+        for _fde_name in sorted(name for name in vars(_fde_module) if name.startswith('test_')):
+            _fde_test = getattr(_fde_module, _fde_name)
+            if not callable(_fde_test):
+                continue
+            try:
+                _fde_result = _fde_test()
+                if inspect.isawaitable(_fde_result):
+                    await _fde_result
+                print(f'{_fde_file}::{_fde_name} PASSED')
+                _fde_passed += 1
+            except Exception:
+                traceback.print_exc()
+                print(f'{_fde_file}::{_fde_name} FAILED')
+                _fde_failed += 1
+    print(f'{_fde_passed} passed, {_fde_failed} failed')
+    return 0 if _fde_failed == 0 and _fde_passed > 0 else 1
+await _fde_run_tests()
+`;
+        const result = await pyodide.runPythonAsync(asyncTestRunner);
+        exitCode = typeof result === 'number' ? result : 0;
+      } else {
+        const pythonArgs = JSON.stringify(args.length ? args : ['-q']);
+        const result = await pyodide.runPythonAsync(`import os\nos.environ['PYTEST_DISABLE_PLUGIN_AUTOLOAD'] = '1'\nimport pytest\npytest.main(${pythonArgs})`);
+        exitCode = typeof result === 'number' ? result : 0;
+      }
     } else {
       throw new Error('This workspace supports `python file.py` and `pytest` commands.');
     }
