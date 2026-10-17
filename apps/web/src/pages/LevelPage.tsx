@@ -14,6 +14,7 @@ const HttpWorkspace = lazy(() => import('../components/HttpWorkspace'));
 const OAuthWorkspace = lazy(() => import('../components/OAuthWorkspace'));
 const SecurityQuizWorkspace = lazy(() => import('../components/SecurityQuizWorkspace'));
 const TsWorkspace = lazy(() => import('../components/TsWorkspace'));
+const DockerWorkspace = lazy(() => import('../components/DockerWorkspace'));
 
 export default function LevelPage() {
   const { levelId } = useParams<{ levelId: string }>();
@@ -209,6 +210,10 @@ export default function LevelPage() {
           ) : (level.environment === 'ts' || level.environment === 'js') && level.type === 'code' ? (
             <Suspense fallback={<div className={styles.editorPlaceholder}>Loading JavaScript workspace…</div>}>
               <TsWorkspace level={level} hintsUsed={hintsRevealed} onPassed={markPassed} />
+            </Suspense>
+          ) : level.environment === 'docker' && level.type === 'terminal' ? (
+            <Suspense fallback={<div className={styles.editorPlaceholder}>Loading Docker simulator…</div>}>
+              <DockerWorkspace level={level} hintsUsed={hintsRevealed} onPassed={markPassed} />
             </Suspense>
           ) : <div className={styles.editorPlaceholder}><span className={styles.editorIcon}>⌨️</span><h3>Workspace coming soon</h3><p>Environment: <code>{level.environment}</code> · Type: <code>{level.type}</code></p></div>}
         </div>

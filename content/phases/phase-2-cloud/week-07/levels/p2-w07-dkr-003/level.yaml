@@ -1,0 +1,30 @@
+id: p2-w07-dkr-003
+title: Use a multi-stage build
+phase: 2
+week: 7
+module: docker-basics
+order: 3
+difficulty: 3
+estimated_minutes: 16
+type: terminal
+environment: docker
+lesson: ../../lessons/02-small-and-secure-images.md
+task: Create build and runtime stages so the published api:local image uses the smaller Python slim base.
+starter_files:
+  - path: Dockerfile
+    content: "# Add a build stage and a clean runtime stage\n"
+  - path: app.py
+    content: "print('api ready')\n"
+checks:
+  - kind: sim_state
+    path: images
+    contains: "api:local 49MB"
+  - kind: sim_state
+    path: image:api:local
+    contains: '"stages":["builder","runtime"]'
+hints:
+  - Name the first stage with FROM python:3.12 AS builder.
+  - Start the final stage with FROM python:3.12-slim AS runtime.
+solution: solution/
+unlocks: [p2-w07-dkr-004]
+tags: [docker, multistage, image-size]

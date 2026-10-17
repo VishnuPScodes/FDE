@@ -1,0 +1,29 @@
+id: p2-w07-dkr-010
+title: Add a health check
+phase: 2
+week: 7
+module: docker-basics
+order: 10
+difficulty: 3
+estimated_minutes: 14
+type: terminal
+environment: docker
+lesson: ../../lessons/03-running-and-debugging-containers.md
+task: Add a HEALTHCHECK to the image, build it, and run a container whose simulated health status is healthy.
+starter_files:
+  - path: Dockerfile
+    content: "FROM python:3.12-slim\nCMD [\"python\", \"app.py\"]\n"
+  - path: app.py
+    content: "print('healthy')\n"
+checks:
+  - kind: sim_state
+    path: containers
+    contains: "api running api:local ports= health=healthy"
+  - kind: sim_command_used
+    command: docker run
+hints:
+  - Add a HEALTHCHECK instruction before building.
+  - Build api:local, then run it as a detached container named api.
+solution: solution/
+unlocks: [p2-w07-dkr-011]
+tags: [docker, healthcheck, run]

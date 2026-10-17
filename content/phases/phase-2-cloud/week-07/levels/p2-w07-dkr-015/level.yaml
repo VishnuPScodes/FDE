@@ -1,0 +1,30 @@
+id: p2-w07-dkr-015
+title: Repair a Compose dependency error
+phase: 2
+week: 7
+module: docker-basics
+order: 15
+difficulty: 3
+estimated_minutes: 18
+type: terminal
+environment: docker
+lesson: ../../lessons/04-compose-and-registry.md
+task: The worker refers to a service that does not exist. Correct the dependency to api and start the Compose application.
+starter_files:
+  - path: Dockerfile
+    content: "FROM alpine:3.20\n"
+  - path: docker-compose.yml
+    content: "services:\n  api:\n    image: api:local\n  worker:\n    image: api:local\n    depends_on: [database]\n"
+checks:
+  - kind: sim_state
+    path: __stderr__
+    contains: undefined service database
+  - kind: sim_state
+    path: containers
+    contains: worker running api:local
+hints:
+  - Run compose once to read the missing dependency error.
+  - Change database to api, build api:local, then run docker compose up -d.
+solution: solution/
+unlocks: []
+tags: [docker, compose, debugging]

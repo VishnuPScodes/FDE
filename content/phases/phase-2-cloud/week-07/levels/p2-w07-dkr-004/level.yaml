@@ -1,0 +1,29 @@
+id: p2-w07-dkr-004
+title: Diagnose a missing build context file
+phase: 2
+week: 7
+module: docker-basics
+order: 4
+difficulty: 2
+estimated_minutes: 12
+type: terminal
+environment: docker
+lesson: ../../lessons/01-images-and-dockerfiles.md
+task: Build the supplied Dockerfile, inspect the COPY error, correct the source filename, then build broken:local successfully.
+starter_files:
+  - path: Dockerfile
+    content: "FROM python:3.12-slim\nCOPY server.py /app.py\nCMD [\"python\", \"/app.py\"]\n"
+  - path: app.py
+    content: "print('server ready')\n"
+checks:
+  - kind: sim_state
+    path: images
+    contains: "broken:local"
+  - kind: sim_command_used
+    command: docker build
+hints:
+  - The build context contains app.py, not server.py.
+  - Change the COPY source to app.py, then rerun docker build.
+solution: solution/
+unlocks: [p2-w07-dkr-005]
+tags: [docker, build-context, debugging]

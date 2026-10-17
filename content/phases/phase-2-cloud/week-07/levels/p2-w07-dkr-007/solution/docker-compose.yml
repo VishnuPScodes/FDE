@@ -1,0 +1,6 @@
+services:
+  api:
+    image: api:local
+  worker:
+    image: api:local
+    depends_on: [api]

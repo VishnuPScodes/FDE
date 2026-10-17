@@ -1,0 +1,28 @@
+id: p2-w07-dkr-014
+title: Pull a published image
+phase: 2
+week: 7
+module: docker-basics
+order: 14
+difficulty: 3
+estimated_minutes: 15
+type: terminal
+environment: docker
+lesson: ../../lessons/04-compose-and-registry.md
+task: Tag and push api:local to the simulated training registry, then pull that registry-qualified image.
+starter_files:
+  - path: Dockerfile
+    content: "FROM alpine:3.20\n"
+checks:
+  - kind: sim_state
+    path: registry
+    contains: registry.example.test/team/api:1.0
+  - kind: sim_state
+    path: __stdout__
+    contains: Pulled registry.example.test/team/api:1.0
+hints:
+  - Build api:local, then tag it with the registry host and repository path.
+  - Log in, push the image, and use docker pull with the same tag.
+solution: solution/
+unlocks: [p2-w07-dkr-015]
+tags: [docker, registry, pull]

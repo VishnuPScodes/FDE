@@ -196,6 +196,16 @@ Format: `## YYYY-MM-DD — Decision title`
 
 **Verification:** Fifteen Week 6 levels cover CSV contracts, money parsing, validation, deduplication, Excel/PDF parsing, SOAP XML and namespaces, incremental checkpoints, and a CSV/SFTP-drop/SOAP reconciliation project. Content validation, web unit tests, type-check, and a Chromium/Pyodide E2E covering the capstone plus Excel/PDF package installation pass. Production build succeeds. Preview deployment and review remain pending.
 
+## 2026-10-16 — M10: Docker and Compose simulator
+
+**Decision:** Model Docker commands as deterministic state transitions in the browser. Persist Dockerfiles, Compose files, image/container state, and simulated registry state in the existing IndexedDB workspace. Use estimated base/layer sizes to show the impact of slim bases and multi-stage builds.
+
+**Why:** Learners can practice common image and container workflows without a local Docker daemon or server-side execution. The simulator can reproduce relevant build, port-binding, missing-image, and registry-permission errors in a repeatable environment.
+
+**Limitations:** This does not launch operating-system containers, execute RUN instructions or application code, download public images, or upload to a real registry. Compose implements a focused service/image/dependency lifecycle subset. Image sizes are teaching estimates, not actual registry sizes.
+
+**Verification:** Fifteen Week 7 levels cover image builds, non-root users, multi-stage sizing, build-context failures, run/port errors, health checks, container lifecycle, Compose recovery, networks/volumes, and a simulated registry. Docker state/command grader tests, the Docker workspace UI test, Chromium runtime/grader E2E, content validation, type-check, and production build pass. Preview deployment and review remain pending.
+
 ## 2026-10-16 — M8: TypeScript transpilation and isolated UI preview
 
 **Decision:** Compile one active TypeScript/TSX file at a time with MIT-licensed esbuild-wasm in a lazy Web Worker. Execute the generated code in an opaque-origin sandboxed iframe with a small React-compatible element renderer, console output, timeout, and embedded `test`/`expect` checks. Keep learner files in the existing browser workspace store.

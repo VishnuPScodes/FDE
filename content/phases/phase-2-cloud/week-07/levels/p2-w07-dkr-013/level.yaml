@@ -1,0 +1,27 @@
+id: p2-w07-dkr-013
+title: Pass runtime configuration
+phase: 2
+week: 7
+module: docker-basics
+order: 13
+difficulty: 2
+estimated_minutes: 13
+type: terminal
+environment: docker
+lesson: ../../lessons/03-running-and-debugging-containers.md
+task: Build api:local, run a named container with APP_ENV=staging, and confirm the value is stored as runtime configuration.
+starter_files:
+  - path: Dockerfile
+    content: "FROM alpine:3.20\nCMD [\"echo\", \"ready\"]\n"
+checks:
+  - kind: sim_state
+    path: containers
+    contains: "api running api:local ports= health=none env=APP_ENV=staging"
+  - kind: sim_command_used
+    command: docker run
+hints:
+  - Build api:local before running the container.
+  - Use docker run --name api -e APP_ENV=staging api:local.
+solution: solution/
+unlocks: [p2-w07-dkr-014]
+tags: [docker, environment, run]

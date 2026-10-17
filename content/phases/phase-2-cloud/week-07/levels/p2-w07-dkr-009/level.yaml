@@ -1,0 +1,27 @@
+id: p2-w07-dkr-009
+title: Inspect image metadata
+phase: 2
+week: 7
+module: docker-basics
+order: 9
+difficulty: 2
+estimated_minutes: 12
+type: terminal
+environment: docker
+lesson: ../../lessons/01-images-and-dockerfiles.md
+task: Build edge:local from nginx:alpine and inspect the image to confirm its base and estimated size.
+starter_files:
+  - path: Dockerfile
+    content: "FROM nginx:alpine\nEXPOSE 80\n"
+checks:
+  - kind: sim_state
+    path: images
+    contains: "edge:local 24MB"
+  - kind: sim_command_used
+    command: docker inspect
+hints:
+  - Build the image with docker build -t edge:local .
+  - Use docker inspect edge:local after the build.
+solution: solution/
+unlocks: [p2-w07-dkr-010]
+tags: [docker, inspect, metadata]

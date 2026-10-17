@@ -1,0 +1,29 @@
+id: p2-w07-dkr-007
+title: Start and stop a Compose application
+phase: 2
+week: 7
+module: docker-basics
+order: 7
+difficulty: 3
+estimated_minutes: 18
+type: terminal
+environment: docker
+lesson: ../../lessons/04-compose-and-registry.md
+task: Build api:local, then start the supplied Compose services. The worker depends on api; bring both services down when finished.
+starter_files:
+  - path: Dockerfile
+    content: "FROM alpine:3.20\nCMD [\"echo\", \"ready\"]\n"
+  - path: docker-compose.yml
+    content: "services:\n  api:\n    image: api:local\n  worker:\n    image: api:local\n    depends_on: [api]\n"
+checks:
+  - kind: sim_state
+    path: __stdout__
+    contains: "Containers stopped and removed"
+  - kind: sim_command_used
+    command: docker compose down
+hints:
+  - Build the image with the tag api:local before Compose starts the services.
+  - Run docker compose up -d followed by docker compose down.
+solution: solution/
+unlocks: [p2-w07-dkr-008]
+tags: [docker, compose, services]

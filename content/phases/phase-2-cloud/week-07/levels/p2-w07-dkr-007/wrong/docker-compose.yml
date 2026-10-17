@@ -1,0 +1,4 @@
+services:
+  worker:
+    image: api:local
+    depends_on: [missing]

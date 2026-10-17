@@ -1,0 +1,30 @@
+id: p2-w07-dkr-008
+title: Push an image to the training registry
+phase: 2
+week: 7
+module: docker-basics
+order: 8
+difficulty: 3
+estimated_minutes: 16
+type: terminal
+environment: docker
+lesson: ../../lessons/04-compose-and-registry.md
+task: Build registry.example.test/team/api:1.0, log in to the simulated registry, and push the tagged image.
+starter_files:
+  - path: Dockerfile
+    content: "FROM python:3.12-slim\nCOPY app.py /app.py\n"
+  - path: app.py
+    content: "print('registry demo')\n"
+checks:
+  - kind: sim_state
+    path: registry
+    contains: registry.example.test/team/api:1.0
+  - kind: sim_state
+    path: logged_in
+    expected: "true"
+hints:
+  - Build an image directly with the registry-qualified tag.
+  - Run docker login before docker push.
+solution: solution/
+unlocks: []
+tags: [docker, registry, push]

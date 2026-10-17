@@ -1,0 +1,27 @@
+id: p2-w07-dkr-012
+title: Restart a stopped container
+phase: 2
+week: 7
+module: docker-basics
+order: 12
+difficulty: 2
+estimated_minutes: 12
+type: terminal
+environment: docker
+lesson: ../../lessons/03-running-and-debugging-containers.md
+task: Build api:local, run it, stop it, then start it again and confirm the named container is running.
+starter_files:
+  - path: Dockerfile
+    content: "FROM alpine:3.20\nCMD [\"echo\", \"ready\"]\n"
+checks:
+  - kind: sim_state
+    path: containers
+    contains: "api running api:local"
+  - kind: sim_command_used
+    command: docker start
+hints:
+  - Run the image with --name api, then stop api.
+  - docker start api returns a stopped container to the running state.
+solution: solution/
+unlocks: [p2-w07-dkr-013]
+tags: [docker, lifecycle, restart]

@@ -1,0 +1,29 @@
+id: p2-w07-dkr-001
+title: Build a slim Python image
+phase: 2
+week: 7
+module: docker-basics
+order: 1
+difficulty: 1
+estimated_minutes: 12
+type: terminal
+environment: docker
+lesson: ../../lessons/01-images-and-dockerfiles.md
+task: Write a Dockerfile using the Python slim base, copy app.py into the image, then build it as hello:local.
+starter_files:
+  - path: Dockerfile
+    content: "# Add FROM, WORKDIR, COPY, and CMD instructions\n"
+  - path: app.py
+    content: "print('hello from a container')\n"
+checks:
+  - kind: sim_state
+    path: images
+    contains: "hello:local 49MB"
+  - kind: sim_command_used
+    command: docker build
+hints:
+  - Start with FROM python:3.12-slim.
+  - Copy app.py and set an explicit CMD before building the tag.
+solution: solution/
+unlocks: [p2-w07-dkr-002]
+tags: [docker, images, dockerfile]

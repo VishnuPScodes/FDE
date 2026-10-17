@@ -119,7 +119,7 @@ pnpm build
 
 ## Milestones
 
-Current: **M9 implementation is locally validated; Cloudflare preview deployment and review are pending** 🚧
+Current: **M10 implementation is locally validated; Cloudflare preview deployment and review are pending** 🚧
 
 | # | Milestone | Status |
 |---|---|---|
@@ -133,6 +133,7 @@ Current: **M9 implementation is locally validated; Cloudflare preview deployment
 | M7 | HTTP & integration | ✅ HTTP health, signed webhook, OAuth PKCE/OIDC, and FastAPI-in-Pyodide browser checks passed |
 | M8 | JS/TS sandbox | 🚧 Implemented locally: TypeScript runner, embedded behavior checks, isolated React-style preview, and four Week 5 levels. Preview deployment/review pending. |
 | M9 | ETL & messy data | 🚧 Implemented locally: 15 Week 6 levels, Pyodide Excel/PDF packages, and Project A CSV/SFTP-drop/SOAP reconciliation. Content, unit, type, build, and browser runtime checks pass. Preview deployment/review pending. |
+| M10 | Docker simulator | 🚧 Implemented locally: Dockerfile builds, image sizing and stages, non-root users, health checks, container lifecycle/ports, Compose, networks/volumes, and simulated registry across 15 Week 7 levels. Unit, UI, browser, content, and build checks pass. Preview deployment/review pending. |
 | ... | ... | |
 
 ---

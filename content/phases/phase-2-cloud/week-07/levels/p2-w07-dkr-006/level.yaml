@@ -1,0 +1,30 @@
+id: p2-w07-dkr-006
+title: Read logs and resolve a port conflict
+phase: 2
+week: 7
+module: docker-basics
+order: 6
+difficulty: 2
+estimated_minutes: 15
+type: terminal
+environment: docker
+lesson: ../../lessons/03-running-and-debugging-containers.md
+task: Run one service on host port 8080. Attempt a second container on the same host port, inspect the bind error, then stop the first container.
+starter_files:
+  - path: Dockerfile
+    content: "FROM python:3.12-slim\nCMD [\"python\", \"app.py\"]\n"
+  - path: app.py
+    content: "print('ready')\n"
+checks:
+  - kind: sim_state
+    path: __stderr__
+    contains: "port is already allocated"
+  - kind: sim_state
+    path: containers
+    contains: "api exited api:local"
+hints:
+  - Create the first container with docker run -d --name api -p 8080:8000 api:local.
+  - The second run should fail; stop api to release the host port.
+solution: solution/
+unlocks: [p2-w07-dkr-007]
+tags: [docker, logs, ports, troubleshooting]
