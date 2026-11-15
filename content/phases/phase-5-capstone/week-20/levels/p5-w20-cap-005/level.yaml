@@ -1,0 +1,43 @@
+id: p5-w20-cap-005
+title: Choose a success metric
+phase: 5
+week: 20
+module: capstone-scoping
+order: 1
+difficulty: 2
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/03-scope-on-one-page.md
+task: Your customer said "I want fewer no-shows and I want Meena to have her mornings back". Choose the success metric you should write in the scope.
+checks:
+- kind: sim_state
+  action: multiple_choice
+  label: Pick a measurable metric
+  question: Which success metric belongs in the scope?
+  options:
+  - No-shows fall from about 18% to under 10% of booked slots over a four-week pilot
+  - The clinic feels more modern
+  - The app has at least 15 features
+  - The WhatsApp bot uses the newest AI model
+  expected: No-shows fall from about 18% to under 10% of booked slots over a four-week pilot
+- kind: sim_state
+  action: multiple_choice
+  label: Pick the baseline source
+  question: Where should the 18% baseline come from?
+  options:
+  - Counting no-shows in the clinic's booking sheet for the last four weeks
+  - A national average for clinics found online
+  - Your own guess after the first meeting
+  - Whatever number makes the after result look best
+  expected: Counting no-shows in the clinic's booking sheet for the last four weeks
+hints:
+- A metric has a number, a direction and a time window.
+- The baseline should come from the customer's own records, not a guess.
+solution: solution/
+unlocks:
+- p5-w20-cap-006
+tags:
+- capstone
+- metrics
+mobile_compatible: true

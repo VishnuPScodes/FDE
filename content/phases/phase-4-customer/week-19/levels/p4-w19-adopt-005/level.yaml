@@ -1,0 +1,111 @@
+id: p4-w19-adopt-005
+title: Write the follow-up email after a demo
+phase: 4
+week: 19
+module: demo-storytelling
+order: 5
+difficulty: 3
+estimated_minutes: 15
+type: writing
+environment: writing
+lesson: ../../lessons/01-demo-storytelling.md
+task: 'You demoed the reminder tool to Sunrise Clinics on Tuesday. Dr. Kapoor asked about patient privacy.
+  Ms. Rao asked whether reminders can go out in Malayalam. They have not decided anything yet.
+
+
+  Write the follow-up email with four headings: Thanks and recap, What we heard, Decision, Next step.
+  Name both concerns, give two options, and set a date.'
+starter_files:
+- path: answer.md
+  content: |
+    # Write the follow-up email after a demo
+
+    ## Thanks and recap
+    <!-- What you showed, in two lines. -->
+
+    ## What we heard
+    <!-- Their questions and concerns, by name. -->
+
+    ## Decision
+    <!-- What they need to decide, with options. -->
+
+    ## Next step
+    <!-- Who, what, by when. -->
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Thanks and recap'
+- kind: file_contains
+  path: answer.md
+  expected: '## What we heard'
+- kind: file_contains
+  path: answer.md
+  expected: '## Decision'
+- kind: file_contains
+  path: answer.md
+  expected: '## Next step'
+- kind: sim_state
+  path: word_count
+  min: 71
+  max: 226
+- kind: sim_state
+  path: section:Thanks and recap
+  min_words: 15
+  contains_any:
+  - thank
+  - showed
+- kind: sim_state
+  path: section:What we heard
+  min_words: 20
+  contains_any:
+  - privacy
+  - malayalam
+- kind: sim_state
+  path: section:Decision
+  min_words: 15
+  contains_any:
+  - option
+- kind: sim_state
+  path: section:Next step
+  min_words: 10
+  contains_any:
+  - monday
+  - tuesday
+  - wednesday
+  - thursday
+  - friday
+  - december
+  - november
+  label: Next step has a day or date
+- kind: file_contains
+  path: answer.md
+  expected: privacy
+  label: Names the privacy concern
+- kind: file_contains
+  path: answer.md
+  expected: Malayalam
+  label: Names the language question
+- kind: checklist
+  label: Self-review
+  items:
+  - A busy reader can find the main point in the first two lines
+  - Every number has a source or is marked as an assumption
+  - I removed jargon the customer would not use
+  - I named each person's concern
+- kind: ai_rubric
+  rubric:
+  - Names Dr. Kapoor's privacy concern and Ms. Rao's language question, and says how each will be answered
+  - Offers two concrete options without pressuring them
+  - Ends with one clear next step and a date
+  min_score: 3
+hints:
+- Use people's names and their own words. It proves you listened.
+- Offer two options, then end with a date.
+solution: solution/
+unlocks:
+- p4-w19-adopt-006
+tags:
+- demo
+- email
+- writing
+mobile_compatible: true

@@ -1,0 +1,129 @@
+id: p4-w19-adopt-014
+title: Report the 90-day results
+phase: 4
+week: 19
+module: roi-measurement
+order: 14
+difficulty: 3
+estimated_minutes: 25
+type: writing
+environment: writing
+lesson: ../../lessons/03-roi-measurement.md
+task: 'Three months ago the Thrissur branch of a co-operative bank started using a file checking tool.
+  Baseline: 45 minutes per file. Now: 15 minutes, measured on 60 files a month. The branch handles 480
+  files a month. Loaded staff cost is ₹250 an hour.
+
+
+  Write the 90-day update for the CEO with headings: Headline, Before and after, What it means, What we
+  do not know yet, Next 90 days. Show hours and rupees and be honest about gaps.'
+starter_files:
+- path: answer.md
+  content: |
+    # Report 90-day results
+
+    ## Headline
+    <!-- One sentence with the main number. -->
+
+    ## Before and after
+    <!-- Baseline and now, same measure. -->
+
+    ## What it means
+    <!-- Hours and rupees. -->
+
+    ## What we do not know yet
+    <!-- Honest gaps. -->
+
+    ## Next 90 days
+    <!-- Two actions. -->
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Headline'
+- kind: file_contains
+  path: answer.md
+  expected: '## Before and after'
+- kind: file_contains
+  path: answer.md
+  expected: '## What it means'
+- kind: file_contains
+  path: answer.md
+  expected: '## What we do not know yet'
+- kind: file_contains
+  path: answer.md
+  expected: '## Next 90 days'
+- kind: sim_state
+  path: word_count
+  min: 79
+  max: 252
+- kind: sim_state
+  path: section:Headline
+  min_words: 10
+  contains_any:
+  - 1,80,000
+  - ₹
+- kind: sim_state
+  path: section:Before and after
+  min_words: 15
+  contains_any:
+  - '45'
+  - '15'
+- kind: sim_state
+  path: section:What it means
+  min_words: 15
+  contains_any:
+  - '240'
+  - 60,000
+- kind: sim_state
+  path: section:What we do not know yet
+  min_words: 12
+  contains_any:
+  - sample
+  - 60 files
+  - estimate
+  label: Names that the saving is estimated from a 60-file sample
+- kind: sim_state
+  path: section:Next 90 days
+  min_words: 10
+  contains_any:
+  - check
+  - share
+  - measure
+- kind: file_contains
+  path: answer.md
+  expected: '240'
+  label: Hours saved a month is 240
+- kind: file_contains
+  path: answer.md
+  expected: 60,?000
+  is_regex: true
+  label: Money saved a month is ₹60,000
+- kind: file_contains
+  path: answer.md
+  expected: 1,?80,?000
+  is_regex: true
+  label: Three-month saving is ₹1,80,000
+- kind: checklist
+  label: Self-review
+  items:
+  - A busy reader can find the main point in the first two lines
+  - Every number has a source or is marked as an assumption
+  - I removed jargon the customer would not use
+- kind: ai_rubric
+  rubric:
+  - Clear and plain language for the audience
+  - Specific, believable detail
+  - Honest about limits
+  - Compares before and after on the same measure
+  - Names what is not yet proven
+  min_score: 3
+hints:
+- Hours saved = files the branch handles x minutes saved per file / 60. Then multiply by the hourly cost.
+- A report that lists its gaps is believed more than one that does not.
+solution: solution/
+unlocks:
+- p4-w19-adopt-015
+tags:
+- roi
+- report
+- writing
+mobile_compatible: true

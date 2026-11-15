@@ -1,0 +1,88 @@
+id: p4-w18-write-005
+title: Explain the proposed design to a shop owner
+phase: 4
+week: 18
+module: design-docs
+order: 5
+difficulty: 3
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/01-design-docs.md
+task: 'Nair Handlooms in Kannur receives supplier orders as long emails and types them into Excel and
+  then Tally. You will build a tool that reads the emails and fills the sheet.
+
+
+  Write the Proposed design as five numbered steps a shop owner can follow, then What could go wrong with
+  two risks and what you will do about each. No jargon.'
+starter_files:
+- path: answer.md
+  content: |
+    # Explain the proposed design to a shop owner
+
+    ## Proposed design
+    <!-- Five numbered steps a shop owner can follow. -->
+
+    ## What could go wrong
+    <!-- Two risks, each with what you will do about it. -->
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Proposed design'
+- kind: file_contains
+  path: answer.md
+  expected: '## What could go wrong'
+- kind: sim_state
+  path: word_count
+  min: 82
+  max: 260
+- kind: sim_state
+  path: section:Proposed design
+  min_words: 40
+  contains_any:
+  - email
+  - excel
+- kind: sim_state
+  path: section:What could go wrong
+  min_words: 30
+  contains_any:
+  - risk
+  - if
+- kind: file_contains
+  path: answer.md
+  expected: (^|\n)\s*1\.\s
+  is_regex: true
+  label: Steps are numbered
+- kind: file_contains
+  path: answer.md
+  expected: (^|\n)\s*5\.\s
+  is_regex: true
+  label: There are five steps
+- kind: file_contains
+  path: answer.md
+  expected: (person|you|accountant).{0,40}(check|confirm|approve)
+  is_regex: true
+  label: A person checks the output
+- kind: checklist
+  label: Self-review
+  items:
+  - A non-technical person can follow it
+  - Each step says who or what does it
+  - I removed jargon the customer would not use
+- kind: ai_rubric
+  rubric:
+  - Plain language the owner would use
+  - Steps in the order they happen, with a human check
+  - Risks are honest and each has a mitigation
+  min_score: 3
+hints:
+- Write what happens, not what the technology is. "Reads the email" not "parses with a model".
+- Put a human check before anything is saved.
+solution: solution/
+unlocks:
+- p4-w18-write-006
+tags:
+- design-doc
+- plain-language
+- writing
+mobile_compatible: true

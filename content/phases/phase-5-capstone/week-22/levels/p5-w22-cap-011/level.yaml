@@ -1,0 +1,54 @@
+id: p5-w22-cap-011
+title: Decide what to harden
+phase: 5
+week: 22
+module: capstone-measure
+order: 7
+difficulty: 2
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/02-harden-and-hand-over.md
+task: Pick the answer that keeps the clinic running with the least risk after you leave.
+checks:
+- kind: sim_state
+  action: multiple_choice
+  label: Quota error
+  question: Google Sheets returns a quota error at 9:05 while reminders are sending. What should the runbook say?
+  options:
+  - Retry after a minute; if it still fails, Meena calls today's patients by hand from the printed list
+  - Restart the laptop
+  - Wait until tomorrow
+  - Delete the sheet and start again
+  expected: Retry after a minute; if it still fails, Meena calls today's patients by hand from the printed list
+- kind: sim_state
+  action: multiple_choice
+  label: What to fix first
+  question: 'The usage log shows: status page errors 2 times, reminders failing for Marathi names 31 times, one slow request of 1.2 s. Which do you fix first?'
+  options:
+  - Reminders failing for Marathi names, 31 times
+  - The status page errors, 2 times
+  - The slow request
+  - None of them, the pilot is nearly over
+  expected: Reminders failing for Marathi names, 31 times
+- kind: sim_state
+  action: multiple_choice
+  label: Handover
+  question: What must Meena be able to do without you after handover?
+  options:
+  - Check the health page, see yesterday's failures and fall back to calling patients
+  - Edit the Python code
+  - Rotate the API keys herself
+  - Read raw server logs
+  expected: Check the health page, see yesterday's failures and fall back to calling patients
+hints:
+- Fix the problem that hurts the most patients first. Counts beat gut feeling.
+- Design the handover for the person who will actually use it every day.
+solution: solution/
+unlocks:
+- p5-w22-cap-005
+tags:
+- capstone
+- harden
+- quiz
+mobile_compatible: true

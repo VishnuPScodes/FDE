@@ -1,0 +1,31 @@
+id: p1-w03-http-007
+title: Handle a missing resource
+phase: 1
+week: 3
+module: rest-api-design
+order: 6
+difficulty: 2
+estimated_minutes: 6
+type: console
+environment: http
+lesson: ../../lessons/01-http-fundamentals.md
+task: Request `/api/items/101` and confirm it returns `200 OK` with the item. Then request `/api/items/999` and inspect the `404 Not Found` response for an item that does not exist.
+checks:
+  - kind: http_response
+    action: request_exists
+    method: GET
+    path: /api/items/101
+    status: 200
+    body_contains: '"name":"Northwind Cafe"'
+    label: Existing item was found
+  - kind: http_response
+    action: request_exists
+    method: GET
+    path: /api/items/999
+    status: 404
+    body_contains: 'Item not found'
+    label: Missing item returned 404
+hints:
+  - Put the item ID in the path, for example `/api/items/101`.
+  - A 404 is a final answer about that resource, so do not retry it the way you would a temporary 500.
+tags: [http, status-codes, not-found]

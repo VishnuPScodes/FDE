@@ -1,0 +1,32 @@
+id: p1-w04-jwt-004
+title: Identify who a token is for
+phase: 1
+week: 4
+module: jwt-rbac
+order: 4
+difficulty: 3
+estimated_minutes: 7
+type: console
+environment: http
+lesson: ../../lessons/02-jwt-and-access-control.md
+task: Issue a service token and verify it. Confirm from the verified claims that the subject is the service identity `service:fde-browser-demo` and that this is an access token, not an ID token.
+checks:
+  - kind: sim_state
+    action: token_verified
+    expected: true
+    label: Token signature, issuer, audience, and expiry are valid
+  - kind: sim_state
+    action: claim_equals
+    claim: sub
+    expected: service:fde-browser-demo
+    label: Subject identifies the service client
+  - kind: sim_state
+    action: claim_equals
+    claim: token_use
+    expected: access
+    label: Token is an access token
+hints:
+  - Use the Client Credentials flow; the subject is the service, not a person.
+  - The `token_use` claim tells you whether you hold an access token or an ID token. Verify the access token.
+unlocks: [p1-w04-jwt-005]
+tags: [jwt, claims, subject]

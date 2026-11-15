@@ -1,0 +1,95 @@
+id: p3-w15-ops-012
+title: "Gate a new prompt with an A/B eval"
+phase: 3
+week: 15
+module: prompt-versioning
+order: 4
+difficulty: 4
+estimated_minutes: 30
+type: code
+environment: python
+lesson: ../../lessons/03-prompt-versioning.md
+task: |
+  Before a new prompt version becomes active, run both versions on the same golden set and compare. Promote only when it is clearly better and does not break many cases.
+
+  Write `ab_gate(scores_a, scores_b, min_gain=0.02, max_regressions=1, regression_margin=0.05)`.
+
+  `scores_a` is the current prompt, `scores_b` the candidate. Both are lists of per-case scores from 0 to 1, in the same order.
+
+  - If the lists are empty or have different lengths, raise `ValueError`.
+  - `mean_gain` = mean(b) - mean(a), rounded to 4 places.
+  - A **regression** is a case where `round(a - b, 4) > regression_margin`. Count them.
+  - `promote` is `True` only if `mean_gain >= min_gain` **and** `regressions <= max_regressions`.
+  - `reasons` is a list of strings: `"gain too small"` if the gain is below `min_gain`, and `"too many regressions"` if there are too many. Keep that order. It is empty when promoting.
+
+  Return `{"promote": ..., "mean_gain": ..., "regressions": ..., "reasons": [...]}`.
+starter_files:
+  - path: main.py
+    content: |
+      def ab_gate(scores_a, scores_b, min_gain=0.02, max_regressions=1, regression_margin=0.05):
+          pass
+  - path: test_main.py
+    content: |
+      import pytest
+
+      from main import ab_gate
+
+      A = [0.8, 0.7, 0.9, 0.6, 0.75]
+
+
+      def test_clear_win_is_promoted():
+          b = [0.85, 0.8, 0.9, 0.7, 0.8]
+          assert ab_gate(A, b) == {"promote": True, "mean_gain": 0.06, "regressions": 0, "reasons": []}
+
+
+      def test_gain_too_small():
+          b = [0.8, 0.71, 0.9, 0.6, 0.75]
+          result = ab_gate(A, b)
+          assert result["promote"] is False
+          assert result["mean_gain"] == 0.002
+          assert result["reasons"] == ["gain too small"]
+
+
+      def test_good_average_but_breaks_cases():
+          b = [1.0, 1.0, 0.7, 0.9, 0.5]
+          result = ab_gate(A, b)
+          assert result["mean_gain"] == 0.07
+          assert result["regressions"] == 2
+          assert result["promote"] is False
+          assert result["reasons"] == ["too many regressions"]
+
+
+      def test_both_reasons_in_order():
+          b = [0.7, 0.6, 0.9, 0.6, 0.75]
+          result = ab_gate(A, b)
+          assert result["reasons"] == ["gain too small", "too many regressions"]
+
+
+      def test_margin_is_strict_and_float_safe():
+          a = [0.5, 0.9]
+          b = [0.45, 1.0]           # drop of exactly 0.05 is not a regression
+          result = ab_gate(a, b, min_gain=0.0)
+          assert result["regressions"] == 0
+          assert result["promote"] is True
+
+
+      def test_exact_threshold_promotes():
+          assert ab_gate([0.5, 0.5], [0.52, 0.52])["promote"] is True
+
+
+      def test_bad_input():
+          with pytest.raises(ValueError):
+              ab_gate([], [])
+          with pytest.raises(ValueError):
+              ab_gate([0.5], [0.5, 0.6])
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Compute the two means first, subtract, then round. Round once at the end so you do not stack rounding errors."
+  - "Use `round(a - b, 4) > regression_margin`. A drop of exactly 0.05 can look like 0.05000000000000004 in floats; rounding fixes that."
+  - "Build `reasons` first, then `promote` is simply `not reasons`. That keeps the two in sync."
+solution: solution/
+unlocks: [p3-w15-ops-013]
+tags: [ab-test, eval-gate, release]

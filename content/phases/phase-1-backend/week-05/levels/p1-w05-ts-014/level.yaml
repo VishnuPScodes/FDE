@@ -1,0 +1,57 @@
+id: p1-w05-ts-014
+title: Retry a flaky request
+phase: 1
+week: 5
+module: typescript-essentials
+order: 13
+difficulty: 4
+estimated_minutes: 15
+type: code
+environment: ts
+lesson: ../../lessons/02-async-and-ui.md
+task: "Implement `withRetry` so it calls `task` up to `attempts` times, returning the first success. If every attempt fails, throw the last error."
+starter_files:
+  - path: main.ts
+    content: |-
+      async function withRetry<T>(task: () => Promise<T>, attempts: number): Promise<T> {
+        return task();
+      }
+
+      function flaky(failures: number): { run: () => Promise<string>; calls: () => number } {
+        let calls = 0;
+        return {
+          run: async () => {
+            calls += 1;
+            if (calls <= failures) throw new Error(`fail ${calls}`);
+            return 'ok';
+          },
+          calls: () => calls,
+        };
+      }
+
+      test('succeeds after transient failures', async () => {
+        const task = flaky(2);
+        expect(await withRetry(task.run, 3)).toBe('ok');
+        expect(task.calls()).toBe(3);
+      });
+      test('stops retrying after the first success', async () => {
+        const task = flaky(0);
+        await withRetry(task.run, 5);
+        expect(task.calls()).toBe(1);
+      });
+      test('throws the last error when attempts run out', async () => {
+        const task = flaky(10);
+        let message = '';
+        try { await withRetry(task.run, 3); } catch (error) { message = (error as Error).message; }
+        expect(message).toBe('fail 3');
+        expect(task.calls()).toBe(3);
+      });
+checks:
+  - kind: vitest_passes
+    label: All behaviour checks pass
+hints:
+  - "Loop from 1 to `attempts`, wrapping `await task()` in try/catch."
+  - "Remember the last error and throw it after the loop."
+solution: solution/
+unlocks: [p1-w05-ts-015]
+tags: [typescript, async, retry]

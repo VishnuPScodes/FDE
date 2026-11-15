@@ -1,0 +1,58 @@
+id: p2-w09-obs-003
+title: Find the slow dependency in warnings
+phase: 2
+week: 9
+module: structured-logging
+order: 3
+difficulty: 2
+estimated_minutes: 10
+type: console
+environment: observability
+lesson: ../../lessons/01-structured-logging.md
+task: |-
+  A different day, a different problem. Invoices for GST filing feel slow at a Chennai accounting firm.
+
+  Warnings often show trouble before errors do. Group warn-level logs by their `peer` field:
+
+  `level:warn | count by peer`
+
+  Then name the slow outside service and the service that calls it.
+starter_files:
+  - path: scenario.json
+    content: |
+      {
+        "scenario": "third-party-latency",
+        "seed": 7
+      }
+checks:
+  - kind: sim_command_used
+    pattern: ^logs> .*level:warn.*\|\s*count by peer
+    label: Grouped warnings by peer
+  - kind: sim_state
+    path: answer:peer
+    prompt: Which outside service is slow?
+    options:
+      - npci-upi
+      - gst-api
+      - postgres
+      - sms-gateway
+    expected: gst-api
+  - kind: sim_state
+    path: answer:service
+    prompt: Which of our services calls it?
+    options:
+      - api-gateway
+      - payments
+      - invoices
+      - notifications
+    expected: invoices
+hints:
+  - Use level:warn, then count by peer.
+  - 'Look at one warning with: level:warn | limit 3. The service field says who logged it.'
+solution: solution/
+unlocks:
+  - p2-w09-obs-004
+tags:
+  - observability
+  - logs
+  - warnings

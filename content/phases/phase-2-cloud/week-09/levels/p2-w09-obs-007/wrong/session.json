@@ -1,0 +1,10 @@
+{
+  "history": [
+    "metrics> process_cpu_usage"
+  ],
+  "report": {
+    "rootCause": "traffic-spike",
+    "service": "invoices",
+    "evidence": "lots of users"
+  }
+}

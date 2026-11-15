@@ -1,0 +1,103 @@
+id: p3-w10-llm-012
+title: Write a scoped system prompt for a GST help bot
+phase: 3
+week: 10
+module: prompt-engineering
+order: 14
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: ai
+lesson: ../../lessons/05-prompt-engineering.md
+task: |
+  Edit `prompt.json` to configure a support bot for a CA firm in Chennai that answers GST questions.
+
+  The checks read your file. They do not call a model, so you do not need an API key.
+  If you have one saved in Settings, press **Run with my key** to try it.
+
+  Your `system` prompt must:
+
+  - say the bot answers questions about **GST** only,
+  - tell it to say **"I don't know"** when it is not sure, instead of guessing,
+  - tell it to never ask for or repeat a full **PAN** or **Aadhaar** number,
+  - be under 200 tokens (about 800 characters).
+
+  Also set `temperature` to 0.3 or lower (support answers should be steady) and
+  `max_tokens` between 100 and 500.
+starter_files:
+- path: prompt.json
+  content: |
+    {
+      "system": "You are a helpful assistant.",
+      "temperature": 1.0,
+      "max_tokens": 1000,
+      "sample_user": "Mera restaurant AC hai, GST kitna lagega?"
+    }
+checks:
+- kind: sim_state
+  label: prompt.json is valid JSON with a system prompt
+  simulator: prompt
+  file: prompt.json
+  path: system
+  op: exists
+- kind: sim_state
+  label: System prompt scopes the bot to GST
+  simulator: prompt
+  file: prompt.json
+  path: system
+  op: matches
+  expected: \bGST\b
+- kind: sim_state
+  label: System prompt allows "I don't know"
+  simulator: prompt
+  file: prompt.json
+  path: system
+  op: matches
+  expected: (don't|do not) know
+- kind: sim_state
+  label: System prompt protects PAN and Aadhaar numbers
+  simulator: prompt
+  file: prompt.json
+  path: system
+  op: matches
+  expected: PAN[\s\S]*Aadhaar|Aadhaar[\s\S]*PAN
+- kind: sim_state
+  label: System prompt is under 200 tokens
+  simulator: prompt
+  file: prompt.json
+  path: system.$tokens
+  op: lt
+  expected: 200
+- kind: sim_state
+  label: Temperature is 0.3 or lower
+  simulator: prompt
+  file: prompt.json
+  path: temperature
+  op: lte
+  expected: 0.3
+- kind: sim_state
+  label: max_tokens is at least 100
+  simulator: prompt
+  file: prompt.json
+  path: max_tokens
+  op: gte
+  expected: 100
+- kind: sim_state
+  label: max_tokens is at most 500
+  simulator: prompt
+  file: prompt.json
+  path: max_tokens
+  op: lte
+  expected: 500
+hints:
+- Write plain instructions, one rule per sentence. The checks look for the words GST, "I don't know" (or "do not know"), PAN and Aadhaar.
+- Inside JSON, a double quote in your text must be written as `\"`. Single quotes are fine as they are.
+solution: solution/
+unlocks:
+- p3-w10-llm-013
+tags:
+- llm
+- prompting
+- system-prompt
+- ai-workspace
+mobile_compatible: true

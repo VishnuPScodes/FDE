@@ -1,0 +1,78 @@
+id: p4-w16-disc-009
+title: Write up a shadowing session
+phase: 4
+week: 16
+module: discovery-interviews
+order: 7
+difficulty: 2
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/03-five-whys-and-shadowing.md
+task: >
+  You spent a morning beside Shabeer, the dispatch lead at Malabar Freight Lines in Kozhikode. What
+  you saw:
+
+
+  At 8:30 he opened a WhatsApp group of 40 drivers and scrolled for "loaded" messages. He copied
+  each truck number into an Excel sheet. At 9:15 a customer called asking where their shipment was.
+  He phoned two drivers to find out. At 10:00 he printed the sheet and walked it to billing. Twice
+  he wrote truck numbers on a paper notebook "because Excel was frozen". He told you the morning is
+  "always like this".
+
+
+  Write shadowing notes in `answer.md`. Keep what you observed separate from what you think.
+starter_files:
+  - path: answer.md
+    content: |+
+      # Shadowing notes: dispatch desk
+
+      ## Steps observed
+      <!-- What he did, in order, with times. -->
+
+      ## Workarounds
+      <!-- Things he does that no system was designed for. -->
+
+      ## Time spent
+      <!-- Rough minutes per step. -->
+
+      ## Surprises
+      <!-- What you did not expect. -->
+
+      ## My interpretation
+      <!-- Your opinion, kept separate from observation. -->
+
+checks:
+  - kind: sim_state
+    path: section:Steps observed
+    min_words: 30
+  - kind: sim_state
+    path: section:Workarounds
+    contains_any:
+      - whatsapp
+      - notebook
+      - paper
+      - phone
+  - kind: sim_state
+    path: section:Time spent
+    contains_any:
+      - minute
+      - hour
+      - min
+  - kind: sim_state
+    path: section:My interpretation
+    min_words: 10
+  - kind: sim_state
+    path: word_count
+    min: 120
+    max: 650
+hints:
+  - "Write steps with times: \"8:30 opened the WhatsApp group\"."
+  - Save your opinions for the last section. Observations first.
+solution: solution/
+unlocks:
+  - p4-w16-disc-010
+tags:
+  - shadowing
+  - writing
+mobile_compatible: true

@@ -1,0 +1,131 @@
+id: p5-w22-capstone-001
+title: 'Capstone sign-off: deployed, used, handed over'
+phase: 5
+week: 22
+module: capstone-case-study
+order: 6
+difficulty: 5
+estimated_minutes: 60
+type: writing
+environment: writing
+lesson: ../../lessons/03-case-study-and-sign-off.md
+task: |-
+  This is the final checkpoint of the capstone. It closes the project with your customer.
+
+  1. Fill the sign-off form in `answer.md` together with your customer. **Customer Statement** is in their words, with their name and the date. **Usage Summary** gives real numbers from your usage pings: users, events and days in use. **Success Metric Result** has before and after.
+  2. Fill `submission.json` with your live health URL and repo.
+  3. Tick the checklist only when each item is true.
+
+  We check the form, that your system is live and that usage pings arrived. The aim is a system still running a month from now.
+starter_files:
+- path: answer.md
+  content: |
+    # Capstone sign-off
+
+    ## Customer
+
+
+    ## Problem Solved
+
+
+    ## Success Metric Result
+
+
+    ## Usage Summary
+
+
+    ## Handover Confirmed
+
+
+    ## Customer Statement
+- path: submission.json
+  content: |
+    {
+      "url": "",
+      "repo": ""
+    }
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Customer'
+- kind: file_contains
+  path: answer.md
+  expected: '## Problem Solved'
+- kind: file_contains
+  path: answer.md
+  expected: '## Success Metric Result'
+- kind: file_contains
+  path: answer.md
+  expected: '## Usage Summary'
+- kind: file_contains
+  path: answer.md
+  expected: '## Handover Confirmed'
+- kind: file_contains
+  path: answer.md
+  expected: '## Customer Statement'
+- kind: sim_state
+  path: word_count
+  min: 140
+  max: 700
+- kind: sim_state
+  path: section:Customer
+  min_words: 5
+- kind: sim_state
+  path: section:Success Metric Result
+  min_words: 15
+  contains_all:
+  - before
+  - after
+- kind: sim_state
+  path: section:Usage Summary
+  min_words: 20
+  contains_any:
+  - users
+  - events
+  - days
+  - sessions
+- kind: sim_state
+  path: section:Handover Confirmed
+  min_words: 15
+  contains_any:
+  - owner
+  - owns
+  - transferred
+  - runbook
+- kind: sim_state
+  path: section:Customer Statement
+  min_words: 15
+  contains_any:
+  - signed
+  - agreed
+  - confirmed
+  - approve
+- kind: checklist
+  label: Sign-off checklist
+  items:
+  - The customer read and agreed to this form
+  - The system has run in production for at least two weeks
+  - The customer owns the accounts and has the runbook
+  - My case study is published without personal data
+- kind: live_url
+  url_field: url
+  expect_status: 200
+  contains: ok
+  label: System is live
+- kind: checker_token
+  label: Usage pings received
+- kind: ai_rubric
+  rubric:
+  - Customer statement is in the customer's voice
+  - Usage and metric numbers are specific and consistent
+  min_score: 3
+hints:
+- Fill this form in the room (or on a call) with your customer. Their words go in Customer Statement.
+- Pull Usage Summary numbers from your usage pings or logs, not from memory.
+- submission.json needs the public health URL, not localhost.
+solution: solution/
+unlocks: []
+tags:
+- capstone
+- project
+- sign-off

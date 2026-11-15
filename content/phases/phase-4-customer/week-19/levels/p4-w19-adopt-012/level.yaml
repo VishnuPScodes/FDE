@@ -1,0 +1,114 @@
+id: p4-w19-adopt-012
+title: Set the baseline and measurement plan
+phase: 4
+week: 19
+module: roi-measurement
+order: 12
+difficulty: 3
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/03-roi-measurement.md
+task: >-
+  Before the Gupta Traders order reader goes live for all 120 shops, write the plan to prove its
+  value later. Today two staff type orders for about 3 hours a day each day, and returns for wrong
+  items run at 4%.
+
+
+  Headings: Metric, Baseline, How we measure, Who owns the number, Review date.
+starter_files:
+  - path: answer.md
+    content: |
+      # Set the baseline and measurement plan
+
+      ## Metric
+      <!-- Two metrics at most. -->
+
+      ## Baseline
+      <!-- Today's numbers, measured before launch. -->
+
+      ## How we measure
+      <!-- Data source and how often. -->
+
+      ## Who owns the number
+      <!-- A person, not a team. -->
+
+      ## Review date
+      <!-- Fixed dates. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Metric'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Baseline'
+  - kind: file_contains
+    path: answer.md
+    expected: '## How we measure'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Who owns the number'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Review date'
+  - kind: sim_state
+    path: word_count
+    min: 71
+    max: 260
+  - kind: sim_state
+    path: section:Metric
+    min_words: 12
+    contains_any:
+      - typing
+      - returns
+  - kind: sim_state
+    path: section:Baseline
+    min_words: 15
+    contains_all:
+      - 3 hours
+      - 4%
+  - kind: sim_state
+    path: section:How we measure
+    min_words: 20
+    contains_any:
+      - log
+      - sheet
+      - weekly
+  - kind: sim_state
+    path: section:Who owns the number
+    min_words: 8
+    contains_any:
+      - owner
+      - gupta
+      - accountant
+      - manager
+  - kind: sim_state
+    path: section:Review date
+    min_words: 8
+    contains_any:
+      - april
+      - march
+      - monday
+      - month
+  - kind: checklist
+    label: Self-review
+    items:
+      - A non-technical person can follow it
+      - Every number has a source or is marked as an assumption
+      - It ends with a clear next step
+  - kind: ai_rubric
+    rubric:
+      - Clear and plain language for the audience
+      - Specific, believable detail
+      - Honest about limits
+    min_score: 3
+hints:
+  - Write the baseline before the launch. After the launch it is too late.
+  - The owner of the number should be a person who will not change the way it is counted.
+solution: solution/
+unlocks:
+- p4-w19-adopt-013
+tags:
+  - roi
+  - baseline
+mobile_compatible: true

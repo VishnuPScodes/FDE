@@ -1,0 +1,54 @@
+id: p2-w09-sec-001
+title: Spot the threat
+phase: 2
+week: 9
+module: security-posture
+order: 1
+difficulty: 2
+estimated_minutes: 8
+type: quiz
+environment: quiz
+lesson: ../../lessons/03-security-posture.md
+task: RupeeRoute is a UPI refund app used by shopkeepers in Jaipur. Pick the best answer for each threat model question.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: A shopkeeper changes the amount in the refund request from ₹500 to ₹50,000 before it reaches the server. Which STRIDE threat is this?
+    options:
+      - Tampering
+      - Spoofing
+      - Repudiation
+      - Denial of service
+    expected: Tampering
+    label: 'Name the threat: changed amount'
+  - kind: sim_state
+    action: multiple_choice
+    question: An attacker floods the refund API with 10 lakh requests so real users cannot get through. Which threat is this?
+    options:
+      - Denial of service
+      - Information disclosure
+      - Spoofing
+      - Elevation of privilege
+    expected: Denial of service
+    label: 'Name the threat: flooding'
+  - kind: sim_state
+    action: multiple_choice
+    question: Which step comes FIRST in a simple threat model?
+    options:
+      - Draw what the system does and where data moves
+      - Buy a security tool
+      - Write the fixes
+      - Run a penetration test
+    expected: Draw what the system does and where data moves
+    label: Know the order of a threat model
+hints:
+  - Tampering means changing data that should not change. Spoofing means pretending to be someone else.
+  - You cannot protect what you have not drawn. Start with a picture of data flows.
+solution: solution/
+unlocks:
+  - p2-w09-sec-002
+tags:
+  - security
+  - threat-model
+  - stride
+mobile_compatible: true

@@ -1,0 +1,78 @@
+id: p6-w23-int-004
+title: 'Drill: aggregate a flaky paginated API'
+phase: 6
+week: 23
+module: coding-drills
+order: 4
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-practical-coding.md
+task: |-
+  Timed drill, aim for 25 minutes. A logistics partner's API returns delivery payouts page by page, and it sometimes times out. Total the payouts per state.
+
+  Implement `total_by_state` in `api.py`. Follow `next` until it is `None`. Retry a timed-out page, but stop after `max_retries` attempts and raise. Never silently return partial totals. Run `test_api.py`.
+timed: true
+starter_files:
+- path: api.py
+  content: |
+    def total_by_state(fetch_page, max_retries: int = 3) -> dict[str, int]:
+        """fetch_page(page) returns {"items": [{"state": "KA", "amount": 1200}, ...], "next": 2 or None}.
+        Start at page 1 and follow "next" until it is None.
+        fetch_page may raise TimeoutError; retry the same page up to max_retries times in total,
+        then let the error propagate. Return the total amount per state.
+        """
+        pass
+- path: test_api.py
+  content: |
+    import pytest
+    from api import total_by_state
+
+    PAGES = {
+        1: {"items": [{"state": "KA", "amount": 1200}, {"state": "KL", "amount": 800}], "next": 2},
+        2: {"items": [{"state": "KA", "amount": 300}], "next": 3},
+        3: {"items": [], "next": None},
+    }
+
+
+    def flaky(fail_times):
+        calls = {}
+
+        def fetch(page):
+            calls[page] = calls.get(page, 0) + 1
+            if calls[page] <= fail_times.get(page, 0):
+                raise TimeoutError(f"page {page} timed out")
+            return PAGES[page]
+
+        fetch.calls = calls
+        return fetch
+
+
+    def test_happy_path():
+        assert total_by_state(flaky({})) == {"KA": 1500, "KL": 800}
+
+
+    def test_retries_then_succeeds():
+        fetch = flaky({2: 2})
+        assert total_by_state(fetch) == {"KA": 1500, "KL": 800}
+        assert fetch.calls[2] == 3
+
+
+    def test_gives_up():
+        with pytest.raises(TimeoutError):
+            total_by_state(flaky({1: 3}))
+checks:
+- kind: pytest_passes
+  run: pytest -q test_api.py
+hints:
+- Write a small helper that fetches one page with a retry loop.
+- On the last failed attempt, re-raise the TimeoutError instead of swallowing it.
+- Breaking out of the loop on error returns partial totals. That is the bug interviewers look for.
+solution: solution/
+unlocks:
+- p6-w23-int-005
+tags:
+- interview
+- python
+- api

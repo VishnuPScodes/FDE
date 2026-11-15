@@ -1,0 +1,42 @@
+id: p3-w13-agent-003
+title: Dispatch a tool call safely
+phase: 3
+week: 13
+module: tool-schemas
+order: 3
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-tool-schemas.md
+task: |
+  A Tally assistant for a Pune manufacturer lets the model look up ledger balances. Write `dispatch(tool_call, registry)` in `dispatcher.py`.
+
+  A tool call looks like `{"id": "call_1", "name": "get_ledger_balance", "arguments": {...}}`. The registry maps each tool name to `{"schema": {...}, "fn": callable}`. Return a tool message:
+
+  `{"role": "tool", "tool_call_id": "call_1", "content": "...", "is_error": False}`
+
+  Rules, in order:
+
+  1. Unknown tool: `is_error` true, content `"unknown tool: send_sms. Available tools: get_ledger_balance, list_vouchers"` (names sorted).
+  2. If `arguments` is a string, parse it with `json.loads`. If that fails, content is `"arguments are not valid JSON"`.
+  3. Validate with `validate_args` from `schema_check.py`. If there are errors, do not call the function. Content is `"invalid arguments: "` plus the errors joined with `"; "`.
+  4. Call `fn(**arguments)`. If it raises, content is `"ValueError: ledger not found"` (the exception class name, a colon, the message).
+  5. On success, content is `json.dumps(result, ensure_ascii=False)` and `is_error` is false.
+
+  The function never raises. Errors go back to the model as data.
+starter_files:
+  - path: dispatcher.py
+  - path: schema_check.py
+  - path: test_dispatcher.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_dispatcher.py
+    label: Dispatcher tests pass
+hints:
+  - Write a small helper `result(content, is_error)` that builds the tool message, so every branch returns the same shape.
+  - "Wrap only the tool call in `try/except Exception as error:` and use `type(error).__name__`."
+  - "`json.dumps(..., ensure_ascii=False)` keeps names like `₹` and Devanagari readable."
+solution: solution/
+unlocks: [p3-w13-agent-004]
+tags: [tool-calling, dispatch, tally]

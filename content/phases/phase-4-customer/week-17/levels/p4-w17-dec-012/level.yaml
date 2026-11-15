@@ -1,0 +1,78 @@
+id: p4-w17-dec-012
+title: List and test your assumptions
+phase: 4
+week: 17
+module: decomp-drills
+order: 12
+difficulty: 3
+estimated_minutes: 15
+type: decomposition
+environment: writing
+lesson: ../../lessons/02-decomposition-drills.md
+task: |-
+  A silk weavers' co-operative in Kanchipuram says: "Use AI to price our sarees." About 300 weavers sell through the co-operative. You have only ten minutes of notes.
+
+  In `answer.md`, list at least four assumptions under **Assumptions**, one bullet each, in plain words. Under **To confirm**, say who you will ask and what you will ask for each.
+timed: true
+starter_files:
+- path: answer.md
+  content: |+
+    # List and test your assumptions
+
+    ## Assumptions
+    <!-- One bullet each, starting with I assume. -->
+
+    ## To confirm
+    <!-- Who you will ask, and what. -->
+
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Assumptions'
+- kind: file_contains
+  path: answer.md
+  expected: '## To confirm'
+- kind: file_contains
+  path: answer.md
+  expected: (^|\n)- .+(\n- .+){3}
+  is_regex: true
+  label: At least four bullet points
+- kind: sim_state
+  path: section:Assumptions
+  min_words: 40
+  contains_any:
+  - assume
+- kind: sim_state
+  path: section:To confirm
+  min_words: 30
+  contains_any:
+  - ask
+  - confirm
+- kind: sim_state
+  path: word_count
+  min: 80
+  max: 350
+- kind: checklist
+  label: Self-review
+  items:
+  - Each assumption could be wrong, and I said so
+  - Each assumption has a person who can confirm it
+  - I did not hide a guess inside a fact
+- kind: ai_rubric
+  rubric:
+  - Assumptions are specific and could be wrong
+  - Each one has a sensible way to confirm it
+  - No unstated guesses are presented as facts
+  min_score: 3
+hints:
+- Assumptions are about data, people, prices and tools. Ask yourself what you would have to know before
+  you built anything.
+- Pair every assumption with a person, such as the secretary, a senior weaver or the accountant, and a
+  specific question.
+solution: solution/
+unlocks:
+- p4-w17-dec-013
+tags:
+- decomposition
+- assumptions
+mobile_compatible: true

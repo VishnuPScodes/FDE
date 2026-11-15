@@ -1,0 +1,39 @@
+id: p2-w08-aws-005
+title: "Close SSH to the world"
+phase: 2
+week: 8
+module: aws-core
+order: 5
+difficulty: 2
+estimated_minutes: 15
+type: terminal
+environment: aws
+lesson: ../../lessons/01-aws-core.md
+task: "The security group web-sg lets anyone on the internet reach SSH (port 22). Remove that rule, allow SSH only from the office address 203.0.113.25/32, and also allow HTTPS (443) from anywhere. Keep HTTP (80) open."
+starter_files:
+  - path: .aws-seed
+    content: "# A VPC with one public subnet and a locked-down web security group\nVPC=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=fde-vpc}]' --query Vpc.VpcId --output text)\nSUBNET=$(aws ec2 create-subnet --vpc-id $VPC --cidr-block 10.0.1.0/24 --availability-zone ap-south-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=fde-public-a}]' --query Subnet.SubnetId --output text)\nSG=$(aws ec2 create-security-group --group-name web-sg --description \"Web servers\" --vpc-id $VPC --query GroupId --output text)\naws ec2 authorize-security-group-ingress --group-id $SG --protocol tcp --port 22 --cidr 0.0.0.0/0\naws ec2 authorize-security-group-ingress --group-id $SG --protocol tcp --port 80 --cidr 0.0.0.0/0\n"
+checks:
+  - kind: sim_state
+    path: "ec2.security-groups"
+    not_contains: "tcp:22-22:0.0.0.0/0"
+    label: "Port 22 is not open to 0.0.0.0/0"
+  - kind: sim_state
+    path: "ec2.security-groups"
+    contains: "tcp:22-22:203.0.113.25/32"
+    label: "SSH allowed from the office /32"
+  - kind: sim_state
+    path: "ec2.security-groups"
+    contains: "tcp:443-443:0.0.0.0/0"
+    label: "HTTPS open to the internet"
+  - kind: sim_state
+    path: "ec2.security-groups"
+    contains: "tcp:80-80:0.0.0.0/0"
+    label: "HTTP still open"
+hints:
+  - "Find the group id with aws ec2 describe-security-groups --filters Name=group-name,Values=web-sg --query SecurityGroups[0].GroupId --output text."
+  - "Remove a rule with revoke-security-group-ingress and the same --protocol, --port and --cidr that created it."
+  - "A /32 means exactly one IP address. 0.0.0.0/0 means every IP address."
+solution: solution/
+unlocks: [p2-w08-aws-006]
+tags: [aws, ec2, security-groups]

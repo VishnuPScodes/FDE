@@ -1,0 +1,113 @@
+id: p4-w18-write-015
+title: Reply to a change request
+phase: 4
+week: 18
+module: scope-negotiation
+order: 15
+difficulty: 4
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/03-scope-negotiation.md
+task: >-
+  Week 18 checkpoint. Gupta Traders' owner emails: "Since the order reader works, please also add
+  billing, GST returns and a customer app. We still go live on 10 March."
+
+
+  Write your reply with headings: Summary, What we can do now, What moves to phase 2, Trade-off,
+  Next step. Be warm and plain, give two options, and do not say a flat no.
+starter_files:
+  - path: answer.md
+    content: |
+      # Reply to a change request
+
+      ## Summary
+      <!-- Thank them, then state the situation. -->
+
+      ## What we can do now
+      <!-- What stays on the 10 March date. -->
+
+      ## What moves to phase 2
+      <!-- Name each deferred item. -->
+
+      ## Trade-off
+      <!-- Two options with dates or costs. -->
+
+      ## Next step
+      <!-- Who, what, when. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Summary'
+  - kind: file_contains
+    path: answer.md
+    expected: '## What we can do now'
+  - kind: file_contains
+    path: answer.md
+    expected: '## What moves to phase 2'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Trade-off'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Next step'
+  - kind: sim_state
+    path: word_count
+    min: 101
+    max: 370
+  - kind: sim_state
+    path: section:Summary
+    min_words: 20
+    contains_any:
+      - thank
+      - glad
+  - kind: sim_state
+    path: section:What we can do now
+    min_words: 15
+    contains_any:
+      - 10 march
+  - kind: sim_state
+    path: section:What moves to phase 2
+    min_words: 15
+    contains_all:
+      - billing
+      - GST
+      - app
+  - kind: sim_state
+    path: section:Trade-off
+    min_words: 25
+    contains_any:
+      - option
+      - or
+  - kind: sim_state
+    path: section:Next step
+    min_words: 10
+    contains_any:
+      - by
+      - please
+  - kind: checklist
+    label: Self-review
+    items:
+      - A busy reader can find the main point in the first two lines
+      - Every number has a source or is marked as an assumption
+      - I removed jargon the customer would not use
+      - I offered two options and did not just refuse
+  - kind: ai_rubric
+    rubric:
+      - Clear and concise for the intended reader
+      - Specific numbers and decisions, not vague claims
+      - Honest about risks and trade-offs
+      - Warm tone, no flat refusal
+      - Clear trade-off with dates
+    min_score: 3
+hints:
+  - Say yes to the idea, and no to the date. Ideas fit in phase 2.
+  - Give two options, with dates, and recommend one.
+solution: solution/
+unlocks:
+- p4-w19-adopt-001
+tags:
+  - writing
+  - scope
+  - email
+mobile_compatible: true

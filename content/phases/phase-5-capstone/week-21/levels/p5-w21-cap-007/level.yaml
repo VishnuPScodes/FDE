@@ -1,0 +1,158 @@
+id: p5-w21-cap-007
+title: Weekly check-in with a requirement change
+phase: 5
+week: 21
+module: capstone-build
+order: 11
+difficulty: 3
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/03-iterate-with-the-customer.md
+task: |-
+  It's your first weekly check-in with Meena at the clinic. Something is not working for some patients, and she has a request.
+
+  In at most 10 questions, find out what worked, what didn't, the new request, how many patients it affects, the deadline and what can be dropped to make room. Avoid leading questions.
+
+  Write a short change request in `notes.md` that includes the word `Marathi` and the date of the deadline.
+starter_files:
+- path: persona.json
+  content: |
+    {
+      "name": "Meena Patil",
+      "role": "Front desk lead",
+      "company": "Sharma Physiotherapy, Kothrud, Pune",
+      "opening": "Hi Priya! The reminders have been going out since Saturday. I have a few things to tell you.",
+      "facts": [
+        {
+          "id": "what-worked",
+          "triggers": [
+            "what worked",
+            "how has it",
+            "how is it going",
+            "how did it go",
+            "what went well",
+            "first week"
+          ],
+          "reply": "Confirmations come straight into the sheet. I made only 12 calls today instead of 40."
+        },
+        {
+          "id": "problem",
+          "triggers": [
+            "what didn't",
+            "what did not",
+            "problem",
+            "issue",
+            "not work",
+            "complain"
+          ],
+          "reply": "Some older patients said they could not read the English message. Two of them came on the wrong day."
+        },
+        {
+          "id": "change-request",
+          "triggers": [
+            "what would you change",
+            "what do you need",
+            "what should",
+            "change",
+            "request"
+          ],
+          "requires": [
+            "problem"
+          ],
+          "reply": "Can the reminder also come in Marathi? Doctor ma'am asked me to request this."
+        },
+        {
+          "id": "affected",
+          "triggers": [
+            "how many",
+            "which patients",
+            "who is affected",
+            "how much"
+          ],
+          "requires": [
+            "change-request"
+          ],
+          "reply": "Around a third of our patients are over 60. Most of them prefer Marathi."
+        },
+        {
+          "id": "deadline",
+          "triggers": [
+            "when",
+            "deadline",
+            "by what date",
+            "how soon"
+          ],
+          "requires": [
+            "change-request"
+          ],
+          "reply": "Before the pilot review on the 29th, if possible."
+        },
+        {
+          "id": "trade-off",
+          "triggers": [
+            "drop",
+            "move",
+            "delay",
+            "instead",
+            "trade",
+            "priority",
+            "priorities"
+          ],
+          "requires": [
+            "change-request"
+          ],
+          "reply": "The doctor-wise report can wait. We don't look at it much yet."
+        }
+      ],
+      "deflections": [
+        "Sorry, I didn't follow. Could you ask that differently?",
+        "Yes, I suppose. What else do you want to know?"
+      ],
+      "max_turns": 15
+    }
+- path: notes.md
+  content: |+
+    # Check-in notes
+
+checks:
+- kind: sim_state
+  path: facts_uncovered
+  contains_all:
+  - what-worked
+  - problem
+  - change-request
+  - affected
+  - deadline
+  - trade-off
+  label: Understand the change fully
+- kind: sim_state
+  path: turns
+  max: 10
+  label: Finish in 10 questions
+- kind: sim_state
+  path: leading_questions
+  max: 1
+  label: At most one leading question
+- kind: file_contains
+  path: notes.md
+  expected: Marathi
+- kind: file_contains
+  path: notes.md
+  expected: '29'
+- kind: ai_rubric
+  rubric:
+  - Learner asked why before agreeing
+  - Change request records impact and a trade-off
+  min_score: 3
+hints:
+- 'Start broad: how did the first week go? Then ask what did not work.'
+- Meena only makes the request after she has told you the problem. Then ask how many, by when and what can move.
+- Don't promise anything during the questions. Your notes are where you write the impact.
+solution: solution/
+unlocks:
+- p5-w21-cap-008
+tags:
+- capstone
+- roleplay
+- change-request

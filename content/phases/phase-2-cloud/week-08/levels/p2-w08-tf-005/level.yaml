@@ -1,0 +1,141 @@
+id: p2-w08-tf-005
+title: "Fix drift after a console edit"
+phase: 2
+week: 8
+module: terraform-basics
+order: 5
+difficulty: 4
+estimated_minutes: 18
+type: terminal
+environment: terraform
+lesson: ../../lessons/02-terraform-basics.md
+task: "Someone opened SSH (port 22) to the whole internet from the AWS console while debugging. main.tf still says only 10.0.0.0/16 may connect. Use terraform plan to see the drift, apply to put the security group back, and add an output named sg_id."
+starter_files:
+  - path: main.tf
+    content: |
+      terraform {
+        required_providers {
+          aws = {
+            source  = "hashicorp/aws"
+            version = "~> 5.0"
+          }
+        }
+      }
+
+      provider "aws" {
+        region = "ap-south-1"
+      }
+
+      resource "aws_security_group" "web" {
+        name = "fde-web-sg"
+
+        ingress {
+          from_port   = 443
+          to_port     = 443
+          protocol    = "tcp"
+          cidr_blocks = ["0.0.0.0/0"]
+          description = "https"
+        }
+
+        ingress {
+          from_port   = 22
+          to_port     = 22
+          protocol    = "tcp"
+          cidr_blocks = ["10.0.0.0/16"]
+          description = "ssh from the office VPN"
+        }
+
+        tags = {
+          Name = "fde-web"
+        }
+      }
+
+      # TODO: add an output named sg_id
+  - path: terraform.tfstate
+    content: |
+      {
+        "version": 4,
+        "serial": 7,
+        "resources": [
+          {
+            "address": "aws_security_group.web",
+            "type": "aws_security_group",
+            "name": "web",
+            "attrs": {
+              "name": "fde-web-sg",
+              "description": "Managed by Terraform",
+              "vpc_id": null,
+              "tags": {
+                "Name": "fde-web"
+              },
+              "ingress": [
+                {
+                  "from_port": 443,
+                  "to_port": 443,
+                  "protocol": "tcp",
+                  "cidr_blocks": [
+                    "0.0.0.0/0"
+                  ],
+                  "description": "https"
+                },
+                {
+                  "from_port": 22,
+                  "to_port": 22,
+                  "protocol": "tcp",
+                  "cidr_blocks": [
+                    "10.0.0.0/16"
+                  ],
+                  "description": "ssh from the office VPN"
+                }
+              ],
+              "egress": [],
+              "id": "sg-0a1b2c3d4e5f60718",
+              "arn": "arn:aws:ec2:ap-south-1:123456789012:security-group/sg-0a1b2c3d4e5f60718"
+            },
+            "deps": []
+          }
+        ],
+        "pending_console_changes": {
+          "aws_security_group.web": {
+            "ingress": [
+              {
+                "from_port": 443,
+                "to_port": 443,
+                "protocol": "tcp",
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "https"
+              },
+              {
+                "from_port": 22,
+                "to_port": 22,
+                "protocol": "tcp",
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "temporary debugging"
+              }
+            ]
+          }
+        }
+      }
+checks:
+  - kind: "sim_state"
+    path: "resource:aws_security_group.web"
+    contains: "\"cidr_blocks\":[\"10.0.0.0/16\"]"
+    label: "SSH is limited to the VPN range again"
+  - kind: "sim_state"
+    path: "output:sg_id"
+    contains: "sg-0a1b2c3d4e5f60718"
+    label: "Output sg_id shows the group id"
+  - kind: "sim_state"
+    path: "plan_clean"
+    label: "Plan shows no changes"
+hints:
+  - "terraform plan starts with a note about changes made outside Terraform. Read which attribute moved."
+  - "Your configuration is the source of truth here. Do not copy the console value into main.tf."
+  - "Run terraform apply -auto-approve, then add output \"sg_id\" { value = aws_security_group.web.id } and apply again."
+solution: solution/
+unlocks: [p2-w08-tf-006]
+tags: [terraform, drift, security-group]

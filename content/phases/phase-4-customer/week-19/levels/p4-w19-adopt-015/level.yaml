@@ -1,0 +1,122 @@
+id: p4-w19-adopt-015
+title: Write the ROI one-pager for the CFO
+phase: 4
+week: 19
+module: roi-measurement
+order: 15
+difficulty: 4
+estimated_minutes: 30
+type: writing
+environment: writing
+lesson: ../../lessons/03-roi-measurement.md
+task: >-
+  Week 19 checkpoint. Kerala Gramin Co-operative Bank: 400 loan files a month, the tool saves 30
+  minutes per file, loaded cost ₹350 an hour. Tool running cost is ₹25,000 a month, one-time setup
+  is ₹1,80,000.
+
+
+  Write a one page memo for the CFO with headings: Summary, The numbers, Payback, Caveats,
+  Recommendation. Work out the monthly saving, the net benefit and the payback in months.
+starter_files:
+  - path: answer.md
+    content: |
+      # Write the ROI one-pager for the CFO
+
+      ## Summary
+      <!-- The result up front. -->
+
+      ## The numbers
+      <!-- Show the working. -->
+
+      ## Payback
+      <!-- Setup divided by net benefit. -->
+
+      ## Caveats
+      <!-- Two honest limits. -->
+
+      ## Recommendation
+      <!-- The ask. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Summary'
+  - kind: file_contains
+    path: answer.md
+    expected: '## The numbers'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Payback'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Caveats'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Recommendation'
+  - kind: sim_state
+    path: word_count
+    min: 100
+    max: 367
+  - kind: sim_state
+    path: section:Summary
+    min_words: 20
+    contains_any:
+      - payback
+      - months
+  - kind: sim_state
+    path: section:The numbers
+    min_words: 30
+    contains_all:
+      - 200 hours
+  - kind: sim_state
+    path: section:Payback
+    min_words: 12
+    contains_any:
+      - 4 months
+  - kind: sim_state
+    path: section:Caveats
+    min_words: 30
+    contains_any:
+      - assume
+      - cautious
+      - if
+  - kind: sim_state
+    path: section:Recommendation
+    min_words: 15
+    contains_any:
+      - approve
+      - recommend
+  - kind: file_contains
+    path: answer.md
+    expected: 70,?000
+    is_regex: true
+    label: Monthly saving is ₹70,000
+  - kind: file_contains
+    path: answer.md
+    expected: 45,?000
+    is_regex: true
+    label: Net benefit is ₹45,000
+  - kind: file_contains
+    path: answer.md
+    expected: 4 months
+  - kind: checklist
+    label: Self-review
+    items:
+      - A non-technical person can follow it
+      - Every number has a source or is marked as an assumption
+      - It ends with a clear next step
+  - kind: ai_rubric
+    rubric:
+      - Clear and plain language for the audience
+      - Specific, believable detail
+      - Honest about limits
+      - Includes a cautious case
+    min_score: 3
+hints:
+  - 200 hours × ₹350 = ₹70,000. Take off the ₹25,000 running cost to get the net benefit.
+  - Payback = one-time setup ÷ net monthly benefit.
+solution: solution/
+unlocks: []
+tags:
+  - roi
+  - checkpoint
+mobile_compatible: true

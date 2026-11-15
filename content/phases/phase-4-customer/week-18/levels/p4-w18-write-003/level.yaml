@@ -1,0 +1,87 @@
+id: p4-w18-write-003
+title: Write the rollout and rollback plan
+phase: 4
+week: 18
+module: design-docs
+order: 3
+difficulty: 3
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/01-design-docs.md
+task: >-
+  Sunrise Clinics (eight clinics, Hyderabad) will start sending WhatsApp reminders to patients. This
+  touches live patient bookings.
+
+
+  Write three sections: **Rollout** (stages and who), **Rollback** (how to switch off in minutes,
+  and who decides) and **Monitoring** (what you watch and the number that triggers a rollback).
+starter_files:
+  - path: answer.md
+    content: |
+      # Write the rollout and rollback plan
+
+      ## Rollout
+      <!-- Stages, clinics, dates. -->
+
+      ## Rollback
+      <!-- How to stop, how fast, who decides. -->
+
+      ## Monitoring
+      <!-- Metrics and the trigger number. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Rollout'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Rollback'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Monitoring'
+  - kind: sim_state
+    path: word_count
+    min: 88
+    max: 323
+  - kind: sim_state
+    path: section:Rollout
+    min_words: 25
+    contains_any:
+      - week
+      - clinic
+  - kind: sim_state
+    path: section:Rollback
+    min_words: 25
+    contains_any:
+      - switch off
+      - stop
+      - pause
+      - minutes
+  - kind: sim_state
+    path: section:Monitoring
+    min_words: 25
+    contains_any:
+      - '%'
+      - complaint
+  - kind: checklist
+    label: Self-review
+    items:
+      - A busy reader can find the main point in the first two lines
+      - Every number has a source or is marked as an assumption
+      - I removed jargon the customer would not use
+  - kind: ai_rubric
+    rubric:
+      - Clear and concise for the intended reader
+      - Specific numbers and decisions, not vague claims
+      - Honest about risks and trade-offs
+    min_score: 3
+hints:
+  - Rollback should say how fast you can stop and who has the right to press stop.
+  - Pick one number that triggers a pause, such as an opt-out rate.
+solution: solution/
+unlocks:
+- p4-w18-write-004
+tags:
+  - design-doc
+  - rollback
+mobile_compatible: true

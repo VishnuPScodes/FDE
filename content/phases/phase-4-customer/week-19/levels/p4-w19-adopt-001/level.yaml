@@ -1,0 +1,111 @@
+id: p4-w19-adopt-001
+title: Write a five-beat demo script
+phase: 4
+week: 19
+module: demo-storytelling
+order: 1
+difficulty: 3
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/01-demo-storytelling.md
+task: >-
+  You will demo the loan file checker to the branch manager and three loan officers at Kerala Gramin
+  Co-operative Bank. Today an officer needs 45 minutes per file. With the tool it takes about 15.
+
+
+  Write a script with five headings: Hook, Before, Live moment, After, Ask. Keep it under ten
+  minutes of speaking.
+starter_files:
+  - path: answer.md
+    content: |
+      # Write a five-beat demo script
+
+      ## Hook
+      <!-- The pain in their words. -->
+
+      ## Before
+      <!-- Today, with real numbers. -->
+
+      ## Live moment
+      <!-- One real case, on their data. -->
+
+      ## After
+      <!-- Same task, new time. -->
+
+      ## Ask
+      <!-- One clear next step. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Hook'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Before'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Live moment'
+  - kind: file_contains
+    path: answer.md
+    expected: '## After'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Ask'
+  - kind: sim_state
+    path: word_count
+    min: 83
+    max: 306
+  - kind: sim_state
+    path: section:Hook
+    min_words: 12
+    contains_any:
+      - file
+      - officer
+  - kind: sim_state
+    path: section:Before
+    min_words: 15
+    contains_any:
+      - 45 minutes
+      - '400'
+  - kind: sim_state
+    path: section:Live moment
+    min_words: 20
+    contains_any:
+      - your own
+      - real
+      - live
+  - kind: sim_state
+    path: section:After
+    min_words: 12
+    contains_any:
+      - 15 minutes
+      - minutes
+  - kind: sim_state
+    path: section:Ask
+    min_words: 10
+    contains_any:
+      - pilot
+      - week
+      - next
+  - kind: checklist
+    label: Self-review
+    items:
+      - A non-technical person can follow it
+      - Every number has a source or is marked as an assumption
+      - It ends with a clear next step
+  - kind: ai_rubric
+    rubric:
+      - Clear and plain language for the audience
+      - Specific, believable detail
+      - Honest about limits
+    min_score: 3
+hints:
+  - Use the customer's own file in the live moment, not made up data.
+  - The Ask should be one small, dated step, such as a four week pilot.
+solution: solution/
+unlocks:
+- p4-w19-adopt-002
+tags:
+  - demo
+  - script
+mobile_compatible: true

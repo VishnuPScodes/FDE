@@ -1,0 +1,38 @@
+id: p3-w13-agent-013
+title: Stop an agent that repeats the same tool call
+phase: 3
+week: 13
+module: agent-loops
+order: 12
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/02-agent-loops.md
+task: |
+  A Pune insurance agent keeps calling `search_orders` with the same arguments, hoping for a different answer. A step limit stops it eventually, but it burns tokens first. Catch the repeat early.
+
+  In `loops.py`, write three functions.
+
+  `call_key(call)` returns a tuple `(name, arguments_as_json)`. Two calls with the same tool and the same arguments, in any key order, must give the same key. A missing or `None` `arguments` counts as `{}`.
+
+  `is_looping(calls, window=3)` returns `True` when the last `window` calls all have the same key. Return `False` when there are fewer than `window` calls. Raise `ValueError` if `window` is below 2.
+
+  `loop_message(call, window=3)` returns exactly: `"stopped: search_orders was called 3 times in a row with the same arguments. Try a different approach or ask the user."` (use the real tool name and window).
+starter_files:
+  - path: loops.py
+  - path: test_loops.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_loops.py
+    label: Loop detection tests pass
+hints:
+  - "`json.dumps(arguments, sort_keys=True)` gives the same text for the same data, whatever the key order."
+  - "Slice the last `window` calls with `calls[-window:]`, build their keys, and check that every key equals the first."
+  - "Use `call.get(\"arguments\") or {}` so both a missing key and `None` become an empty dict."
+feedback:
+  - when: { stdout_contains: "test_different_arguments_are_progress" }
+    message: Compare the arguments too, not just the tool name. Looking up different customers is progress, not a loop.
+solution: solution/
+unlocks: [p3-w13-agent-014]
+tags: [agents, agent-loop, loop-detection, insurance]

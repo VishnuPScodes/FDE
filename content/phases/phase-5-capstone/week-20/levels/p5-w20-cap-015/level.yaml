@@ -1,0 +1,84 @@
+id: p5-w20-cap-015
+title: Lint your scope document
+phase: 5
+week: 20
+module: capstone-scoping
+order: 7
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/03-scope-on-one-page.md
+task: Before you send the scope for signing, check it with code. Implement `missing_sections` and `metric_ok` in `scopecheck.py`. Headings only count when they start a line with `#`, and a metric needs both a number and a time window. The required headings match the one-page scope template you fill in next. Run `test_scopecheck.py`.
+starter_files:
+- path: scopecheck.py
+  content: |
+    REQUIRED = ["Problem", "Success Metric", "MVP", "Out of Scope", "Timeline", "Data Handling", "Sign-off"]
+
+
+    def missing_sections(doc: str) -> list[str]:
+        """Return the REQUIRED section names that have no markdown heading in doc.
+        A heading is a line starting with one or more '#'. Compare ignoring case and
+        surrounding spaces. Return names in REQUIRED order."""
+        pass
+
+
+    def metric_ok(text: str) -> bool:
+        """True if the text has a number and a time window (a word containing
+        week, month or day, in any case)."""
+        pass
+- path: test_scopecheck.py
+  content: |
+    from scopecheck import missing_sections, metric_ok
+
+    FULL = """# Scope
+    ## Problem
+    x
+    ### success metric
+    x
+    ## MVP
+    x
+    ## Out of Scope
+    x
+    ##  Timeline  
+    x
+    ## Data Handling
+    x
+    ## Sign-off
+    x
+    """
+
+
+    def test_all_present():
+        assert missing_sections(FULL) == []
+
+
+    def test_missing_in_order():
+        doc = "## Problem\n## Sign-off\n"
+        assert missing_sections(doc) == ["Success Metric", "MVP", "Out of Scope", "Timeline", "Data Handling"]
+
+
+    def test_text_mention_is_not_a_heading():
+        doc = FULL.replace("## Data Handling", "We follow the Data Handling rules here")
+        assert missing_sections(doc) == ["Data Handling"]
+
+
+    def test_metric():
+        assert metric_ok("No-shows under 10% over 4 weeks")
+        assert metric_ok("Calls drop to 1 hour a Day")
+        assert not metric_ok("No-shows go down a lot over time")
+        assert not metric_ok("Under 10%")
+checks:
+- kind: pytest_passes
+  run: pytest -q test_scopecheck.py
+hints:
+- 'Collect the heading texts into a set first: strip the leading # characters and spaces, then lower-case them.'
+- 'Mentioning a section name in a sentence must not count. Only lines that start with # are headings.'
+- For metric_ok, check for any digit and for any of the words week, month or day.
+solution: solution/
+unlocks:
+- p5-w20-cap-009
+tags:
+- capstone
+- python
+- scope

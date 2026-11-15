@@ -1,0 +1,86 @@
+id: p3-w12-eval-010
+title: 'Write the judge prompt and parse its reply'
+phase: 3
+week: 12
+module: llm-as-judge
+order: 1
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/03-llm-as-judge.md
+task: |
+  For open answers ("explain our refund policy") there is no single right string. A second model grades the answer against a rubric.
+  That is an LLM-as-judge. You will not call a real model here. You only build the prompt and parse the reply.
+
+  Write `build_judge_prompt(rubric, question, answer)` returning exactly these lines joined by `"\n"`:
+
+  ```
+  You are a strict grader. Score the answer from 1 to 5.
+  Rubric:
+  - <each rubric item on its own line>
+  Question: <question>
+  Answer: <answer>
+  Reply exactly as:
+  SCORE: <1-5>
+  REASON: <one sentence>
+  ```
+
+  Write `parse_judge(raw)`: find `SCORE:` followed by a digit 1 to 5 (case-insensitive, extra spaces allowed). Return
+  `{"score": int, "reason": str}`, where `reason` is the text after `REASON:` stripped (or `""` if missing).
+  If there is no valid score (for example `SCORE: 9` or no score at all), return `None`.
+starter_files:
+- path: main.py
+  content: |
+    import re
+
+
+    def build_judge_prompt(rubric, question, answer):
+        pass
+
+
+    def parse_judge(raw):
+        pass
+- path: test_main.py
+  content: |
+    from main import build_judge_prompt, parse_judge
+
+
+    def test_prompt():
+        p = build_judge_prompt(["Mentions T+1", "Polite tone"], "When is my refund?", "Next working day.")
+        assert p == (
+            "You are a strict grader. Score the answer from 1 to 5.\n"
+            "Rubric:\n- Mentions T+1\n- Polite tone\n"
+            "Question: When is my refund?\nAnswer: Next working day.\n"
+            "Reply exactly as:\nSCORE: <1-5>\nREASON: <one sentence>"
+        )
+
+
+    def test_parse_ok():
+        assert parse_judge("SCORE: 4\nREASON: Covers T+1 but is curt.") == {"score": 4, "reason": "Covers T+1 but is curt."}
+
+
+    def test_parse_loose_format():
+        assert parse_judge("Sure!\nscore:   5\nreason: perfect") == {"score": 5, "reason": "perfect"}
+        assert parse_judge("SCORE: 3") == {"score": 3, "reason": ""}
+
+
+    def test_parse_invalid():
+        assert parse_judge("SCORE: 9\nREASON: x") is None
+        assert parse_judge("I think it is good.") is None
+        assert parse_judge("SCORE: 12") is None
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Build a list of lines, then join them with a newline. Each rubric item gets a dash and a space in front.'
+- 'Search with a regex that has SCORE, optional spaces, one digit from 1 to 5, then a word boundary (backslash b). The boundary stops 12 from matching as 1.'
+solution: solution/
+unlocks:
+- p3-w12-eval-011
+tags:
+- evals
+- llm-judge
+- prompts
+mobile_compatible: false

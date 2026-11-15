@@ -1,0 +1,89 @@
+id: p5-w20-cap-006
+title: Write the problem statement
+phase: 5
+week: 20
+module: capstone-scoping
+order: 2
+difficulty: 2
+estimated_minutes: 25
+type: writing
+environment: writing
+lesson: ../../lessons/03-scope-on-one-page.md
+task: |-
+  Turn your discovery notes into a problem statement. It should be short enough to read aloud in one minute.
+
+  Fill in `answer.md`. **Current Cost** needs a number. **Success Metric** needs a target and a time window, for example "under 10% in four weeks".
+starter_files:
+- path: answer.md
+  content: |
+    # Problem statement
+
+    ## Problem
+
+
+    ## Who Feels It
+
+
+    ## Current Cost
+
+
+    ## Success Metric
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Problem'
+- kind: file_contains
+  path: answer.md
+  expected: '## Who Feels It'
+- kind: file_contains
+  path: answer.md
+  expected: '## Current Cost'
+- kind: file_contains
+  path: answer.md
+  expected: '## Success Metric'
+- kind: sim_state
+  path: word_count
+  min: 100
+  max: 400
+- kind: sim_state
+  path: section:Problem
+  min_words: 20
+- kind: sim_state
+  path: section:Who Feels It
+  min_words: 10
+- kind: sim_state
+  path: section:Current Cost
+  min_words: 15
+  contains_any:
+  - rs
+  - ₹
+  - hours
+  - '%'
+  - lakh
+  - minutes
+- kind: sim_state
+  path: section:Success Metric
+  min_words: 12
+  contains_any:
+  - week
+  - month
+  - days
+- kind: checklist
+  label: Self-review
+  items:
+  - I did not describe my solution in the Problem section
+  - My customer could say the success metric in their own words
+- kind: ai_rubric
+  rubric:
+  - Problem is specific and free of solution language
+  - Metric is measurable with a time window
+  min_score: 3
+hints:
+- The Problem section should not mention apps, bots or AI. Describe the pain only.
+- 'Add a time window to the metric: in two weeks, over a four-week pilot, by month end.'
+solution: solution/
+unlocks:
+- p5-w20-cap-007
+tags:
+- capstone
+- scoping

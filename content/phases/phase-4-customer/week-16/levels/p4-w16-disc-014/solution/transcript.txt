@@ -1,0 +1,4 @@
+Thank you for your time, Suresh. Can you walk me through where the policy data lives today?
+What does it take for an outside vendor to get access?
+What rules apply to the sensitive customer data?
+What happened the last time a vendor worked with your team?

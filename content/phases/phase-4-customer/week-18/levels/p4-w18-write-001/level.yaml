@@ -1,0 +1,122 @@
+id: p4-w18-write-001
+title: Write a one-page design doc
+phase: 4
+week: 18
+module: design-docs
+order: 1
+difficulty: 3
+estimated_minutes: 30
+type: writing
+environment: writing
+lesson: ../../lessons/01-design-docs.md
+task: >-
+  Kerala Gramin Co-operative Bank wants a tool that flags missing pages in loan files (400 files a
+  month, 45 minutes each, three officers). You agreed to a pilot at the Thrissur branch.
+
+
+  Write a design doc with six headings: Context, Goals, Non-goals, Proposed design, Alternatives
+  considered, Open questions.
+starter_files:
+  - path: answer.md
+    content: |
+      # Write a one-page design doc
+
+      ## Context
+      <!-- Problem, who feels it, why now. -->
+
+      ## Goals
+      <!-- Success with numbers. -->
+
+      ## Non-goals
+      <!-- What you will not do. At least two. -->
+
+      ## Proposed design
+      <!-- Plain steps, in order. -->
+
+      ## Alternatives considered
+      <!-- Two options and why not. -->
+
+      ## Open questions
+      <!-- What you still need answered. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Context'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Goals'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Non-goals'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Proposed design'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Alternatives considered'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Open questions'
+  - kind: sim_state
+    path: word_count
+    min: 155
+    max: 570
+  - kind: sim_state
+    path: section:Context
+    min_words: 25
+    contains_any:
+      - 45 minutes
+      - '400'
+  - kind: sim_state
+    path: section:Goals
+    min_words: 15
+    contains_any:
+      - minutes
+      - '%'
+  - kind: sim_state
+    path: section:Non-goals
+    min_words: 20
+    contains_any:
+      - not
+  - kind: sim_state
+    path: section:Proposed design
+    min_words: 30
+    contains_any:
+      - '->'
+      - →
+      - step
+      - first
+  - kind: sim_state
+    path: section:Alternatives considered
+    min_words: 30
+    contains_any:
+      - instead
+      - but
+      - because
+  - kind: sim_state
+    path: section:Open questions
+    min_words: 15
+    contains_any:
+      - '?'
+  - kind: checklist
+    label: Self-review
+    items:
+      - A busy reader can find the main point in the first two lines
+      - Every number has a source or is marked as an assumption
+      - I removed jargon the customer would not use
+  - kind: ai_rubric
+    rubric:
+      - Clear and concise for the intended reader
+      - Specific numbers and decisions, not vague claims
+      - Honest about risks and trade-offs
+    min_score: 3
+hints:
+  - Non-goals prevent arguments later. Write at least two, and make them real.
+  - For each alternative, say the cost or limit that ruled it out.
+solution: solution/
+unlocks:
+- p4-w18-write-002
+tags:
+  - design-doc
+  - writing
+mobile_compatible: true

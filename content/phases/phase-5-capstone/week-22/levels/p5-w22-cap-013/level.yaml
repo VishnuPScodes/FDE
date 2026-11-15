@@ -1,0 +1,85 @@
+id: p5-w22-cap-013
+title: Ask permission for a testimonial
+phase: 5
+week: 22
+module: capstone-case-study
+order: 3
+difficulty: 2
+estimated_minutes: 15
+type: writing
+environment: writing
+lesson: ../../lessons/03-case-study-and-sign-off.md
+task: |-
+  Write the short email asking your customer for a quote and for permission to publish results. Be explicit about what you will share, whether the clinic is named, and that she will see the draft first.
+
+  Show the before and after numbers so she can confirm them.
+starter_files:
+- path: answer.md
+  content: "Subject: \n\nHi Dr. Anjali,\n\n"
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: 'Subject:'
+- kind: sim_state
+  path: word_count
+  min: 70
+  max: 220
+- kind: sim_state
+  path: document
+  contains_any:
+  - permission
+  - consent
+  - okay to
+  - ok to
+- kind: sim_state
+  path: document
+  contains_any:
+  - named
+  - by name
+  - its name
+  - clinic name
+  - anonymous
+  - anonymised
+  - anonymized
+- kind: sim_state
+  path: document
+  contains_any:
+  - quote
+  - testimonial
+- kind: sim_state
+  path: document
+  contains_all:
+  - before
+  - after
+- kind: file_contains
+  path: answer.md
+  label: Shows the actual numbers
+  is_regex: true
+  expected: '\d'
+- kind: sim_state
+  path: document
+  contains_any:
+  - draft
+  - review
+  - see it first
+  - before it goes
+- kind: checklist
+  label: Self-review
+  items:
+  - She can say no or change the wording
+  - I never put words in her mouth
+- kind: ai_rubric
+  rubric:
+  - The email asks permission clearly and politely
+  - It says what will be published and lets her review the draft
+  min_score: 3
+hints:
+- 'Say what you will publish: the numbers, a quote, and whether the clinic is named.'
+- Offer to send the draft first. People agree faster when they can see what goes out.
+solution: solution/
+unlocks:
+- p5-w22-cap-007
+tags:
+- capstone
+- case-study
+- consent

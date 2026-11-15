@@ -1,0 +1,69 @@
+id: p2-w08-tf-006
+title: "Build a small stack"
+phase: 2
+week: 8
+module: terraform-basics
+order: 6
+difficulty: 4
+estimated_minutes: 25
+type: terminal
+environment: terraform
+lesson: ../../lessons/02-terraform-basics.md
+task: "Using the TODO notes in main.tf, create one S3 bucket per team with for_each, an IAM role named fde-app-role that EC2 can assume, a policy attachment, and an output named role_arn. Apply it all and finish with a clean plan."
+starter_files:
+  - path: main.tf
+    content: |
+      terraform {
+        required_providers {
+          aws = {
+            source  = "hashicorp/aws"
+            version = "~> 5.0"
+          }
+        }
+      }
+
+      provider "aws" {
+        region = "ap-south-1"
+      }
+
+      variable "teams" {
+        type    = list(string)
+        default = ["billing", "orders"]
+      }
+
+      # Build below:
+      #  1. one bucket per team, named fde-<team>-data (use for_each)
+      #  2. an IAM role named fde-app-role that EC2 can assume
+      #  3. an attachment of arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess to the role
+      #  4. an output named role_arn
+checks:
+  - kind: "sim_state"
+    path: "resources"
+    contains: "aws_s3_bucket.team[\"billing\"]"
+    label: "Billing bucket exists"
+  - kind: "sim_state"
+    path: "resources"
+    contains: "aws_s3_bucket.team[\"orders\"]"
+    label: "Orders bucket exists"
+  - kind: "sim_state"
+    path: "resource:aws_iam_role.app"
+    contains: "ec2.amazonaws.com"
+    label: "Role trusts EC2"
+  - kind: "sim_state"
+    path: "resources"
+    contains: "aws_iam_role_policy_attachment.s3_read"
+    label: "Policy is attached"
+  - kind: "sim_state"
+    path: "output:role_arn"
+    contains: "arn:aws:iam::123456789012:role/fde-app-role"
+    label: "Output shows the role ARN"
+  - kind: "sim_state"
+    path: "plan_clean"
+    label: "Plan shows no changes"
+hints:
+  - "for_each needs a set or map. Wrap the list: for_each = toset(var.teams). Inside the block use each.key."
+  - "assume_role_policy must be JSON text. jsonencode({ ... }) turns an HCL object into JSON."
+  - "Attach with role = aws_iam_role.app.name and the AmazonS3ReadOnlyAccess policy ARN."
+solution: solution/
+unlocks: [p2-w08-k8s-001]
+tags: [terraform, for_each, iam]

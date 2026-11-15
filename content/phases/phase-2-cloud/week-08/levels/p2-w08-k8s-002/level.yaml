@@ -1,0 +1,69 @@
+id: p2-w08-k8s-002
+title: "Expose pods with a Service"
+phase: 2
+week: 8
+module: kubernetes-basics
+order: 2
+difficulty: 2
+estimated_minutes: 15
+type: terminal
+environment: kubernetes
+lesson: ../../lessons/03-kubernetes-basics.md
+task: "The orders Deployment and its Service are written, but the Service sends traffic nowhere. Fix service.yaml so it finds the pods and reaches the container port, apply both files, and make curl http://orders/orders return the order list."
+starter_files:
+  - path: deployment.yaml
+    content: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: orders
+      spec:
+        replicas: 2
+        selector:
+          matchLabels:
+            app: orders
+        template:
+          metadata:
+            labels:
+              app: orders
+          spec:
+            containers:
+              - name: orders
+                image: ghcr.io/fde-labs/orders-api:1.0.0
+                ports:
+                  - containerPort: 8080
+                readinessProbe:
+                  httpGet:
+                    path: /healthz
+                    port: 8080
+  - path: service.yaml
+    content: |
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: orders
+      spec:
+        selector:
+          app: order
+        ports:
+          - port: 80
+            targetPort: 8080
+checks:
+  - kind: "sim_state"
+    path: "object"
+    kind_name: "Service"
+    name: "orders"
+    contains: "\"endpoints\":2"
+    label: "Service has two endpoints"
+  - kind: "sim_state"
+    path: "http"
+    url: "http://orders/orders"
+    contains: "ORD-1042"
+    label: "curl returns the order list"
+hints:
+  - "Run kubectl describe service orders and look at Endpoints. <none> means the selector matches no pods."
+  - "The Service selector must equal the pod label app: orders."
+  - "targetPort is the port the container listens on. This image listens on 8080."
+solution: solution/
+unlocks: [p2-w08-k8s-003]
+tags: [kubernetes, service, selectors]

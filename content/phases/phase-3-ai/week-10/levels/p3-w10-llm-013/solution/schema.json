@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "invoice_number": { "type": "string" },
+    "gstin": { "type": "string", "minLength": 15, "maxLength": 15 },
+    "invoice_date": { "type": "string" },
+    "total_inr": { "type": "number" },
+    "line_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string" },
+          "amount_inr": { "type": "number" }
+        },
+        "required": ["description", "amount_inr"]
+      }
+    }
+  },
+  "required": ["invoice_number", "gstin", "total_inr"]
+}

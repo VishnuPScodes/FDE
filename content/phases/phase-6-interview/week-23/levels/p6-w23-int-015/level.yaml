@@ -1,0 +1,135 @@
+id: p6-w23-int-015
+title: Build your eight-story bank
+phase: 6
+week: 23
+module: story-bank
+order: 3
+difficulty: 3
+estimated_minutes: 60
+type: writing
+environment: writing
+lesson: ../../lessons/03-customer-sims-and-stories.md
+task: |-
+  Week 23 checkpoint: your story bank covers all eight themes interviewers ask about.
+
+  For each heading in `answer.md`, write a short STAR summary (3-5 sentences) and the project it comes from. **Measurable Impact** must include a number. **Ethical Call** should be a real choice where the easy option was wrong. Keep this file; you will use it all through your job search.
+starter_files:
+- path: answer.md
+  content: |
+    # Story bank
+
+    ## Ambiguity
+
+
+    ## Failure
+
+
+    ## Pushback on a Customer
+
+
+    ## Shipped Under Pressure
+
+
+    ## Learned a Domain Fast
+
+
+    ## Cross-team Conflict
+
+
+    ## Ethical Call
+
+
+    ## Measurable Impact
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Ambiguity'
+- kind: file_contains
+  path: answer.md
+  expected: '## Failure'
+- kind: file_contains
+  path: answer.md
+  expected: '## Pushback on a Customer'
+- kind: file_contains
+  path: answer.md
+  expected: '## Shipped Under Pressure'
+- kind: file_contains
+  path: answer.md
+  expected: '## Learned a Domain Fast'
+- kind: file_contains
+  path: answer.md
+  expected: '## Cross-team Conflict'
+- kind: file_contains
+  path: answer.md
+  expected: '## Ethical Call'
+- kind: file_contains
+  path: answer.md
+  expected: '## Measurable Impact'
+- kind: sim_state
+  path: word_count
+  min: 300
+  max: 1200
+- kind: sim_state
+  path: section:Ambiguity
+  min_words: 25
+- kind: sim_state
+  path: section:Failure
+  min_words: 25
+- kind: sim_state
+  path: section:Pushback on a Customer
+  min_words: 25
+- kind: sim_state
+  path: section:Shipped Under Pressure
+  min_words: 25
+- kind: sim_state
+  path: section:Learned a Domain Fast
+  min_words: 25
+- kind: sim_state
+  path: section:Cross-team Conflict
+  min_words: 25
+- kind: sim_state
+  path: section:Ethical Call
+  min_words: 25
+- kind: sim_state
+  path: section:Measurable Impact
+  min_words: 25
+- kind: sim_state
+  path: section:Measurable Impact
+  contains_any:
+  - '%'
+  - hours
+  - rs
+  - ₹
+  - lakh
+  - minutes
+  - x faster
+- kind: sim_state
+  path: section:Pushback on a Customer
+  contains_any:
+  - customer
+  - client
+  - owner
+  - cfo
+  - manager
+- kind: checklist
+  label: Self-review
+  items:
+  - I have said every story aloud at least once
+  - At least three different projects appear in my bank
+  - No story blames someone else for the problem
+- kind: ai_rubric
+  rubric:
+  - Stories are specific and varied
+  - Results are concrete
+  min_score: 3
+hints:
+- One project can supply several stories, but use at least three projects across the bank.
+- Pushback means you disagreed with a customer politely and explained why. Show the outcome.
+- 'Measurable Impact needs a number: percent, hours, rupees or users.'
+solution: solution/
+unlocks:
+  - p6-w24-mock-001
+tags:
+- interview
+- behavioural
+- star

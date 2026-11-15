@@ -1,0 +1,85 @@
+id: p5-w20-cap-002
+title: Shortlist customers and write outreach
+phase: 5
+week: 20
+module: capstone-discovery
+order: 2
+difficulty: 2
+estimated_minutes: 25
+type: writing
+environment: writing
+lesson: ../../lessons/01-find-your-customer.md
+task: |-
+  List three possible customers near you. Pick one and explain why. Then write the real message you will send them.
+
+  Fill in `answer.md`:
+
+  1. **Shortlist**: three options, each with the pain you think they have.
+  2. **Chosen Customer**: who you picked and why (weekly pain, data access, time to meet).
+  3. **Outreach Message**: the exact WhatsApp or email text. Ask for a short meeting.
+
+  Then send the message for real.
+starter_files:
+- path: answer.md
+  content: |
+    # Customer shortlist
+
+    ## Shortlist
+
+
+    ## Chosen Customer
+
+
+    ## Outreach Message
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Shortlist'
+- kind: file_contains
+  path: answer.md
+  expected: '## Chosen Customer'
+- kind: file_contains
+  path: answer.md
+  expected: '## Outreach Message'
+- kind: sim_state
+  path: word_count
+  min: 120
+  max: 600
+- kind: sim_state
+  path: section:Shortlist
+  min_words: 30
+- kind: sim_state
+  path: section:Chosen Customer
+  min_words: 25
+  contains_any:
+  - because
+  - since
+  - why
+- kind: sim_state
+  path: section:Outreach Message
+  min_words: 40
+  contains_any:
+  - minutes
+  - meet
+  - visit
+  - call
+- kind: checklist
+  label: Self-review
+  items:
+  - I listed three real people or places I can reach this week
+  - My message asks for a small, specific amount of time
+  - I actually sent the message
+- kind: ai_rubric
+  rubric:
+  - Shortlist names real, reachable customers with a specific pain
+  - Message is short, polite and makes a clear ask
+  min_score: 3
+hints:
+- 'Pick people you can reach in one message: family business, college office, a local clinic or NGO.'
+- Your message should name their pain, ask for 20-30 minutes and say it costs them nothing.
+solution: solution/
+unlocks:
+- p5-w20-cap-003
+tags:
+- capstone
+- outreach

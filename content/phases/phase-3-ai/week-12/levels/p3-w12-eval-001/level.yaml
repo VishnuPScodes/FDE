@@ -1,0 +1,76 @@
+id: p3-w12-eval-001
+title: 'Load a golden dataset from JSONL'
+phase: 3
+week: 12
+module: golden-datasets
+order: 1
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/01-golden-datasets.md
+task: |
+  A golden dataset is a file of questions with the right answers, kept in JSONL: one JSON object per line.
+  Flipkart's support team keeps one with lines like
+  `{"id": "q1", "question": "...", "relevant_ids": ["returns#2"], "tags": ["returns"]}`.
+
+  Write `load_golden(text)`:
+
+  - Split `text` into lines, strip each, and skip blank lines.
+  - Parse each line with `json.loads`. If a line is not valid JSON, raise `ValueError(f"line {n}: invalid JSON")`.
+  - Every row must have the keys `id`, `question` and `relevant_ids`. If any are missing, raise
+    `ValueError(f"line {n}: missing {names}")` where `names` is the sorted list of missing keys, for example `['question']`.
+  - `n` is the 1-based line number in the original text, counting blank lines.
+  - Return the list of rows.
+starter_files:
+- path: main.py
+  content: |
+    import json
+
+    REQUIRED = ("id", "question", "relevant_ids")
+
+
+    def load_golden(text):
+        pass
+- path: test_main.py
+  content: |
+    import pytest
+    from main import load_golden
+
+    GOOD = """{"id": "q1", "question": "How long do refunds take?", "relevant_ids": ["upi#3"]}
+
+    {"id": "q2", "question": "Can I cancel my order?", "relevant_ids": ["orders#1"], "tags": ["orders"]}
+    """
+
+
+    def test_loads_rows_and_skips_blanks():
+        rows = load_golden(GOOD)
+        assert [r["id"] for r in rows] == ["q1", "q2"]
+        assert rows[1]["tags"] == ["orders"]
+
+
+    def test_bad_json_reports_line_number():
+        text = '{"id": "q1", "question": "a", "relevant_ids": []}\n\n{oops}\n'
+        with pytest.raises(ValueError, match="line 3: invalid JSON"):
+            load_golden(text)
+
+
+    def test_missing_keys():
+        with pytest.raises(ValueError, match=r"line 1: missing \['question'\]"):
+            load_golden('{"id": "q1", "relevant_ids": []}')
+        with pytest.raises(ValueError, match=r"line 1: missing \['id', 'relevant_ids'\]"):
+            load_golden('{"question": "hi"}')
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- '`enumerate(text.splitlines(), 1)` gives you 1-based line numbers even when you skip blank lines.'
+- 'Catch `json.JSONDecodeError` and raise your own `ValueError` with the line number. Build the missing list with `sorted(k for k in REQUIRED if k not in row)`.'
+solution: solution/
+unlocks:
+- p3-w12-eval-002
+tags:
+- evals
+- jsonl
+mobile_compatible: false

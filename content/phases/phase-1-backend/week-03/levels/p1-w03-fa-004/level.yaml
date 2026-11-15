@@ -1,0 +1,61 @@
+id: p1-w03-fa-004
+title: Add query parameters with limits
+phase: 1
+week: 3
+module: fastapi-basics
+order: 4
+difficulty: 3
+estimated_minutes: 12
+type: code
+environment: python
+lesson: ../../lessons/03-fastapi-in-process.md
+task: "Finish `GET /items` so it accepts a `limit` query parameter that defaults to 2. Return the first `limit` items as `{\"items\": [...]}`. FastAPI should reject a `limit` below 1 with status 422."
+starter_files:
+  - path: main.py
+    content: |
+      from fastapi import FastAPI
+
+      app = FastAPI()
+      ITEMS = [
+          {"id": 1, "name": "Field Kit"},
+          {"id": 2, "name": "Sensor"},
+          {"id": 3, "name": "Gateway"},
+      ]
+
+      @app.get("/items")
+      async def list_items():
+          return {"items": ITEMS}
+  - path: test_api.py
+    content: |
+      import pytest
+      from httpx import ASGITransport, AsyncClient
+      from main import app
+
+      @pytest.mark.asyncio
+      async def test_default_limit():
+          async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+              response = await client.get("/items")
+          assert response.status_code == 200
+          assert len(response.json()["items"]) == 2
+
+      @pytest.mark.asyncio
+      async def test_custom_limit():
+          async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+              response = await client.get("/items", params={"limit": 3})
+          assert [item["id"] for item in response.json()["items"]] == [1, 2, 3]
+
+      @pytest.mark.asyncio
+      async def test_limit_below_one_is_rejected():
+          async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+              response = await client.get("/items", params={"limit": 0})
+          assert response.status_code == 422
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_api.py
+    expected: 0
+    label: Query parameter tests pass
+hints:
+  - A function argument that is not in the path becomes a query parameter, and a default value makes it optional.
+  - 'Import `Query` from `fastapi` and declare `limit: int = Query(2, ge=1)`. Slice the list with `ITEMS[:limit]`.'
+unlocks: [p1-w03-fa-005]
+tags: [fastapi, query-parameters, validation]

@@ -1,0 +1,125 @@
+id: p6-w24-mock-015
+title: Write your project README
+phase: 6
+week: 24
+module: portfolio-polish
+order: 15
+difficulty: 4
+estimated_minutes: 40
+type: writing
+environment: writing
+lesson: ../../lessons/02-portfolio-polish.md
+task: >-
+  Final checkpoint. Write the README for your best project from this course. You can describe the
+  capstone or any earlier project. Use headings What it does, Who it is for, Results, How to run,
+  What I would do next.
+
+
+  Be honest about whether results come from real use, a pilot or test data. Do not include real
+  customer data or keys.
+starter_files:
+  - path: answer.md
+    content: |
+      # Write your project README
+
+      ## What it does
+      <!-- One or two plain sentences. -->
+
+      ## Who it is for
+      <!-- The user and customer. -->
+
+      ## Results
+      <!-- Numbers, with their source. -->
+
+      ## How to run
+      <!-- Three to five commands. -->
+
+      ## What I would do next
+      <!-- Two honest next steps. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## What it does'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Who it is for'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Results'
+  - kind: file_contains
+    path: answer.md
+    expected: '## How to run'
+  - kind: file_contains
+    path: answer.md
+    expected: '## What I would do next'
+  - kind: sim_state
+    path: word_count
+    min: 100
+    max: 365
+  - kind: sim_state
+    path: section:What it does
+    min_words: 20
+    contains_any:
+      - helps
+      - reads
+      - checks
+      - sends
+  - kind: sim_state
+    path: section:Who it is for
+    min_words: 15
+    contains_any:
+      - officer
+      - manager
+      - clinic
+      - team
+  - kind: sim_state
+    path: section:Results
+    min_words: 25
+    contains_any:
+      - '%'
+      - minutes
+      - test
+      - pilot
+  - kind: sim_state
+    path: section:How to run
+    min_words: 12
+    contains_any:
+      - pnpm
+      - npm
+      - pip
+      - python
+      - run
+  - kind: sim_state
+    path: section:What I would do next
+    min_words: 20
+    contains_any:
+      - next
+      - would
+      - add
+  - kind: sim_state
+    path: word_count
+    max: 500
+  - kind: checklist
+    label: Self-review
+    items:
+      - A stranger could understand the project from the first paragraph
+      - Results say where the numbers came from
+      - No real customer data, names or keys appear
+      - The run steps work on a fresh machine
+  - kind: ai_rubric
+    rubric:
+      - Clear for a hiring manager in thirty seconds
+      - Honest about results and sources
+      - Run steps are copyable
+    min_score: 3
+hints:
+  - Start with what it does, not with how to install it.
+  - 'Label results honestly: real use, pilot or test data.'
+  - Check that the run steps work on a fresh copy of the project.
+solution: solution/
+unlocks: []
+tags:
+  - portfolio
+  - readme
+  - checkpoint
+mobile_compatible: true

@@ -1,0 +1,8 @@
+{
+  "history": [
+    "metrics> histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{service=\"invoices\"}[5m])))"
+  ],
+  "answers": {
+    "p95_seconds": "9.6"
+  }
+}

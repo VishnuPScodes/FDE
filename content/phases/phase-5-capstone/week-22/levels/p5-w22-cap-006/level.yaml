@@ -1,0 +1,139 @@
+id: p5-w22-cap-006
+title: Collect feedback and a testimonial
+phase: 5
+week: 22
+module: capstone-case-study
+order: 1
+difficulty: 2
+estimated_minutes: 15
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/03-case-study-and-sign-off.md
+task: |-
+  Practise the feedback conversation before you have it with your real customer. Dr. Anjali has used the reminder system for four weeks.
+
+  In at most 8 questions, learn what changed for her, the result she sees, what surprised her, what she would improve and whether she would recommend it. Then ask permission to quote her by name.
+
+  In `notes.md`, write a one or two sentence quote you can use, and note the permission.
+starter_files:
+- path: persona.json
+  content: |
+    {
+      "name": "Dr. Anjali Sharma",
+      "role": "Owner",
+      "company": "Sharma Physiotherapy, Kothrud, Pune",
+      "opening": "Priya, good to see you. You wanted some feedback for your write-up?",
+      "facts": [
+        {
+          "id": "what-changed",
+          "triggers": [
+            "what changed",
+            "what has changed",
+            "different now",
+            "difference"
+          ],
+          "reply": "Meena spends her mornings with patients now, not on the phone. That alone is worth it."
+        },
+        {
+          "id": "numbers",
+          "triggers": [
+            "numbers",
+            "how many",
+            "no-show",
+            "no show",
+            "results"
+          ],
+          "reply": "Your report says no-shows halved. I can feel it. The 10 am slots are full now."
+        },
+        {
+          "id": "surprise",
+          "triggers": [
+            "surprise",
+            "unexpected",
+            "didn't expect",
+            "did not expect"
+          ],
+          "reply": "I didn't expect older patients to like it. Once it was in Marathi, they started replying faster than the young ones."
+        },
+        {
+          "id": "improve",
+          "triggers": [
+            "improve",
+            "better",
+            "next",
+            "missing",
+            "wish"
+          ],
+          "reply": "I'd like a weekly summary on Monday morning. Which therapist had the most cancellations."
+        },
+        {
+          "id": "recommend",
+          "triggers": [
+            "recommend",
+            "other clinic",
+            "another clinic",
+            "tell others",
+            "tell another"
+          ],
+          "reply": "I'd tell any small clinic to try it. It's simple, and it uses what we already have."
+        },
+        {
+          "id": "permission",
+          "triggers": [
+            "quote",
+            "permission",
+            "use your name",
+            "publish"
+          ],
+          "requires": [
+            "what-changed"
+          ],
+          "reply": "Yes, you can use my name and the clinic's name. Please don't show patient details."
+        }
+      ],
+      "deflections": [
+        "Yes, it was good. What else?",
+        "I'm not sure I understand. Ask me something specific about the clinic."
+      ],
+      "max_turns": 15
+    }
+- path: notes.md
+  content: |+
+    # Feedback notes
+
+checks:
+- kind: sim_state
+  path: facts_uncovered
+  contains_all:
+  - what-changed
+  - numbers
+  - surprise
+  - improve
+  - recommend
+  - permission
+  label: Collect complete feedback
+- kind: sim_state
+  path: turns
+  max: 8
+- kind: sim_state
+  path: leading_questions
+  max: 1
+- kind: file_contains
+  path: notes.md
+  expected: permission
+- kind: ai_rubric
+  rubric:
+  - Questions invite honest feedback, not praise
+  - Quote is in the customer's words
+  min_score: 3
+hints:
+- Ask 'What changed for you?' before you ask about numbers.
+- Ask what she would improve. Criticism makes a testimonial believable.
+- Permission questions only make sense after she has said something worth quoting.
+solution: solution/
+unlocks:
+- p5-w22-cap-014
+tags:
+- capstone
+- testimonial
+- roleplay

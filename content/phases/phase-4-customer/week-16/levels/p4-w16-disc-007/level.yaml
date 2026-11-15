@@ -1,0 +1,47 @@
+id: p4-w16-disc-007
+title: Find the root cause
+phase: 4
+week: 16
+module: discovery-interviews
+order: 5
+difficulty: 2
+estimated_minutes: 6
+type: quiz
+environment: quiz
+lesson: ../../lessons/03-five-whys-and-shadowing.md
+task: |
+  A Pune clinic has many missed appointments. Use five whys thinking to pick the answers.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: >-
+      Patients miss appointments → they forget → reminders arrive the night before at 11 pm → the
+      SMS job runs after the billing batch → the billing batch was moved last year. What is the root
+      cause?
+    options:
+      - The reminder job was pushed late when the billing batch moved
+      - Patients are careless
+      - SMS is outdated
+      - The clinic needs an AI receptionist
+    expected: The reminder job was pushed late when the billing batch moved
+    label: Pick the root cause
+  - kind: sim_state
+    action: multiple_choice
+    question: When should you stop asking "why"?
+    options:
+      - When the answer is something the team can change and test
+      - After exactly five whys, always
+      - When the customer gets annoyed
+      - When you reach a person to blame
+    expected: When the answer is something the team can change and test
+    label: Know when to stop
+hints:
+  - A root cause is something you can fix. "Patients are careless" is not fixable.
+  - Five is a guide, not a rule. Stop at a cause you can act on.
+solution: solution/
+unlocks:
+  - p4-w16-disc-008
+tags:
+  - five-whys
+  - root-cause
+mobile_compatible: true

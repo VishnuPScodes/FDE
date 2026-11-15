@@ -1,0 +1,49 @@
+id: p3-w13-agent-012
+title: Choose a workflow or an agent
+phase: 3
+week: 13
+module: human-in-the-loop
+order: 15
+difficulty: 2
+estimated_minutes: 10
+type: quiz
+environment: quiz
+lesson: ../../lessons/03-human-in-the-loop.md
+task: |
+  Customers often ask for "an agent". Your job is to build the simplest thing that works. Answer three questions about real requests.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    label: Fixed claim intake
+    question: A Pune insurer wants every new motor claim to go through the same steps. Pull fields from the claim PDF, check the policy is active, then send it to a queue based on claim size. The steps never change. What do you build first?
+    options:
+      - A fixed workflow in code that calls the model only to pull fields from the PDF
+      - An autonomous agent that decides which tools to call and in what order
+      - A team of agents with a planner, a worker and a critic
+      - A fine-tuned model that does every step in one call
+    expected: A fixed workflow in code that calls the model only to pull fields from the PDF
+  - kind: sim_state
+    action: multiple_choice
+    label: Open-ended support questions
+    question: A Kerala logistics company's support desk gets mixed questions. Some need a shipment lookup, some need a rate card, some need both, and a few need a refund. You cannot list every path ahead of time. What fits best?
+    options:
+      - An agent loop with a small set of read tools, a step limit, and approval for refunds
+      - A fixed workflow with one hard-coded branch for every possible question
+      - An agent with full database write access so it never gets stuck
+      - No model at all; a keyword menu on WhatsApp handles everything
+    expected: An agent loop with a small set of read tools, a step limit, and approval for refunds
+  - kind: sim_state
+    action: multiple_choice
+    label: Where approval belongs
+    question: The refund agent sometimes tries to refund ₹45,000. Where should the rule "refunds above ₹10,000 need a human" live?
+    options:
+      - In the code that runs tools, checked before the refund tool executes
+      - In the system prompt, asking the model politely to check with a human
+      - In the tool description, so the model knows about the limit
+      - In a weekly report that finance reviews
+    expected: In the code that runs tools, checked before the refund tool executes
+hints:
+  - If you can draw the steps as a fixed flowchart, you probably want a workflow, not an agent.
+  - A prompt is a request to the model. Code that runs before a tool is a rule the model cannot skip.
+unlocks: [p3-w14-mcp-001]
+tags: [agents, workflows, architecture, human-in-the-loop]

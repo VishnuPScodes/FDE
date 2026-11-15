@@ -1,0 +1,115 @@
+id: p4-w18-write-014
+title: Write a change order
+phase: 4
+week: 18
+module: scope-negotiation
+order: 14
+difficulty: 3
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/03-scope-negotiation.md
+task: 'Gupta Traders'' owner asked on 3 February for a customer app on top of the agreed order reader.
+  It needs about 6 weeks and ₹2,40,000 extra, and would move the 10 March go-live to 21 April.
+
+
+  Write a short change order with headings: Request, Impact, Options, Sign-off. State the impact in days
+  and rupees, give two options, recommend one, and ask for approval in writing.'
+starter_files:
+- path: answer.md
+  content: |
+    # Write a change order
+
+    ## Request
+    <!-- What was asked, in one line. -->
+
+    ## Impact
+    <!-- Effect on date and cost, with numbers. -->
+
+    ## Options
+    <!-- Two options and your recommendation. -->
+
+    ## Sign-off
+    <!-- Who approves, by when. -->
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Request'
+- kind: file_contains
+  path: answer.md
+  expected: '## Impact'
+- kind: file_contains
+  path: answer.md
+  expected: '## Options'
+- kind: file_contains
+  path: answer.md
+  expected: '## Sign-off'
+- kind: sim_state
+  path: word_count
+  min: 66
+  max: 210
+- kind: sim_state
+  path: section:Request
+  min_words: 8
+  contains_any:
+  - app
+- kind: sim_state
+  path: section:Impact
+  min_words: 15
+  contains_any:
+  - 21 april
+  - weeks
+  - ₹
+- kind: sim_state
+  path: section:Options
+  min_words: 25
+  contains_all:
+  - recommend
+  contains_any:
+  - option a
+  - option b
+  - option 1
+  - option 2
+- kind: sim_state
+  path: section:Sign-off
+  min_words: 10
+  contains_any:
+  - in writing
+  - written
+  - sign
+  label: Sign-off asks for written approval
+- kind: file_contains
+  path: answer.md
+  expected: 2,?40,?000
+  is_regex: true
+  label: States the extra cost of ₹2,40,000
+- kind: file_contains
+  path: answer.md
+  expected: 21 April
+  label: States the new date
+- kind: checklist
+  label: Self-review
+  items:
+  - A busy reader can find the main point in the first two lines
+  - Every number has a source or is marked as an assumption
+  - I removed jargon the customer would not use
+  - Nothing is built before written approval
+- kind: ai_rubric
+  rubric:
+  - Clear and concise for the intended reader
+  - Specific numbers and decisions, not vague claims
+  - Honest about risks and trade-offs
+  - Neutral, factual tone
+  - Written approval is requested
+  min_score: 3
+hints:
+- A change order is not a refusal. It shows the cost, so the owner can choose.
+- End with who approves and by when.
+solution: solution/
+unlocks:
+- p4-w18-write-015
+tags:
+- scope
+- change-order
+- writing
+mobile_compatible: true

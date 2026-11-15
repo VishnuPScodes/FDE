@@ -1,0 +1,93 @@
+id: p3-w14-guard-005
+title: "Test your guard with a case list"
+phase: 3
+week: 14
+module: guardrails
+order: 15
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-guardrails.md
+task: |
+  A guard that blocks everything is as broken as one that blocks nothing. Write `run_cases(guard, cases)` to measure it.
+
+  `guard(text)` returns a dict with an `"action"` key (`"allow"`, `"escalate"` or `"block"`). `cases` is a list of `(text, expected_action)` pairs.
+
+  Return `{"total": n, "passed": p, "rate": r, "failures": [...]}`:
+
+  - `rate` is `passed / total` rounded to 2 places.
+  - Each failure is `{"text", "expected", "got", "kind"}` in case order. `kind` is:
+    - `"error"` if the guard raised. Then `got` is `"error"`.
+    - `"missed"` if `got` is `"allow"` but something else was expected.
+    - `"over_blocked"` if `expected` is `"allow"` but the guard did not allow.
+    - `"wrong_action"` for any other difference (for example `block` instead of `escalate`).
+  - Raise `ValueError("no cases")` for an empty list.
+
+  One crashing case must not stop the rest.
+starter_files:
+  - path: main.py
+    content: |
+      def run_cases(guard, cases):
+          pass
+  - path: test_main.py
+    content: |
+      import pytest
+
+      from main import run_cases
+
+
+      def guard(text):
+          if text == "crash":
+              raise RuntimeError("boom")
+          if "bypass" in text:
+              return {"action": "block"}
+          if "notice" in text:
+              return {"action": "escalate"}
+          return {"action": "allow"}
+
+
+      def test_all_pass():
+          result = run_cases(guard, [("hello", "allow"), ("bypass kyc", "block")])
+          assert result == {"total": 2, "passed": 2, "rate": 1.0, "failures": []}
+
+
+      def test_failure_kinds():
+          cases = [
+              ("legal notice", "block"),
+              ("hello", "block"),
+              ("bypass kyc", "allow"),
+              ("crash", "allow"),
+              ("hello", "allow"),
+          ]
+          result = run_cases(guard, cases)
+          assert result["total"] == 5
+          assert result["passed"] == 1
+          assert result["rate"] == 0.2
+          assert result["failures"] == [
+              {"text": "legal notice", "expected": "block", "got": "escalate", "kind": "wrong_action"},
+              {"text": "hello", "expected": "block", "got": "allow", "kind": "missed"},
+              {"text": "bypass kyc", "expected": "allow", "got": "block", "kind": "over_blocked"},
+              {"text": "crash", "expected": "allow", "got": "error", "kind": "error"},
+          ]
+
+
+      def test_rate_is_rounded():
+          result = run_cases(guard, [("a", "allow"), ("b", "allow"), ("bypass", "allow")])
+          assert result["rate"] == 0.67
+
+
+      def test_empty():
+          with pytest.raises(ValueError, match="no cases"):
+              run_cases(guard, [])
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Wrap only the `guard(text)` call in try/except Exception."
+  - "Decide the failure `kind` after you have `got` and `expected`. Check the error case first."
+  - "`round(passed / total, 2)` gives the rate."
+solution: solution/
+unlocks: [p3-w15-ops-001]
+tags: [guardrails, testing, red-team]

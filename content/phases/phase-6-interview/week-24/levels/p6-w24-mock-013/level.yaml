@@ -1,0 +1,87 @@
+id: p6-w24-mock-013
+title: Write your 60-second introduction
+phase: 6
+week: 24
+module: portfolio-polish
+order: 13
+difficulty: 2
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/02-portfolio-polish.md
+task: >-
+  Every loop opens with "Tell me about yourself". Write a spoken answer of about 150 words
+  (roughly 60 seconds) with three headings: Present, Past and Why this role. Name one project and
+  one number. Be honest, and label practice projects as practice.
+starter_files:
+  - path: answer.md
+    content: |
+      # My 60-second introduction
+
+      ## Present
+      <!-- What you do or build now, and one project. -->
+
+      ## Past
+      <!-- The one or two experiences that led here. -->
+
+      ## Why this role
+      <!-- Why forward deployed work, and what you offer a customer. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Present'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Past'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Why this role'
+  - kind: sim_state
+    path: word_count
+    min: 110
+    max: 190
+  - kind: sim_state
+    path: section:Present
+    min_words: 25
+    contains_any:
+      - built
+      - project
+      - shipped
+  - kind: sim_state
+    path: section:Past
+    min_words: 20
+  - kind: sim_state
+    path: section:Why this role
+    min_words: 25
+    contains_any:
+      - customer
+      - customers
+      - field
+  - kind: file_contains
+    path: answer.md
+    label: Present names a number
+    is_regex: true
+    expected: '## Present[^#]*\d'
+  - kind: checklist
+    label: Self-review
+    items:
+      - I said it aloud and it took about 60 seconds
+      - It names one project and one number
+      - Anything from a practice scenario is labelled as practice
+  - kind: ai_rubric
+    rubric:
+      - The introduction has a clear thread from past to this role
+      - It is specific and honest
+    min_score: 3
+hints:
+  - Present first. Lead with the thing you built and its number, not your degree.
+  - Past is one or two steps, not your whole life story.
+  - End with what you offer a customer, not what you hope to get.
+solution: solution/
+unlocks:
+  - p6-w24-mock-014
+tags:
+  - mock
+  - behavioural
+  - introduction
+mobile_compatible: true

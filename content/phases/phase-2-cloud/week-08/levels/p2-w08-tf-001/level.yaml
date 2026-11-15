@@ -1,0 +1,52 @@
+id: p2-w08-tf-001
+title: "Create your first S3 bucket"
+phase: 2
+week: 8
+module: terraform-basics
+order: 1
+difficulty: 2
+estimated_minutes: 12
+type: terminal
+environment: terraform
+lesson: ../../lessons/02-terraform-basics.md
+task: "Add an aws_s3_bucket resource named logs with bucket = \"fde-mumbai-logs-2026\" and a Team tag set to \"platform\". Then run terraform init, terraform plan and terraform apply -auto-approve."
+starter_files:
+  - path: main.tf
+    content: |
+      terraform {
+        required_providers {
+          aws = {
+            source  = "hashicorp/aws"
+            version = "~> 5.0"
+          }
+        }
+      }
+
+      provider "aws" {
+        region = "ap-south-1"
+      }
+
+      # Add your S3 bucket below.
+checks:
+  - kind: "sim_command_used"
+    command: "terraform init"
+    label: "Ran terraform init"
+  - kind: "sim_state"
+    path: "resources"
+    contains: "aws_s3_bucket.logs"
+    label: "Bucket exists in state"
+  - kind: "sim_state"
+    path: "resource:aws_s3_bucket.logs"
+    contains: "\"bucket\":\"fde-mumbai-logs-2026\""
+    label: "Bucket has the right name"
+  - kind: "sim_state"
+    path: "resource:aws_s3_bucket.logs"
+    contains: "\"Team\":\"platform\""
+    label: "Bucket has the Team tag"
+hints:
+  - "A resource block has two labels: the type and your own name. Write resource \"aws_s3_bucket\" \"logs\" { ... }."
+  - "Tags are a map: tags = { Team = \"platform\" }."
+  - "Run terraform init once, then terraform plan to preview, then terraform apply -auto-approve."
+solution: solution/
+unlocks: [p2-w08-tf-002]
+tags: [terraform, s3, basics]

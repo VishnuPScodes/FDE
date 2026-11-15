@@ -1,0 +1,78 @@
+id: p5-w22-cap-004
+title: Fix the top issues from usage
+phase: 5
+week: 22
+module: capstone-measure
+order: 5
+difficulty: 3
+estimated_minutes: 40
+type: writing
+environment: writing
+lesson: ../../lessons/02-harden-and-hand-over.md
+task: |-
+  Go through your pilot logs and customer messages. List the most frequent problems with counts, fix the top ones and record what you shipped.
+
+  **Top Issues** has at least three issues, each with how many times it happened. **Fixes Shipped** says what you changed and how you tested it. **Not Fixed Yet** is honest about what remains.
+starter_files:
+- path: answer.md
+  content: |
+    # Hardening report
+
+    ## Top Issues
+
+
+    ## Fixes Shipped
+
+
+    ## Not Fixed Yet
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Top Issues'
+- kind: file_contains
+  path: answer.md
+  expected: '## Fixes Shipped'
+- kind: file_contains
+  path: answer.md
+  expected: '## Not Fixed Yet'
+- kind: sim_state
+  path: word_count
+  min: 100
+  max: 500
+- kind: sim_state
+  path: section:Top Issues
+  min_words: 30
+  contains_any:
+  - times
+  - cases
+  - '%'
+  - 'x '
+- kind: sim_state
+  path: section:Fixes Shipped
+  min_words: 25
+  contains_any:
+  - test
+  - checked
+  - verified
+- kind: sim_state
+  path: section:Not Fixed Yet
+  min_words: 8
+- kind: checklist
+  label: Self-review
+  items:
+  - Issues are ranked by how often they happened
+  - Each fix was tested with real or realistic data
+- kind: ai_rubric
+  rubric:
+  - Issues are grounded in logs, not guesses
+  - Fixes target the most frequent problems
+  min_score: 3
+hints:
+- Count first, then fix. The loudest complaint is not always the most frequent.
+- Say how you checked each fix, even if it was replaying ten real replies.
+solution: solution/
+unlocks:
+- p5-w22-cap-010
+tags:
+- capstone
+- reliability

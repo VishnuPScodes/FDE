@@ -1,0 +1,83 @@
+id: p2-w09-sec-005
+title: Write a blameless postmortem
+phase: 2
+week: 9
+module: security-posture
+order: 5
+difficulty: 3
+estimated_minutes: 30
+type: writing
+environment: writing
+lesson: ../../lessons/03-security-posture.md
+task: Use what you found in the Week 9 database pool incident (payments 503s from 10:31 to 11:00 IST) and write a blameless postmortem in `answer.md`. Blame the system and the process, never a person. Include numbers, a timeline, and action items with owners and dates.
+starter_files:
+  - path: answer.md
+    content: |
+      # Postmortem: UPI payments failing (10:31 to 11:00 IST)
+
+      ## Summary
+      <!-- Two or three sentences: what broke, who was hurt, for how long. -->
+
+      ## Impact
+      <!-- Numbers: error rate, failed payments, rupees, customers. -->
+
+      ## Timeline
+      <!-- Times in IST, one line each. -->
+
+      ## Root cause
+      <!-- The technical reason, not a person. -->
+
+      ## What went well and what did not
+      <!-- Be honest about detection and response. -->
+
+      ## Action items
+      <!-- Concrete, with an owner role and a due date. -->
+checks:
+  - kind: sim_state
+    path: section:Summary
+    min_words: 20
+  - kind: sim_state
+    path: section:Impact
+    contains_any:
+      - '%'
+      - lakh
+      - ₹
+      - requests
+      - payments
+    min_words: 15
+  - kind: sim_state
+    path: section:Timeline
+    contains_any:
+      - '10:3'
+      - '10:4'
+      - '10:5'
+    min_words: 25
+  - kind: sim_state
+    path: section:Root cause
+    contains_any:
+      - pool
+      - connection
+      - database
+  - kind: sim_state
+    path: section:Action items
+    contains_any:
+      - alert
+      - owner
+      - due
+    min_words: 25
+  - kind: sim_state
+    path: word_count
+    min: 200
+    max: 700
+hints:
+  - Write "the deploy held connections too long", not "Ravi broke production".
+  - 'Good action items are specific: what, who (a role), and by when.'
+  - Impact needs numbers. Use the error rate and the minutes from the metrics.
+solution: solution/
+unlocks:
+  - p2-w09-project-001
+tags:
+  - postmortem
+  - incident
+  - writing
+mobile_compatible: true

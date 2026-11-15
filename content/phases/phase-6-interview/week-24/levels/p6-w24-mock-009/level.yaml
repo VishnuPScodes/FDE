@@ -1,0 +1,63 @@
+id: p6-w24-mock-009
+title: 'Mock coding round: parse WhatsApp order messages'
+phase: 6
+week: 24
+module: mock-loop
+order: 9
+difficulty: 4
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-mock-loop.md
+task: |-
+  Mock coding round, aim for 25 minutes and talk aloud. A Coimbatore grocery wholesaler receives orders as WhatsApp messages such as `2 kg rice, 5 oil`.
+
+  Implement `parse_order` in `orders.py`. Each comma-separated part is `<qty> <unit> <item>` or `<qty> <item>` (unit defaults to `pcs`). Units are `kg`, `g`, `l` and `pcs`. Return a list of dicts with `qty` (int), `unit` and `item` (lowercase). Parts that do not start with a whole number are skipped. Run `test_orders.py`.
+timed: true
+starter_files:
+- path: orders.py
+  content: |
+    def parse_order(message: str) -> list[dict]:
+        """Return [{"qty": 2, "unit": "kg", "item": "rice"}, ...]."""
+        pass
+- path: test_orders.py
+  content: |
+    from orders import parse_order
+
+
+    def test_with_and_without_unit():
+        assert parse_order("2 kg rice, 5 oil") == [
+            {"qty": 2, "unit": "kg", "item": "rice"},
+            {"qty": 5, "unit": "pcs", "item": "oil"},
+        ]
+
+
+    def test_case_and_spaces():
+        assert parse_order("  10 L Milk ,3 Soap bar ") == [
+            {"qty": 10, "unit": "l", "item": "milk"},
+            {"qty": 3, "unit": "pcs", "item": "soap bar"},
+        ]
+
+
+    def test_skips_noise():
+        assert parse_order("hello, some rice, 2.5 kg dal, 4 g saffron") == [
+            {"qty": 4, "unit": "g", "item": "saffron"}
+        ]
+
+
+    def test_empty():
+        assert parse_order("") == []
+checks:
+- kind: pytest_passes
+  run: pytest -q test_orders.py
+hints:
+- Split on commas, then split each part on whitespace and check the first token with isdigit().
+- If the second token lowercased is one of the known units, it is the unit and the item is the rest. Otherwise the unit is pcs.
+- Join the remaining tokens with a space and lowercase them, so "Soap bar" becomes "soap bar".
+solution: solution/
+unlocks:
+- p6-w24-mock-010
+tags:
+- mock
+- python
+- parsing

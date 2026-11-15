@@ -1,0 +1,36 @@
+id: p3-w14-mcp-003
+title: Serve policy documents as MCP resources
+phase: 3
+week: 14
+module: mcp-servers
+order: 3
+difficulty: 2
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-mcp-servers.md
+task: |
+  Tools are actions. Resources are things the client can read, like the insurer's policy wording or its list of network garages. `server.py` now has a `RESOURCES` dict keyed by URI.
+
+  Add two methods to `handle()`:
+
+  - `resources/list`: result `{"resources": [{"uri", "name", "description", "mimeType"}, ...]}`. Do not send the `text` in the listing. Listings stay small; clients read what they need.
+  - `resources/read` with `params` `{"uri": ...}`:
+    - `uri` missing or not a string: error `-32602` `"Invalid params: uri is required"`.
+    - Unknown URI: error `-32002` `"Resource not found: <uri>"`.
+    - Otherwise: `{"contents": [{"uri", "mimeType", "text"}]}`.
+starter_files:
+  - path: server.py
+  - path: mcp_host.py
+  - path: schema_check.py
+  - path: test_server.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_server.py
+    label: MCP resource tests pass
+hints:
+  - "`-32002` is the code the MCP spec uses for a missing resource."
+  - Check the type of `uri` before you look it up, so a list or number cannot crash the server.
+solution: solution/
+unlocks: [p3-w14-mcp-004]
+tags: [mcp, resources, insurance]

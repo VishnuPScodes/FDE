@@ -1,0 +1,148 @@
+id: p6-w23-int-008
+title: 'Customer sim: the vague ops head'
+phase: 6
+week: 23
+module: decomp-mocks
+order: 4
+difficulty: 3
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/03-customer-sims-and-stories.md
+task: |-
+  Customer-simulation round. Lakshmi, Head of Operations at a Kochi logistics company, "just wants to use AI somewhere".
+
+  Do not suggest a solution yet. In at most 9 questions, find the business goal, how work happens today, the volume, where the data lives, the constraints and how success would be measured.
+
+  In `notes.md`, write a one-paragraph proposal that names the call volume and the language constraint (`Malayalam`).
+starter_files:
+- path: persona.json
+  content: |
+    {
+      "name": "Lakshmi Menon",
+      "role": "Head of Operations",
+      "company": "Malabar Coast Logistics, Kochi",
+      "opening": "Thanks for coming. Honestly, we just want to use AI somewhere. Everyone else is doing it. Where should we start?",
+      "facts": [
+        {
+          "id": "goal",
+          "triggers": [
+            "goal",
+            "outcome",
+            "what would success",
+            "achieve",
+            "why now"
+          ],
+          "reply": "Our board wants lower cost per delivery. It's about 62 rupees now."
+        },
+        {
+          "id": "process",
+          "triggers": [
+            "walk me through",
+            "how does",
+            "today",
+            "current process",
+            "day look like"
+          ],
+          "reply": "Customers call our support line to ask where their parcel is. Twelve agents answer calls all day."
+        },
+        {
+          "id": "volume",
+          "triggers": [
+            "how many",
+            "volume",
+            "per day",
+            "how often"
+          ],
+          "requires": [
+            "process"
+          ],
+          "reply": "About 4,000 calls a day. Most are 'where is my parcel' calls."
+        },
+        {
+          "id": "data",
+          "triggers": [
+            "data",
+            "system",
+            "tracking",
+            "where is the information",
+            "records"
+          ],
+          "reply": "Tracking status is in our transport system. It has an API, but nobody has used it outside the team."
+        },
+        {
+          "id": "constraint",
+          "triggers": [
+            "constraint",
+            "worry",
+            "concern",
+            "can't",
+            "cannot",
+            "limit",
+            "language"
+          ],
+          "reply": "Most customers speak Malayalam. And we can't send customer phone numbers to a foreign server without legal approval."
+        },
+        {
+          "id": "success",
+          "triggers": [
+            "how will we know",
+            "measure",
+            "metric",
+            "in three months",
+            "look like"
+          ],
+          "requires": [
+            "goal"
+          ],
+          "reply": "If call volume dropped by a third, that would fund the whole project."
+        }
+      ],
+      "deflections": [
+        "Hmm, I'm not technical. Can you ask about the business?",
+        "Maybe. What else?"
+      ],
+      "max_turns": 15
+    }
+- path: notes.md
+  content: |+
+    # Proposal
+
+checks:
+- kind: sim_state
+  path: facts_uncovered
+  contains_all:
+  - goal
+  - process
+  - volume
+  - data
+  - constraint
+  - success
+- kind: sim_state
+  path: turns
+  max: 9
+- kind: sim_state
+  path: leading_questions
+  max: 1
+- kind: file_contains
+  path: notes.md
+  expected: Malayalam
+- kind: file_contains
+  path: notes.md
+  expected: 4,000
+- kind: ai_rubric
+  rubric:
+  - Learner asked about the goal before solutions
+  - Proposal is small and tied to the measured pain
+  min_score: 3
+hints:
+- Ask why now and what outcome the board wants.
+- Ask how the work happens today, then how many times a day it happens.
+- Ask about worries or constraints. Language and data rules matter in Kerala.
+solution: solution/
+unlocks:
+- p6-w23-int-009
+tags:
+- interview
+- customer-sim
+- roleplay

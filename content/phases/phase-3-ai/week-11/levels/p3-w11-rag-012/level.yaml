@@ -1,0 +1,80 @@
+id: p3-w11-rag-012
+title: Build cited context and check the citations
+phase: 3
+week: 11
+module: hybrid-search
+order: 12
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/03-hybrid-search-and-citations.md
+task: |
+  Every answer must cite the chunk it came from. You format the context with ids, ask the model to
+  cite like `[upi#3]`, then check that each citation is real.
+
+  Write:
+
+  - `build_context(chunks)`: one `<chunk id="...">text</chunk>` per chunk, joined by `"\n"`.
+    Escape `&`, `<`, `>` in the text with `html.escape(text, quote=False)`.
+  - `check_citations(answer, chunks)`: find every `[id]` marker in `answer` with the regex
+    `\[([A-Za-z0-9_.:-]+#\d+)\]`. Return a dict with:
+    `"cited"` (ids in order of first appearance, no repeats),
+    `"unknown"` (cited ids not in `chunks`, in order),
+    and `"uncited_sentences"`: sentences of the answer (split after `.`, `?` or `!` followed by
+    whitespace) that contain no marker, stripped, excluding empty ones.
+starter_files:
+- path: main.py
+  content: |
+    import html
+    import re
+
+
+    def build_context(chunks):
+        pass
+
+
+    def check_citations(answer, chunks):
+        pass
+- path: test_main.py
+  content: |
+    from main import build_context, check_citations
+
+    CHUNKS = [
+        {"id": "upi#3", "text": "UPI refunds reach the account within T+1 working days."},
+        {"id": "upi#7", "text": "Disputes go to the bank if the refund is late & unpaid < 30 days."},
+    ]
+
+
+    def test_context():
+        assert build_context(CHUNKS) == (
+            '<chunk id="upi#3">UPI refunds reach the account within T+1 working days.</chunk>\n'
+            '<chunk id="upi#7">Disputes go to the bank if the refund is late &amp; unpaid &lt; 30 days.</chunk>'
+        )
+
+
+    def test_check_citations():
+        answer = (
+            "Your refund should arrive by the next working day [upi#3]. "
+            "If not, raise a dispute with your bank [upi#7] [upi#3]. "
+            "Call us anytime! It is free [faq#2]."
+        )
+        assert check_citations(answer, CHUNKS) == {
+            "cited": ["upi#3", "upi#7", "faq#2"],
+            "unknown": ["faq#2"],
+            "uncited_sentences": ["Call us anytime!"],
+        }
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Split sentences with a look-behind so the punctuation stays: `re.split(r"(?<=[.?!])\s+", answer)`.'
+- Keep `cited` as a list and only append ids you have not seen, so order is kept and repeats are dropped.
+solution: solution/
+unlocks:
+- p3-w11-rag-013
+tags:
+- rag
+- citations
+mobile_compatible: false

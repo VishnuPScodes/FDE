@@ -14,7 +14,7 @@ phases:
         modules:
           - sql-foundations
           - data-modelling
-    project: "p0-w02-checkpoint"
+    project: "p0-w02-sql-016"
 
   - id: 1
     title: "Backend & Data Integration"
@@ -64,7 +64,7 @@ phases:
           - structured-logging
           - metrics-tracing
           - security-posture
-    project: "p2-w09-project-a-deployed"
+    project: "p2-w09-project-001"
 
   - id: 3
     title: "Applied AI Engineering"
@@ -105,7 +105,7 @@ phases:
           - tracing-llm
           - cost-latency
           - prompt-versioning
-    project: "p3-w15-project-b"
+    project: "p3-w15-project-001"
 
   - id: 4
     title: "Customer Craft"
@@ -150,7 +150,7 @@ phases:
         modules:
           - capstone-measure
           - capstone-case-study
-    project: "p5-w22-capstone"
+    project: "p5-w22-capstone-001"
 
   - id: 6
     title: "Interview Loop"

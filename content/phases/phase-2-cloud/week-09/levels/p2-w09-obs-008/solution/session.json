@@ -1,0 +1,9 @@
+{
+  "history": [
+    "traces> slowest 5",
+    "traces> trace 13f6a48b"
+  ],
+  "answers": {
+    "slow_span": "db.pool.acquire"
+  }
+}

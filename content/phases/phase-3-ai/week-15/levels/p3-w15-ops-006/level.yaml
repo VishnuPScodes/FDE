@@ -1,0 +1,91 @@
+id: p3-w15-ops-006
+title: "Report p50 and p95 latency"
+phase: 3
+week: 15
+module: cost-latency
+order: 2
+difficulty: 2
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/02-cost-and-latency.md
+task: |
+  An average hides pain. If 19 users wait 1 second and one waits 30 seconds, the average looks fine. Teams watch **percentiles**: p95 means "95% of requests were faster than this".
+
+  Write `percentile(values, p)` using the **nearest-rank** method: sort the values, take `rank = ceil(p / 100 * n)` (at least 1), and return the value at that rank (1-based). Return `None` for an empty list.
+
+  Write `latency_summary(ms_values)`. Return a dict with `count`, `mean` (rounded to 1 place), `p50`, `p95` and `max`. For an empty list return `{"count": 0, "mean": None, "p50": None, "p95": None, "max": None}`.
+
+  Write `slo_ok(ms_values, p95_limit_ms)`. It returns `True` when the p95 is at or below the limit. An empty list is `True` (nothing was slow).
+starter_files:
+  - path: main.py
+    content: |
+      import math
+
+
+      def percentile(values, p):
+          pass
+
+
+      def latency_summary(ms_values):
+          pass
+
+
+      def slo_ok(ms_values, p95_limit_ms):
+          pass
+  - path: test_main.py
+    content: |
+      from main import latency_summary, percentile, slo_ok
+
+      TWENTY = [100] * 19 + [3000]
+
+
+      def test_percentile_nearest_rank():
+          data = [15, 20, 35, 40, 50]
+          assert percentile(data, 30) == 20
+          assert percentile(data, 40) == 20
+          assert percentile(data, 50) == 35
+          assert percentile(data, 100) == 50
+          assert percentile(data, 0) == 15
+
+
+      def test_percentile_does_not_need_sorted_input_or_change_it():
+          data = [50, 15, 40, 20, 35]
+          assert percentile(data, 50) == 35
+          assert data == [50, 15, 40, 20, 35]
+
+
+      def test_percentile_empty():
+          assert percentile([], 95) is None
+
+
+      def test_summary_shows_the_slow_tail():
+          summary = latency_summary(TWENTY)
+          assert summary == {"count": 20, "mean": 245.0, "p50": 100, "p95": 100, "max": 3000}
+
+
+      def test_p95_catches_two_slow_calls():
+          values = [100] * 18 + [3000, 3200]
+          assert latency_summary(values)["p95"] == 3000
+
+
+      def test_summary_empty():
+          assert latency_summary([]) == {"count": 0, "mean": None, "p50": None, "p95": None, "max": None}
+
+
+      def test_slo():
+          assert slo_ok([100] * 18 + [3000, 3200], 2000) is False
+          assert slo_ok(TWENTY, 2000) is True
+          assert slo_ok([500, 2000], 2000) is True
+          assert slo_ok([], 10) is True
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Sort a copy with `sorted(values)` so the caller's list is not changed."
+  - "`math.ceil(p / 100 * n)` gives the rank. For `p = 0` it gives 0, so use `max(1, ...)`."
+  - "`slo_ok` must look at the p95, not the mean. One 3-second call in twenty should not hide behind a good average."
+solution: solution/
+unlocks: [p3-w15-ops-007]
+tags: [latency, percentile, slo]

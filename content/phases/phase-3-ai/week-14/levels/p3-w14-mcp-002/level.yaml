@@ -1,0 +1,38 @@
+id: p3-w14-mcp-002
+title: List and call tools on your MCP server
+phase: 3
+week: 14
+module: mcp-servers
+order: 2
+difficulty: 3
+estimated_minutes: 30
+type: code
+environment: python
+lesson: ../../lessons/01-mcp-servers.md
+task: |
+  The handshake works. Now let an AI client use the claims tools. `server.py` already has `TOOLS`: each entry has a `description`, an `inputSchema`, and a Python `fn`.
+
+  Add two methods to `handle()`:
+
+  - `tools/list`: result `{"tools": [{"name", "description", "inputSchema"}, ...]}` in the order of `TOOLS`. Never send `fn`.
+  - `tools/call` with `params` `{"name": ..., "arguments": {...}}`:
+    - Missing or unknown name: error `-32602`, message `"Unknown tool: <name>"`.
+    - Arguments fail `validate_args`: error `-32602`, message `"Invalid params: "` plus the errors joined with `"; "`. Missing `arguments` means `{}`.
+    - The tool raises: this is not a protocol error. Return a result `{"content": [{"type": "text", "text": "LookupError: no such claim"}], "isError": True}`.
+    - Success: `{"content": [{"type": "text", "text": json.dumps(value, ensure_ascii=False)}], "isError": False}`.
+starter_files:
+  - path: server.py
+  - path: mcp_host.py
+  - path: schema_check.py
+  - path: test_server.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_server.py
+    label: MCP tool tests pass
+hints:
+  - Protocol errors (bad method, unknown tool, bad params) use `err()`. A tool that ran and failed still returns `ok()` with `isError` set.
+  - "Build the listing with a comprehension: `{\"name\": name, \"description\": t[\"description\"], \"inputSchema\": t[\"inputSchema\"]}`."
+  - "Format a tool exception as `f\"{type(error).__name__}: {error}\"`."
+solution: solution/
+unlocks: [p3-w14-mcp-003]
+tags: [mcp, tools, json-rpc]

@@ -1,0 +1,54 @@
+id: p2-w09-sec-002
+title: Handle secrets the safe way
+phase: 2
+week: 9
+module: security-posture
+order: 2
+difficulty: 2
+estimated_minutes: 8
+type: quiz
+environment: quiz
+lesson: ../../lessons/03-security-posture.md
+task: Anita, a developer at a Hyderabad lending startup, just noticed her API key for the SMS provider is in the Git history. Choose the best action each time.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: The key was pushed to a public GitHub repo 10 minutes ago. What is the FIRST thing to do?
+    options:
+      - Revoke the key and create a new one
+      - Delete the file and push again
+      - Make the repo private and carry on
+      - Wait to see if anyone uses it
+    expected: Revoke the key and create a new one
+    label: First response to a leaked key
+  - kind: sim_state
+    action: multiple_choice
+    question: Where should the new key live?
+    options:
+      - In the platform secret store or environment variable, outside the repo
+      - In a config file committed to the repo
+      - In the frontend JavaScript bundle
+      - In a shared WhatsApp group for the team
+    expected: In the platform secret store or environment variable, outside the repo
+    label: Where secrets belong
+  - kind: sim_state
+    action: multiple_choice
+    question: Which log line is safe to write?
+    options:
+      - 'payment failed: request_id=req-91ac reason=card_declined'
+      - 'payment failed: card=4111111111111111 cvv=123'
+      - 'login: user=anita password=Summer@2026'
+      - sms sent using key=sk_live_9f8e7d
+    expected: 'payment failed: request_id=req-91ac reason=card_declined'
+    label: Keep secrets out of logs
+hints:
+  - Deleting a file does not remove it from Git history. Treat the key as already stolen.
+  - A secret store lets you rotate a key without changing code.
+solution: solution/
+unlocks:
+  - p2-w09-sec-003
+tags:
+  - security
+  - secrets
+  - logging
+mobile_compatible: true

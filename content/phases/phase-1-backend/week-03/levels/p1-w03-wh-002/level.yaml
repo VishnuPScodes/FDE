@@ -19,4 +19,5 @@ checks:
 hints:
   - The same event body and delivery ID produce the same valid signature.
   - A successful first delivery should be remembered; send that exact request again.
+unlocks: [p1-w03-wh-003]
 tags: [webhooks, replay-protection, security]

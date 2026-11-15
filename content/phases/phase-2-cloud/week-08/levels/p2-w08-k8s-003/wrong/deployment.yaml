@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: invoice-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: invoice
+  template:
+    metadata:
+      labels:
+        app: invoice
+    spec:
+      containers:
+        - name: invoice-api
+          image: ghcr.io/fde-labs/invoice-api:1.4.0
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: invoice-config

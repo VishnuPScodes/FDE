@@ -1,0 +1,7 @@
+{
+  "system": "Extract the invoice fields as JSON that matches the schema. Use null when a field is missing.",
+  "temperature": 0,
+  "max_tokens": 400,
+  "json": true,
+  "sample_user": "Tax Invoice No. KL/2425/0091, GSTIN 32AAACK1234M1Z2, dated 03-08-2024. Freight Kochi to Kozhikode ₹8,000. IGST 18% ₹1,440. Total ₹9,440."
+}

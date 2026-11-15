@@ -1,0 +1,77 @@
+id: p5-w20-cap-012
+title: Rank candidate customers in code
+phase: 5
+week: 20
+module: capstone-discovery
+order: 7
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-find-your-customer.md
+task: Turn the customer checklist into code. Implement `customer_score` and `best_customer` in `customers.py`. A long security review is a penalty, and a customer who scores under 2 is not workable. Run `test_customers.py`.
+starter_files:
+- path: customers.py
+  content: |
+    def customer_score(c: dict) -> int:
+        """Score one candidate customer.
+        +2 if c["weekly_meeting"], +2 if c["data_access"],
+        +2 if c["pain_hours_per_week"] >= 5, -3 if c["review_weeks"] > 2."""
+        pass
+
+
+    def best_customer(candidates: list[dict]) -> "str | None":
+        """Return the name of the highest scoring candidate. Ties go to the name that
+        comes first alphabetically. Return None if the list is empty or the best score is below 2."""
+        pass
+- path: test_customers.py
+  content: |
+    from customers import customer_score, best_customer
+
+
+    def cand(**kw):
+        base = dict(name="X", weekly_meeting=False, data_access=False, pain_hours_per_week=0, review_weeks=0)
+        base.update(kw)
+        return base
+
+
+    def test_score_rules():
+        assert customer_score(cand()) == 0
+        assert customer_score(cand(weekly_meeting=True)) == 2
+        assert customer_score(cand(data_access=True)) == 2
+        assert customer_score(cand(pain_hours_per_week=5)) == 2
+        assert customer_score(cand(pain_hours_per_week=4)) == 0
+        assert customer_score(cand(review_weeks=3)) == -3
+        assert customer_score(cand(review_weeks=2)) == 0
+        assert customer_score(cand(weekly_meeting=True, data_access=True, pain_hours_per_week=15)) == 6
+
+
+    def test_best_customer():
+        clinic = cand(name="Clinic", weekly_meeting=True, data_access=True, pain_hours_per_week=15)
+        bank = cand(name="Bank", pain_hours_per_week=40, review_weeks=24)
+        assert best_customer([bank, clinic]) == "Clinic"
+
+
+    def test_tie_goes_alphabetical():
+        a = cand(name="Zeta", weekly_meeting=True)
+        b = cand(name="Alpha", data_access=True)
+        assert best_customer([a, b]) == "Alpha"
+
+
+    def test_nothing_workable():
+        assert best_customer([]) is None
+        assert best_customer([cand(name="A"), cand(name="B", review_weeks=10)]) is None
+checks:
+- kind: pytest_passes
+  run: pytest -q test_customers.py
+hints:
+- Add points for each good sign and subtract for a long review. Booleans can sit directly inside if statements.
+- sorted() with a key of (-score, name) puts the best score first and breaks ties alphabetically.
+- Check the empty list and the minimum score before you return a name.
+solution: solution/
+unlocks:
+- p5-w20-cap-005
+tags:
+- capstone
+- python
+- customer

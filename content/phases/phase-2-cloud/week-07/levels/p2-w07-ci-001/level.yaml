@@ -1,0 +1,34 @@
+id: p2-w07-ci-001
+title: "Write your first workflow"
+phase: 2
+week: 7
+module: github-actions-cicd
+order: 16
+difficulty: 1
+estimated_minutes: 12
+type: console
+environment: ci
+lesson: ../../lessons/05-github-actions-pipelines.md
+task: "The repo has a workflow that only prints TODO. Make the test job check out the code, set up Python 3.12, install requirements.txt, and run pytest. Then press Run workflow and make sure the run passes."
+starter_files:
+  - path: "app.py"
+    content: "def order_total(price, qty):\n    return price * qty\n\n\ndef apply_discount(price, percent):\n    return price - price * percent / 100\n"
+  - path: "test_app.py"
+    content: "from app import apply_discount, order_total\n\n\ndef test_order_total():\n    assert order_total(250, 3) == 750\n\n\ndef test_apply_discount():\n    assert apply_discount(200, 10) == 180\n"
+  - path: "requirements.txt"
+    content: "pytest==8.3.3\nruff==0.7.4\n"
+  - path: "README.md"
+    content: "# orders-api\n\nOrder service for Acme Pay.\n"
+  - path: ".github/workflows/ci.yml"
+    content: "name: CI\non: push\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo \"TODO\"\n"
+checks:
+  - {"kind": "sim_state", "path": "runs", "contains": "CI push main completed/success", "label": "Workflow run on main succeeded"}
+  - {"kind": "sim_state", "path": "log", "contains": "2 passed", "label": "pytest ran and 2 tests passed"}
+  - {"kind": "sim_state", "path": "jobs", "contains": "job test success", "label": "Job \"test\" passed"}
+hints:
+  - "A job runs on a fresh empty machine. The first step should be actions/checkout@v4 so your files are there."
+  - "Add actions/setup-python@v5 with python-version '3.12', then run pip install -r requirements.txt, then pytest."
+  - "Press Run workflow. Open the failed step in the log if the run turns red."
+solution: solution/
+unlocks: [p2-w07-ci-002]
+tags: ["ci", "github-actions", "workflow"]

@@ -1,0 +1,76 @@
+id: p3-w11-rag-015
+title: Decide when to answer and when to say you don't know
+phase: 3
+week: 11
+module: hybrid-search
+order: 15
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/03-hybrid-search-and-citations.md
+task: |
+  Retrieval always returns *something*, even for a question the documents never cover. Feeding weak chunks to the model invites made-up answers.
+
+  Write `plan_answer(results, min_score=0.35, relative=0.6, max_chunks=3)`. `results` is a list of `{"id": str, "score": float}`, **not necessarily sorted**.
+
+  - Sort by score, highest first (ties by id).
+  - If there are no results, or the best score is below `min_score`, the question is not answerable.
+  - Otherwise keep chunks whose score is at least `relative * best_score` **and** at least `min_score`, up to `max_chunks`.
+  - Return `{"answerable": bool, "chunk_ids": [...], "fallback": str | None}`.
+    When not answerable, `chunk_ids` is `[]` and `fallback` is exactly `"I could not find this in the documents."`. Otherwise `fallback` is `None`.
+starter_files:
+- path: main.py
+  content: |
+    FALLBACK = "I could not find this in the documents."
+
+
+    def plan_answer(results, min_score=0.35, relative=0.6, max_chunks=3):
+        pass
+- path: test_main.py
+  content: |
+    from main import FALLBACK, plan_answer
+
+
+    def test_strong_match_keeps_close_scores_only():
+        results = [
+            {"id": "c3", "score": 0.40},
+            {"id": "c1", "score": 0.90},
+            {"id": "c2", "score": 0.70},
+            {"id": "c4", "score": 0.20},
+        ]
+        assert plan_answer(results) == {"answerable": True, "chunk_ids": ["c1", "c2"], "fallback": None}
+
+
+    def test_weak_best_score_abstains():
+        out = plan_answer([{"id": "c1", "score": 0.30}, {"id": "c2", "score": 0.10}])
+        assert out == {"answerable": False, "chunk_ids": [], "fallback": FALLBACK}
+
+
+    def test_empty_results():
+        assert plan_answer([])["answerable"] is False
+
+
+    def test_max_chunks_and_tie_break():
+        results = [{"id": f"c{i}", "score": 0.8} for i in (4, 2, 3, 1)]
+        assert plan_answer(results, max_chunks=2)["chunk_ids"] == ["c1", "c2"]
+
+
+    def test_min_score_floor_applies_to_kept_chunks():
+        results = [{"id": "a", "score": 0.4}, {"id": "b", "score": 0.3}]
+        assert plan_answer(results, relative=0.1)["chunk_ids"] == ["a"]
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Sort with `key=lambda r: (-r["score"], r["id"])` so the first item is the best and ties are stable.'
+- 'The cut-off is `max(min_score, relative * best)`. Keep chunks with `score >= cutoff`.'
+solution: solution/
+unlocks:
+- p3-w12-eval-001
+tags:
+- rag
+- abstention
+- grounding
+mobile_compatible: false

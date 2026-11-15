@@ -1,0 +1,114 @@
+id: p6-w24-mock-012
+title: 'Mock: a STAR answer about shipping under pressure'
+phase: 6
+week: 24
+module: mock-loop
+order: 12
+difficulty: 3
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/01-mock-loop.md
+task: >-
+  Interviewer prompt: "Tell me about a time you had to ship something under a tight deadline."
+
+
+  Write a STAR answer with headings Situation, Task, Action and Result. Use a real project from your
+  own work, or a clearly practice scenario. Keep Action the longest part, and give the Result as a
+  number.
+starter_files:
+  - path: answer.md
+    content: |
+      # Mock: a STAR answer about shipping under pressure
+
+      ## Situation
+      <!-- Who, where, what was going on. -->
+
+      ## Task
+      <!-- What you had to do. -->
+
+      ## Action
+      <!-- What you did, step by step. The longest part. -->
+
+      ## Result
+      <!-- A number and what you learned. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Situation'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Task'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Action'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Result'
+  - kind: sim_state
+    path: word_count
+    min: 110
+    max: 400
+  - kind: sim_state
+    path: section:Situation
+    min_words: 20
+    contains_any:
+      - deadline
+      - days
+      - launch
+      - demo
+  - kind: sim_state
+    path: section:Task
+    min_words: 12
+    contains_any:
+      - i needed
+      - i had to
+      - my job
+      - i owned
+      - i was
+  - kind: sim_state
+    path: section:Action
+    min_words: 50
+    contains_any:
+      - cut
+      - dropped
+      - deferred
+      - priorit
+      - moved
+  - kind: file_contains
+    path: answer.md
+    label: Action uses "I"
+    is_regex: true
+    expected: '## Action[^#]*\bI\b'
+  - kind: sim_state
+    path: section:Result
+    min_words: 20
+  - kind: file_contains
+    path: answer.md
+    label: Result has a number
+    is_regex: true
+    expected: '## Result[^#]*\d'
+  - kind: checklist
+    label: Self-review
+    items:
+      - I said it aloud and it took under two minutes
+      - My Action uses "I", not "we"
+      - The Result has a number
+  - kind: ai_rubric
+    rubric:
+      - The scope cut is explained with reasons
+      - Action is specific and the longest part
+      - Result is a number
+    min_score: 3
+hints:
+  - A good answer shows what you cut and what you protected, and why.
+  - Use "I" in Action. Interviewers want to know what you did.
+  - End with a number and one line on what you learned.
+solution: solution/
+unlocks:
+  - p6-w24-mock-013
+tags:
+  - mock
+  - behavioural
+  - star
+mobile_compatible: true

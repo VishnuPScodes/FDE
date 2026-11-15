@@ -1,0 +1,39 @@
+id: p2-w08-aws-008
+title: "Tag resources so you can find the owner"
+phase: 2
+week: 8
+module: aws-core
+order: 8
+difficulty: 2
+estimated_minutes: 12
+type: terminal
+environment: aws
+lesson: ../../lessons/01-aws-core.md
+task: "Add the tags Project=fde-learning and Env=dev to the fde-api instance and to the fde-vpc VPC, using one create-tags command."
+starter_files:
+  - path: .aws-seed
+    content: "# A VPC with one public subnet and a locked-down web security group\nVPC=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=fde-vpc}]' --query Vpc.VpcId --output text)\nSUBNET=$(aws ec2 create-subnet --vpc-id $VPC --cidr-block 10.0.1.0/24 --availability-zone ap-south-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=fde-public-a}]' --query Subnet.SubnetId --output text)\nSG=$(aws ec2 create-security-group --group-name web-sg --description \"Web servers\" --vpc-id $VPC --query GroupId --output text)\naws ec2 authorize-security-group-ingress --group-id $SG --protocol tcp --port 22 --cidr 203.0.113.25/32\naws ec2 authorize-security-group-ingress --group-id $SG --protocol tcp --port 80 --cidr 0.0.0.0/0\naws ec2 run-instances --image-id ami-0abcdef1234567890 --instance-type t3.micro --subnet-id $SUBNET --security-group-ids $SG --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=fde-api}]'\n"
+checks:
+  - kind: sim_state
+    path: "ec2.instances"
+    contains: "Project=fde-learning"
+    label: "Instance tagged Project=fde-learning"
+  - kind: sim_state
+    path: "ec2.instances"
+    contains: "Env=dev"
+    label: "Instance tagged Env=dev"
+  - kind: sim_state
+    path: "ec2.vpcs"
+    contains: "Project=fde-learning"
+    label: "VPC tagged Project=fde-learning"
+  - kind: sim_state
+    path: "ec2.vpcs"
+    contains: "Env=dev"
+    label: "VPC tagged Env=dev"
+hints:
+  - "create-tags takes --resources with several ids and --tags with several Key=...,Value=... pairs."
+  - "Get the ids using describe-instances and describe-vpcs with --query and --output text. Do not paste the Name tag over the existing ones; create-tags adds to them."
+  - "Tags help with cost reports: you can group the bill by Project or Env."
+solution: solution/
+unlocks: [p2-w08-tf-001]
+tags: [aws, ec2, tagging, cost]

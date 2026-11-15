@@ -23,4 +23,5 @@ checks:
 hints:
   - Client Credentials has no browser redirect or user consent step.
   - Use the demo client ID and secret shown in the workspace and request `api:read`.
+unlocks: [p1-w04-oa-003]
 tags: [oauth, client-credentials, service-accounts]

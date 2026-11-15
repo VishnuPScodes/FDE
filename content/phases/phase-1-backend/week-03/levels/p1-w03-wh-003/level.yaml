@@ -1,0 +1,23 @@
+id: p1-w03-wh-003
+title: Reject a tampered webhook
+phase: 1
+week: 3
+module: webhook-security
+order: 3
+difficulty: 3
+estimated_minutes: 8
+type: console
+environment: http
+lesson: ../../lessons/02-webhooks-and-signatures.md
+task: Generate a signature for the prepared order event, then change the body (for example the `order_id`) without signing again and send it. Confirm the receiver rejects it with status 401. Then generate a fresh signature for the edited body and confirm it is accepted with 202.
+checks:
+  - kind: http_response
+    action: statuses_include
+    path: /api/webhooks/orders
+    statuses: [401, 202]
+    label: Tampered body was rejected and the re-signed body was accepted
+hints:
+  - The signature covers the exact body bytes, so any edit after signing makes it invalid.
+  - After seeing the 401, use Generate HMAC signature again and resend.
+unlocks: [p1-w03-wh-004]
+tags: [webhooks, hmac, integrity, security]

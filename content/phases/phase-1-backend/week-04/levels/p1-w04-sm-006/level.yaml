@@ -1,0 +1,27 @@
+id: p1-w04-sm-006
+title: Keep secrets out of config files
+phase: 1
+week: 4
+module: secrets-management
+order: 6
+difficulty: 3
+estimated_minutes: 6
+type: quiz
+environment: quiz
+lesson: ../../lessons/03-secrets-and-pii.md
+task: A teammate wants to commit a `.env` file with real API keys so the team can share it. Choose the safest approach.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: How should the team share runtime secrets?
+    options:
+      - Add `.env` to `.gitignore` and distribute secrets through a secret manager
+      - Commit `.env` to a private repo; private repos are always safe
+      - Post the keys in the team chat channel
+      - Hard-code the keys in the front-end bundle
+    expected: Add `.env` to `.gitignore` and distribute secrets through a secret manager
+    label: Select the secret-manager approach
+hints:
+  - Private repos get cloned, forked, and leaked; secrets in history are hard to remove.
+  - Inject secrets at runtime from a managed store.
+tags: [secrets, env, git]

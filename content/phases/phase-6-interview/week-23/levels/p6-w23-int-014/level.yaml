@@ -1,0 +1,117 @@
+id: p6-w23-int-014
+title: Rewrite a weak STAR answer
+phase: 6
+week: 23
+module: story-bank
+order: 2
+difficulty: 3
+estimated_minutes: 25
+type: writing
+environment: writing
+lesson: ../../lessons/03-customer-sims-and-stories.md
+task: |-
+  A candidate gave this answer to "Tell me about a time something you built failed":
+
+  > "We built a WhatsApp reminder bot for a clinic and it didn't work well at first, but then we fixed it and the clinic was happy."
+
+  Rewrite it as a strong STAR answer in `answer.md`. Invent realistic details for a practice scenario. Use "I" in Action, keep Action the longest section, and make the Result a number. Add one line under **Lesson** about what you would do differently.
+starter_files:
+- path: answer.md
+  content: |
+    # Rewrite: a project that failed
+
+    ## Situation
+
+
+    ## Task
+
+
+    ## Action
+
+
+    ## Result
+
+
+    ## Lesson
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Situation'
+- kind: file_contains
+  path: answer.md
+  expected: '## Task'
+- kind: file_contains
+  path: answer.md
+  expected: '## Action'
+- kind: file_contains
+  path: answer.md
+  expected: '## Result'
+- kind: file_contains
+  path: answer.md
+  expected: '## Lesson'
+- kind: sim_state
+  path: word_count
+  min: 110
+  max: 400
+- kind: sim_state
+  path: section:Situation
+  min_words: 15
+  contains_any:
+  - clinic
+  - customer
+  - client
+- kind: sim_state
+  path: section:Task
+  min_words: 10
+  contains_any:
+  - i owned
+  - i was
+  - my job
+  - i had to
+- kind: sim_state
+  path: section:Action
+  min_words: 50
+- kind: file_contains
+  path: answer.md
+  label: Action uses "I"
+  is_regex: true
+  expected: '## Action[^#]*\bI\b'
+- kind: sim_state
+  path: section:Result
+  min_words: 15
+- kind: file_contains
+  path: answer.md
+  label: Result has a number
+  is_regex: true
+  expected: '## Result[^#]*\d'
+- kind: sim_state
+  path: section:Lesson
+  min_words: 10
+  contains_any:
+  - next time
+  - differently
+  - earlier
+  - now i
+- kind: checklist
+  label: Self-review
+  items:
+  - I own the failure and do not blame the customer or my team
+  - Action says what I did, not what we did
+  - The Result has a number
+- kind: ai_rubric
+  rubric:
+  - The failure is owned honestly
+  - Action is specific
+  - Result and lesson are concrete
+  min_score: 3
+hints:
+- Say what went wrong in numbers. How many reminders failed, and why?
+- Name your own actions in order, such as checked the logs, asked the front desk, rewrote the templates and tested them.
+- End with a result number and what you would do differently next time.
+solution: solution/
+unlocks:
+- p6-w23-int-015
+tags:
+- interview
+- behavioural
+- star

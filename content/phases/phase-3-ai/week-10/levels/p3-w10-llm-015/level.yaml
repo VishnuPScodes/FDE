@@ -1,0 +1,122 @@
+id: p3-w10-llm-015
+title: Assemble streamed tool calls
+phase: 3
+week: 10
+module: api-patterns
+order: 13
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-messages-streaming-structured-output.md
+task: |
+  Your support bot streams its replies. When the model decides to call tools, the tool calls stream too, and the JSON arguments arrive in pieces. The model can also call two tools at once, and their pieces can arrive mixed together.
+
+  Each useful SSE line looks like
+  `data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"call_1","function":{"name":"get_order","arguments":"{\"order"}}]}}]}`.
+
+  Write `assemble_tool_calls(lines)` that returns the finished tool calls:
+
+  - Use the same line rules as before. Skip blank lines, lines that start with `:`, and lines that do not start with `data:`. Stop at `data: [DONE]`.
+  - Each chunk may have a list at `choices[0].delta.tool_calls`. Each item has an `index`. Group the pieces by `index`, not by arrival order.
+  - The first piece for an index carries `id` and `function.name`. Later pieces usually carry only `function.arguments`, a piece of text. Join these pieces in the order they arrive.
+  - Return a list sorted by `index`. Each item is `{"id": str, "name": str, "arguments": dict}`, where `arguments` is the joined text parsed with `json.loads`. Joined text that is empty means `{}`.
+  - If the joined arguments are not valid JSON (for example, the stream was cut off), raise `ValueError` with a message that includes the tool name.
+starter_files:
+- path: main.py
+  content: |
+    import json
+
+
+    def assemble_tool_calls(lines):
+        pass
+- path: test_main.py
+  content: |
+    import json
+
+    import pytest
+
+    from main import assemble_tool_calls
+
+
+    def piece(index, arguments="", id=None, name=None):
+        call = {"index": index, "function": {"arguments": arguments}}
+        if id:
+            call["id"] = id
+            call["function"]["name"] = name
+        return "data: " + json.dumps({"choices": [{"delta": {"tool_calls": [call]}}]})
+
+
+    def test_one_call_in_pieces():
+        lines = [
+            'data: {"choices":[{"delta":{"role":"assistant"}}]}',
+            piece(0, "", id="call_1", name="get_order"),
+            piece(0, '{"order_'),
+            ": keep-alive",
+            piece(0, 'id": "OD-1'),
+            "",
+            piece(0, '42"}'),
+            "data: [DONE]",
+        ]
+        assert assemble_tool_calls(lines) == [
+            {"id": "call_1", "name": "get_order", "arguments": {"order_id": "OD-142"}}
+        ]
+
+
+    def test_parallel_calls_with_mixed_pieces():
+        lines = [
+            piece(0, "", id="call_a", name="get_order"),
+            piece(1, "", id="call_b", name="get_refund"),
+            piece(1, '{"refund_id": '),
+            piece(0, '{"order_id": '),
+            piece(0, '"OD-7"}'),
+            piece(1, '"RF-9"}'),
+            "data: [DONE]",
+        ]
+        assert assemble_tool_calls(lines) == [
+            {"id": "call_a", "name": "get_order", "arguments": {"order_id": "OD-7"}},
+            {"id": "call_b", "name": "get_refund", "arguments": {"refund_id": "RF-9"}},
+        ]
+
+
+    def test_sorted_by_index_not_arrival():
+        lines = [piece(1, "{}", id="call_b", name="second"), piece(0, "{}", id="call_a", name="first"), "data: [DONE]"]
+        assert [c["name"] for c in assemble_tool_calls(lines)] == ["first", "second"]
+
+
+    def test_empty_arguments_mean_empty_dict():
+        lines = [piece(0, "", id="call_1", name="list_open_tickets"), "data: [DONE]"]
+        assert assemble_tool_calls(lines) == [{"id": "call_1", "name": "list_open_tickets", "arguments": {}}]
+
+
+    def test_plain_text_reply_has_no_tool_calls():
+        lines = ['data: {"choices":[{"delta":{"content":"Hello"}}]}', "data: [DONE]"]
+        assert assemble_tool_calls(lines) == []
+
+
+    def test_lines_after_done_are_ignored():
+        lines = [piece(0, "{}", id="call_1", name="ping"), "data: [DONE]", piece(0, "junk")]
+        assert assemble_tool_calls(lines)[0]["arguments"] == {}
+
+
+    def test_cut_off_arguments_raise():
+        lines = [piece(0, "", id="call_1", name="get_order"), piece(0, '{"order_id": "OD-')]
+        with pytest.raises(ValueError, match="get_order"):
+            assemble_tool_calls(lines)
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Keep a dict from `index` to `{"id": ..., "name": ..., "parts": []}`. Use `setdefault` so the first piece creates the entry.'
+- Only set `id` and `name` when a piece actually has them. Later pieces leave them out.
+- Join the parts with `"".join(...)`, then wrap `json.loads` in `try/except json.JSONDecodeError` and raise `ValueError` from it.
+solution: solution/
+unlocks:
+- p3-w10-llm-012
+tags:
+- llm
+- api
+- streaming
+- tool-calls
+mobile_compatible: false

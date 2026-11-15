@@ -30,5 +30,5 @@ hints:
   - Keep the 90 percent left after the discount.
   - Use `Math.round` because paise are whole units.
 solution: solution/
-unlocks: [p1-w05-ts-004]
+unlocks: [p1-w05-ts-004, p1-w05-ts-005]
 tags: [typescript, testing, money]

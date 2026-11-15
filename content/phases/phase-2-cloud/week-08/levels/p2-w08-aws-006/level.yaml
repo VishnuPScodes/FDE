@@ -1,0 +1,35 @@
+id: p2-w08-aws-006
+title: "Launch a small EC2 server"
+phase: 2
+week: 8
+module: aws-core
+order: 6
+difficulty: 2
+estimated_minutes: 15
+type: terminal
+environment: aws
+lesson: ../../lessons/01-aws-core.md
+task: "Launch one t3.micro instance (AMI ami-0abcdef1234567890) in the existing public subnet fde-public-a, with the web-sg security group, and tag it Name=fde-web-1."
+starter_files:
+  - path: .aws-seed
+    content: "# A VPC with one public subnet and a locked-down web security group\nVPC=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=fde-vpc}]' --query Vpc.VpcId --output text)\nSUBNET=$(aws ec2 create-subnet --vpc-id $VPC --cidr-block 10.0.1.0/24 --availability-zone ap-south-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=fde-public-a}]' --query Subnet.SubnetId --output text)\nSG=$(aws ec2 create-security-group --group-name web-sg --description \"Web servers\" --vpc-id $VPC --query GroupId --output text)\naws ec2 authorize-security-group-ingress --group-id $SG --protocol tcp --port 22 --cidr 203.0.113.25/32\naws ec2 authorize-security-group-ingress --group-id $SG --protocol tcp --port 80 --cidr 0.0.0.0/0\n"
+checks:
+  - kind: sim_state
+    path: "ec2.instances"
+    contains: "type=t3.micro state=running"
+    label: "A running t3.micro exists"
+  - kind: sim_state
+    path: "ec2.instances"
+    contains: "Name=fde-web-1"
+    label: "Instance is named fde-web-1"
+  - kind: sim_state
+    path: "bill.total"
+    max: 1000
+    label: "Estimated bill stays under ₹1,000 a month"
+hints:
+  - "Look up the subnet and group ids first, using describe-subnets and describe-security-groups with --query ... --output text."
+  - "Use run-instances --image-id --instance-type --subnet-id --security-group-ids."
+  - "Tag at launch time with --tag-specifications ResourceType=instance,Tags=[{Key=Name,Value=fde-web-1}]."
+solution: solution/
+unlocks: [p2-w08-aws-007]
+tags: [aws, ec2, compute]

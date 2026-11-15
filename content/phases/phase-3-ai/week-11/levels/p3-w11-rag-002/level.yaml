@@ -1,0 +1,74 @@
+id: p3-w11-rag-002
+title: Extract readable text from an HTML policy page
+phase: 3
+week: 11
+module: document-parsing
+order: 2
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-parsing-and-chunking.md
+task: |
+  An insurance company's help centre is HTML. You want only the words a reader sees.
+
+  Write `html_to_blocks(html_text)` using `html.parser.HTMLParser` from the standard library.
+  Return a list of text blocks:
+
+  - Each `<h1>`, `<h2>` or `<h3>` becomes a block like `"# Claims"` (one `#` for all heading levels).
+  - Each `<p>` and `<li>` becomes one block of its text.
+  - Skip everything inside `<script>`, `<style>`, `<nav>` and `<footer>`.
+  - Collapse whitespace inside a block and drop empty blocks.
+  - HTML entities like `&amp;` and `&#8377;` must come out as real characters (`&`, `₹`).
+starter_files:
+- path: main.py
+  content: |
+    from html.parser import HTMLParser
+
+
+    def html_to_blocks(html_text):
+        pass
+- path: test_main.py
+  content: |
+    from main import html_to_blocks
+
+    PAGE = """
+    <html><head><style>p { color: red }</style><script>track("view")</script></head>
+    <body>
+      <nav><a href="/">Home</a> <a href="/claims">Claims</a></nav>
+      <h1>Health   claims</h1>
+      <p>Submit bills within <b>30 days</b> of discharge.</p>
+      <h2>Cashless &amp; reimbursement</h2>
+      <ul><li>Room rent up to &#8377;5,000 a day</li><li>  </li></ul>
+      <footer>© Bharat Health Insurance</footer>
+    </body></html>
+    """
+
+
+    def test_blocks():
+        assert html_to_blocks(PAGE) == [
+            "# Health claims",
+            "Submit bills within 30 days of discharge.",
+            "# Cashless & reimbursement",
+            "Room rent up to ₹5,000 a day",
+        ]
+
+
+    def test_plain_paragraph():
+        assert html_to_blocks("<p>One</p><p>Two</p>") == ["One", "Two"]
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Subclass `HTMLParser` and track a `skip_depth` counter: add one on a skipped start tag, subtract on its end tag.'
+- Collect text only while you are inside a block tag. `" ".join(text.split())` collapses whitespace.
+- '`HTMLParser(convert_charrefs=True)` (the default) turns `&amp;` and `&#8377;` into characters for you.'
+solution: solution/
+unlocks:
+- p3-w11-rag-003
+tags:
+- rag
+- parsing
+- html
+mobile_compatible: false

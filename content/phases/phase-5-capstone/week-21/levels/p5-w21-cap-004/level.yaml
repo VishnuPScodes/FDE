@@ -1,0 +1,72 @@
+id: p5-w21-cap-004
+title: Classify patient replies with an eval
+phase: 5
+week: 21
+module: capstone-build
+order: 8
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-architecture-and-milestones.md
+task: |-
+  Patients reply to reminders in many ways: "1", "Yes", "haan ji", "nahi aa paunga". Implement `classify_reply` in `replies.py` so it returns `confirm`, `cancel` or `unknown`. When a reply has both a yes and a no word, or nothing clear, return `unknown` so a human checks it.
+
+  Then implement `accuracy`, a tiny eval that scores the classifier on labelled cases. Run the tests in `test_replies.py`.
+starter_files:
+- path: replies.py
+  content: |
+    def classify_reply(text: str) -> str:
+        """Return "confirm", "cancel" or "unknown" for a patient's WhatsApp reply."""
+        pass
+
+
+    def accuracy(cases: list[tuple[str, str]]) -> float:
+        """Share of (reply, expected_label) cases that classify_reply gets right, from 0.0 to 1.0."""
+        pass
+- path: test_replies.py
+  content: |
+    from replies import classify_reply, accuracy
+
+
+    def test_buttons():
+        assert classify_reply("1") == "confirm"
+        assert classify_reply("2") == "cancel"
+
+
+    def test_words_any_case_and_spaces():
+        assert classify_reply("  Yes ") == "confirm"
+        assert classify_reply("CANCEL please") == "cancel"
+        assert classify_reply("ok, will come") == "confirm"
+
+
+    def test_hindi_and_marathi():
+        assert classify_reply("haan ji") == "confirm"
+        assert classify_reply("nahi aa paunga") == "cancel"
+        assert classify_reply("ho, yeto") == "confirm"
+
+
+    def test_unclear_goes_to_human():
+        assert classify_reply("what time was it?") == "unknown"
+        assert classify_reply("") == "unknown"
+        assert classify_reply("yes but cancel the 5pm one") == "unknown"
+
+
+    def test_accuracy():
+        cases = [("1", "confirm"), ("2", "cancel"), ("maybe", "confirm"), ("no", "cancel")]
+        assert accuracy(cases) == 0.75
+        assert accuracy([]) == 0.0
+checks:
+- kind: pytest_passes
+  run: pytest -q test_replies.py
+hints:
+- Lower-case and strip the text first. Split it into words so 'ok' does not match inside 'book'.
+- Check confirm words and cancel words separately. If both match, the answer is unknown.
+- accuracy([]) must return 0.0, not crash with ZeroDivisionError.
+solution: solution/
+unlocks:
+- p5-w21-cap-005
+tags:
+- capstone
+- python
+- evals

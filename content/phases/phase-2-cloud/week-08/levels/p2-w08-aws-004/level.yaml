@@ -1,0 +1,32 @@
+id: p2-w08-aws-004
+title: "Build a VPC with public and private subnets"
+phase: 2
+week: 8
+module: aws-core
+order: 4
+difficulty: 3
+estimated_minutes: 20
+type: terminal
+environment: aws
+lesson: ../../lessons/01-aws-core.md
+task: "Create VPC 10.0.0.0/16 named fde-vpc. Add a public subnet 10.0.1.0/24 in ap-south-1a and a private subnet 10.0.2.0/24 in ap-south-1b. Attach an internet gateway and route 0.0.0.0/0 to it only for the public subnet."
+checks:
+  - kind: sim_state
+    path: "ec2.vpcs"
+    contains: "10.0.0.0/16 tags=Name=fde-vpc"
+    label: "VPC fde-vpc with 10.0.0.0/16"
+  - kind: sim_state
+    path: "ec2.subnets"
+    contains: "10.0.1.0/24 az=ap-south-1a public"
+    label: "Public subnet in ap-south-1a"
+  - kind: sim_state
+    path: "ec2.subnets"
+    contains: "10.0.2.0/24 az=ap-south-1b private"
+    label: "Private subnet in ap-south-1b"
+hints:
+  - "Save IDs in shell variables: VPC=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --query Vpc.VpcId --output text)."
+  - "A subnet is public when its route table sends 0.0.0.0/0 to an internet gateway. Create the gateway, attach it to the VPC, create a route table, add the route, and associate the table with the public subnet only."
+  - "Name the VPC with --tag-specifications ResourceType=vpc,Tags=[{Key=Name,Value=fde-vpc}]."
+solution: solution/
+unlocks: [p2-w08-aws-005]
+tags: [aws, vpc, networking]

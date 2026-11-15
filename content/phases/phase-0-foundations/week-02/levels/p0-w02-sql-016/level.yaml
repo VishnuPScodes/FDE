@@ -1,0 +1,39 @@
+id: p0-w02-sql-016
+title: "Week 2 checkpoint: revenue by state"
+phase: 0
+week: 2
+module: data-modelling
+order: 4
+difficulty: 4
+estimated_minutes: 20
+type: sql
+environment: sql
+lesson: ../../lessons/05-window-functions.md
+task: |
+  Checkpoint for Week 2. The sales lead wants a quick view of where the money comes from.
+
+  For **delivered** orders only, return one row per customer state with:
+  - `state`
+  - `delivered_orders`: how many delivered orders came from that state
+  - `revenue`: the sum of their `total_amount`
+  - `revenue_rank`: 1 for the state with the most revenue (use `RANK()`)
+
+  Order the rows by `revenue_rank`, then `state`.
+starter_files:
+  - path: main.sql
+    content: "-- Use a CTE for delivered orders by state, then rank it with RANK() OVER (...)\n"
+  - path: setup.sql
+    from: ../../../../../shared/sql/week-02.sql
+checks:
+  - kind: sql_result_equals
+    expected:
+      - {state: Kerala, delivered_orders: 2, revenue: "1830.00", revenue_rank: 1}
+      - {state: Maharashtra, delivered_orders: 2, revenue: "1365.00", revenue_rank: 2}
+      - {state: Karnataka, delivered_orders: 2, revenue: "1190.00", revenue_rank: 3}
+      - {state: Telangana, delivered_orders: 1, revenue: "330.00", revenue_rank: 4}
+hints:
+  - "Join orders to customers to get each order's state, and filter on status = 'delivered' before you group."
+  - "Put the GROUP BY in a CTE, then select from it with RANK() OVER (ORDER BY revenue DESC)."
+solution: solution/
+unlocks: []
+tags: [sql, checkpoint, cte, window-functions]

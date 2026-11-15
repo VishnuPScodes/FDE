@@ -1,0 +1,80 @@
+id: p3-w15-ops-004
+title: "Find the span that really costs time"
+phase: 3
+week: 15
+module: tracing-llm
+order: 4
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-tracing-llm.md
+task: |
+  The longest span is not always the guilty one. An `agent` span of 900 ms may just be waiting for its children. The span that did the slow work itself has the highest **self time**.
+
+  Self time = the span's `duration_ms` minus the total `duration_ms` of its **direct** children (never below 0).
+
+  Write `slowest_span(spans)`:
+
+  - Return a tuple `(name, self_ms)` for the span with the largest self time.
+  - Ties go to the span with the lower `id`.
+  - Return `None` for an empty list.
+
+  Each span is a dict with `id`, `parent_id`, `name`, `duration_ms`.
+starter_files:
+  - path: main.py
+    content: |
+      def slowest_span(spans):
+          pass
+  - path: test_main.py
+    content: |
+      from main import slowest_span
+
+
+      def span(id, parent, name, ms):
+          return {"id": id, "parent_id": parent, "name": name, "duration_ms": ms}
+
+
+      def test_parent_wait_is_not_blamed():
+          spans = [
+              span(1, None, "agent", 900),
+              span(2, 1, "retrieve", 100),
+              span(3, 1, "llm.call", 700),
+          ]
+          # agent self = 900 - 800 = 100, retrieve = 100, llm.call = 700
+          assert slowest_span(spans) == ("llm.call", 700)
+
+
+      def test_self_time_can_belong_to_the_parent():
+          spans = [span(1, None, "agent", 1000), span(2, 1, "tool", 200)]
+          assert slowest_span(spans) == ("agent", 800)
+
+
+      def test_only_direct_children_are_subtracted():
+          spans = [span(1, None, "a", 100), span(2, 1, "b", 90), span(3, 2, "c", 80)]
+          # a self 10, b self 10, c self 80
+          assert slowest_span(spans) == ("c", 80)
+
+
+      def test_tie_goes_to_lower_id_and_negative_is_zero():
+          spans = [span(2, None, "x", 50), span(1, None, "y", 50), span(3, 1, "z", 70)]
+          assert slowest_span(spans) == ("z", 70)
+          spans = [span(2, None, "x", 50), span(1, None, "y", 50)]
+          assert slowest_span(spans) == ("y", 50)
+          parallel = [span(1, None, "p", 100), span(2, 1, "k1", 80), span(3, 1, "k2", 80)]
+          assert slowest_span(parallel) == ("k1", 80)
+
+
+      def test_empty():
+          assert slowest_span([]) is None
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "First add up each parent's children in a dict: `child_total[parent_id] += duration_ms`."
+  - "Use `max(0, duration - children)`. Parallel children can add up to more than the parent."
+  - "Loop in `id` order and only replace the best when the new value is **strictly** bigger. That keeps the lower id on a tie."
+solution: solution/
+unlocks: [p3-w15-ops-005]
+tags: [tracing, latency, self-time]

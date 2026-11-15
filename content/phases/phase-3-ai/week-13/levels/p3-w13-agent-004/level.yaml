@@ -1,0 +1,36 @@
+id: p3-w13-agent-004
+title: Keep tool output small and safe
+phase: 3
+week: 13
+module: tool-schemas
+order: 4
+difficulty: 2
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-tool-schemas.md
+task: |
+  A voucher search in Tally returned 57 rows. Each row also has internal columns like `pan` and `internal_notes`. Sending all of it to the model wastes tokens and leaks data the model does not need.
+
+  Write `shape_result(rows, fields, limit=10)` in `shaping.py`. It returns a dict:
+
+  - `rows`: the first `limit` rows, each with only the keys in `fields` (in the order of `fields`; skip keys a row does not have).
+  - `returned`: how many rows you kept.
+  - `total`: how many rows came in.
+  - `truncated`: `True` when rows were dropped.
+  - `note`: only when truncated, exactly `"Showing 10 of 57 rows. Ask with a narrower filter for more."` (use the real numbers).
+
+  Do not change the input rows.
+starter_files:
+  - path: shaping.py
+  - path: test_shaping.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_shaping.py
+    label: Output shaping tests pass
+hints:
+  - "A dict comprehension builds each smaller row: `{key: row[key] for key in fields if key in row}`."
+  - Only add the `note` key inside an `if truncated:` block.
+solution: solution/
+unlocks: [p3-w13-agent-005]
+tags: [tool-calling, context-budget, tally]

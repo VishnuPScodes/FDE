@@ -1,0 +1,111 @@
+id: p4-w19-adopt-006
+title: Write the adoption plan
+phase: 4
+week: 19
+module: change-management
+order: 6
+difficulty: 3
+estimated_minutes: 25
+type: writing
+environment: writing
+lesson: ../../lessons/02-change-management.md
+task: >-
+  The loan file checker passed its pilot at the Thrissur branch. Now Kerala Gramin Co-operative Bank
+  will roll it out to four more branches, about 20 loan officers, some of whom worry about their
+  jobs.
+
+
+  Write an adoption plan with headings: Champions, Training, Fears and objections, First 30 days,
+  Success signal.
+starter_files:
+  - path: answer.md
+    content: |
+      # Write the adoption plan
+
+      ## Champions
+      <!-- Who goes first and why. -->
+
+      ## Training
+      <!-- Short, hands on, real work. -->
+
+      ## Fears and objections
+      <!-- What you expect to hear, with an answer. -->
+
+      ## First 30 days
+      <!-- Check-ins and support. -->
+
+      ## Success signal
+      <!-- One number that shows real use. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Champions'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Training'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Fears and objections'
+  - kind: file_contains
+    path: answer.md
+    expected: '## First 30 days'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Success signal'
+  - kind: sim_state
+    path: word_count
+    min: 101
+    max: 372
+  - kind: sim_state
+    path: section:Champions
+    min_words: 20
+    contains_any:
+      - officer
+      - branch
+  - kind: sim_state
+    path: section:Training
+    min_words: 20
+    contains_any:
+      - 30 minutes
+      - minutes
+      - hands
+  - kind: sim_state
+    path: section:Fears and objections
+    min_words: 30
+    contains_any:
+      - job
+      - trust
+  - kind: sim_state
+    path: section:First 30 days
+    min_words: 25
+    contains_any:
+      - week
+      - weekly
+  - kind: sim_state
+    path: section:Success signal
+    min_words: 12
+    contains_any:
+      - '%'
+      - files
+  - kind: checklist
+    label: Self-review
+    items:
+      - A non-technical person can follow it
+      - Every number has a source or is marked as an assumption
+      - It ends with a clear next step
+  - kind: ai_rubric
+    rubric:
+      - Clear and plain language for the audience
+      - Specific, believable detail
+      - Honest about limits
+    min_score: 3
+hints:
+  - Pick champions who respect their peers, not only the most senior people.
+  - The success signal should measure real work through the tool, not logins.
+solution: solution/
+unlocks:
+- p4-w19-adopt-007
+tags:
+  - adoption
+  - plan
+mobile_compatible: true

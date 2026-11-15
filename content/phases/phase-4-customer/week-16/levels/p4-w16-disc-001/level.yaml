@@ -1,0 +1,49 @@
+id: p4-w16-disc-001
+title: Spot the real sponsor
+phase: 4
+week: 16
+module: stakeholder-mapping
+order: 1
+difficulty: 1
+estimated_minutes: 6
+type: quiz
+environment: quiz
+lesson: ../../lessons/01-stakeholder-mapping.md
+task: >
+  Nirmal Hospitals, a Delhi hospital chain, wants help with rejected insurance claims. Read each
+  situation and pick the best answer.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: >-
+      The billing head asked for the project. The CFO controls the budget and reports savings to the
+      board. Who is the sponsor?
+    options:
+      - The CFO
+      - The billing head
+      - The IT head
+      - The insurance desk staff
+    expected: The CFO
+    label: Identify the sponsor
+  - kind: sim_state
+    action: multiple_choice
+    question: >-
+      The IT head has not joined any meeting but must approve every new vendor. How should you treat
+      her?
+    options:
+      - As a possible blocker. Meet her early.
+      - Ignore her until go-live.
+      - Ask the CFO to overrule her.
+      - Treat her as a daily user.
+    expected: As a possible blocker. Meet her early.
+    label: Handle a quiet blocker
+hints:
+  - The sponsor pays and is judged on the result. The requester is not always the sponsor.
+  - People who can say no late are cheapest to meet early.
+solution: solution/
+unlocks:
+  - p4-w16-disc-002
+tags:
+  - stakeholders
+  - sponsor
+mobile_compatible: true

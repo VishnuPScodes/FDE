@@ -1,0 +1,54 @@
+id: p2-w09-obs-008
+title: Read a trace waterfall
+phase: 2
+week: 9
+module: metrics-tracing
+order: 4
+difficulty: 3
+estimated_minutes: 14
+type: console
+environment: observability
+lesson: ../../lessons/02-metrics-and-tracing.md
+task: |-
+  A trace shows one request as a set of timed spans. The longest span is the first place to look.
+
+  In the **Traces** tab:
+
+  1. Run `slowest 5`
+  2. Open the slowest with `trace <trace_id>` (copy the id from the list; the first 8 characters are enough)
+
+  Which span ate the time?
+starter_files:
+  - path: scenario.json
+    content: |
+      {
+        "scenario": "db-pool-exhaustion",
+        "seed": 7
+      }
+checks:
+  - kind: sim_command_used
+    pattern: ^traces> slowest
+    label: Listed the slowest traces
+  - kind: sim_command_used
+    pattern: ^traces> trace [0-9a-f]{8}
+    label: Opened one trace
+  - kind: sim_state
+    path: answer:slow_span
+    prompt: Name of the span that took most of the time
+    options:
+      - POST npci-upi /collect
+      - GET gst-api /taxpayers/{gstin}
+      - db.pool.acquire
+      - ledger.insert
+    expected_fact: slowest_span_name
+hints:
+  - slowest 5 lists the 5 slowest traces, longest first.
+  - 'Run: trace 13f6a48b (or the id you see) to open the waterfall.'
+  - The wide bar in the waterfall is the span you want. It waits for a database connection.
+solution: solution/
+unlocks:
+  - p2-w09-obs-009
+tags:
+  - observability
+  - traces
+  - spans

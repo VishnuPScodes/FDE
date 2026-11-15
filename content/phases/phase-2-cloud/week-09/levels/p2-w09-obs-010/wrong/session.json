@@ -1,0 +1,10 @@
+{
+  "history": [
+    "logs> level:error | count by service"
+  ],
+  "report": {
+    "rootCause": "db-slow-query",
+    "service": "payments",
+    "evidence": "the database seems slow"
+  }
+}

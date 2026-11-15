@@ -1,0 +1,50 @@
+id: p2-w09-project-001
+title: 'Project A: deploy your ETL service'
+phase: 2
+week: 9
+module: security-posture
+order: 6
+difficulty: 4
+estimated_minutes: 90
+type: realworld
+environment: realworld
+lesson: ../../lessons/01-structured-logging.md
+task: |-
+  Phase 2 checkpoint. Take the ETL service you built in Week 6 and run it on the public internet.
+
+  1. Push the service to a public GitHub repo with a `README.md` that explains what it does and how to run it.
+  2. Add a `/health` route that returns `ok` with status 200.
+  3. Write **structured logs**: one JSON object per line with `ts`, `level`, `msg` and a `request_id`. Never log secrets or personal data.
+  4. Deploy on a no-card free tier (Render, Cloudflare, Vercel, Netlify or Hugging Face Spaces). Keep keys in the platform's environment variables.
+  5. Fill `submission.json` with your health URL and your repo as `owner/name`.
+
+  We will call the URL and check your repo has a README and a Dockerfile.
+starter_files:
+  - path: submission.json
+    content: |
+      {
+        "url": "",
+        "repo": ""
+      }
+checks:
+  - kind: live_url
+    url_field: url
+    expect_status: 200
+    contains: ok
+    label: Health URL returns 200 and ok
+  - kind: github_repo
+    require_file: README.md
+    label: Repo has a README
+  - kind: github_repo
+    require_file: Dockerfile
+    label: Repo has a Dockerfile
+hints:
+  - If the URL times out, a free service may be asleep. Open it in a browser and retry after a minute.
+  - The repo field is owner/name, for example asha-nair/etl-service, not the full https link.
+  - Log one JSON line per request, for example {"ts":"...","level":"info","msg":"request completed","request_id":"req-1"}.
+solution: solution/
+tags:
+  - project
+  - deploy
+  - logging
+  - realworld

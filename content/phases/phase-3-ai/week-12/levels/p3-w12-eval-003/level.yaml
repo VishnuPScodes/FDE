@@ -1,0 +1,69 @@
+id: p3-w12-eval-003
+title: 'Measure coverage and edge cases'
+phase: 3
+week: 12
+module: golden-datasets
+order: 3
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-golden-datasets.md
+task: |
+  A dataset with 200 easy questions still misses what breaks in production. Measure what it covers.
+
+  Write `coverage(rows, required_tags)` returning a dict:
+
+  - `"counts"`: `{tag: number_of_rows_with_that_tag}` for each tag in `required_tags`, in that order (0 if none).
+  - `"missing"`: the required tags whose count is 0, in the same order.
+  - `"edge_share"`: the share of rows that have at least one **edge tag**, rounded to 2 places. The edge tags are
+    `typo`, `hinglish`, `unanswerable` and `multi-hop`. If there are no rows, use `0.0`.
+
+  A row may have no `tags` key. Count a tag once per row.
+starter_files:
+- path: main.py
+  content: |
+    EDGE_TAGS = {"typo", "hinglish", "unanswerable", "multi-hop"}
+
+
+    def coverage(rows, required_tags):
+        pass
+- path: test_main.py
+  content: |
+    from main import coverage
+
+    ROWS = [
+        {"id": "1", "tags": ["returns"]},
+        {"id": "2", "tags": ["returns", "typo"]},
+        {"id": "3", "tags": ["hinglish", "typo"]},
+        {"id": "4"},
+    ]
+
+
+    def test_counts_and_missing():
+        out = coverage(ROWS, ["returns", "typo", "refunds", "multi-hop"])
+        assert list(out["counts"].items()) == [("returns", 2), ("typo", 2), ("refunds", 0), ("multi-hop", 0)]
+        assert out["missing"] == ["refunds", "multi-hop"]
+
+
+    def test_edge_share_counts_rows_once():
+        assert coverage(ROWS, [])["edge_share"] == 0.5
+
+
+    def test_empty():
+        out = coverage([], ["a"])
+        assert out == {"counts": {"a": 0}, "missing": ["a"], "edge_share": 0.0}
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Turn each row''s tags into a `set` first. Then `tags & EDGE_TAGS` is non-empty when the row is an edge case, and a row counts once.'
+- 'Guard the division: if `rows` is empty, return `0.0` instead of dividing by zero.'
+solution: solution/
+unlocks:
+- p3-w12-eval-004
+tags:
+- evals
+- coverage
+mobile_compatible: false

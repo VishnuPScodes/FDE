@@ -1,0 +1,36 @@
+id: p3-w13-agent-007
+title: Retry overloaded model calls with backoff
+phase: 3
+week: 13
+module: agent-loops
+order: 7
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/02-agent-loops.md
+task: |
+  At 7 pm, when a WhatsApp support bot is busiest, the model API often answers with HTTP 429 or 503. `fake_llm.py` raises `TransientError` for these. Write `call_with_retry(fn, max_attempts=4, base_delay=0.5, max_delay=8.0, sleep=time.sleep)` in `retry.py`.
+
+  - Call `fn()` and return its result.
+  - On `TransientError`, wait and try again. The wait before retry number `n` (1, 2, 3, ...) is `base_delay * 2 ** (n - 1)`, capped at `max_delay`.
+  - If the error has a `retry_after` value that is not `None`, wait exactly that long instead.
+  - Any other exception is a real bug or a bad request. Raise it at once, with no retry.
+  - After `max_attempts` calls have all failed, raise the last `TransientError`.
+
+  Always wait using the `sleep` argument, so tests can record the delays without really waiting.
+starter_files:
+  - path: retry.py
+  - path: fake_llm.py
+  - path: test_retry.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_retry.py
+    label: Retry tests pass
+hints:
+  - "Loop with `for attempt in range(1, max_attempts + 1):` and put `return fn()` inside `try`."
+  - "Only catch `TransientError`. Other exceptions should fly out on their own."
+  - On the last attempt, re-raise with a bare `raise` instead of sleeping.
+solution: solution/
+unlocks: [p3-w13-agent-008]
+tags: [agents, retries, backoff, rate-limits]

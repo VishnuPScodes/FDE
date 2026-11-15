@@ -1,0 +1,4 @@
+{
+  "history": [],
+  "alertRule": "alert: PaymentsHighErrorRate\nexpr: sum(rate(http_requests_total{service=\"payments\",status=~\"5..\"}[5m])) / sum(rate(http_requests_total{service=\"payments\"}[5m])) > 0.05\nfor: 2m\nseverity: page\n"
+}

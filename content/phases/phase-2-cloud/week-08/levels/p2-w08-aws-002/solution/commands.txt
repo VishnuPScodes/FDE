@@ -1,0 +1,3 @@
+aws iam create-user --user-name report-reader
+aws iam create-policy --policy-name ReportsReadOnly --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:GetObject","Resource":"arn:aws:s3:::fde-reports-mumbai/*"},{"Effect":"Allow","Action":"s3:ListBucket","Resource":"arn:aws:s3:::fde-reports-mumbai"}]}'
+aws iam attach-user-policy --user-name report-reader --policy-arn arn:aws:iam::123456789012:policy/ReportsReadOnly

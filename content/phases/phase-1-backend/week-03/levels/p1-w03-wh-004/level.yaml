@@ -1,0 +1,22 @@
+id: p1-w03-wh-004
+title: Reject an unsigned webhook
+phase: 1
+week: 3
+module: webhook-security
+order: 4
+difficulty: 4
+estimated_minutes: 8
+type: console
+environment: http
+lesson: ../../lessons/02-webhooks-and-signatures.md
+task: Send the prepared order event with no `X-FDE-Signature` header and confirm the receiver rejects it with 401. Then clear the body and confirm an empty request is rejected with 400. Finally sign the event and confirm it is accepted with 202.
+checks:
+  - kind: http_response
+    action: statuses_include
+    path: /api/webhooks/orders
+    statuses: [401, 400, 202]
+    label: Unsigned and empty requests were rejected and the signed event accepted
+hints:
+  - Leave the headers as `{}` for the unsigned attempt; a missing signature is invalid.
+  - Empty the body textarea for the 400, then restore the event, generate a signature, and send it.
+tags: [webhooks, authentication, validation, security]

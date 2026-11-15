@@ -1,0 +1,37 @@
+id: p3-w13-agent-014
+title: Cap tool calls per run with a budget
+phase: 3
+week: 13
+module: agent-loops
+order: 13
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/02-agent-loops.md
+task: |
+  An agent that can call tools without limits can send fifty search requests, or issue two refunds, before anyone notices. A step limit counts model turns. A tool budget counts the actions that cost money or change things.
+
+  In `budget.py`, finish the class `ToolBudget(max_calls=8, per_tool=None)`. `per_tool` maps a tool name to the most times it may run in one run, for example `{"refund_payment": 1}`.
+
+  `try_call(name)` returns a tuple `(allowed, reason)`:
+
+  - If the run budget is used up, return `(False, "run budget used: 8 of 8 tool calls")` (real numbers). Check this first.
+  - If `name` has a per-tool limit and it is used up, return `(False, "tool budget used: refund_payment allows 1 call per run")`. Say `calls` when the limit is not 1.
+  - Otherwise record the call and return `(True, "")`.
+
+  A refused call must not use any budget. `remaining()` returns how many run-level calls are left. Copy the `per_tool` dict so later changes by the caller do not affect the budget.
+starter_files:
+  - path: budget.py
+  - path: test_budget.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_budget.py
+    label: Tool budget tests pass
+hints:
+  - Keep two counters in `__init__`, a total and a dict of per-tool counts. Update them only on the last line, after both checks pass.
+  - "`self.per_tool.get(name)` returns `None` for tools without a limit, so test `limit is not None` before comparing."
+  - "Use `dict(per_tool or {})` to make a safe copy that also handles `None`."
+solution: solution/
+unlocks: [p3-w13-agent-015]
+tags: [agents, budget, guardrails, tool-calling]

@@ -1,0 +1,59 @@
+id: p2-w09-obs-004
+title: Follow one request by request_id
+phase: 2
+week: 9
+module: structured-logging
+order: 4
+difficulty: 3
+estimated_minutes: 12
+type: console
+environment: observability
+lesson: ../../lessons/01-structured-logging.md
+task: |-
+  A customer, Meera from Kochi, sends you this: "My payment failed at 10:25. Reference req-7a00093e."
+
+  Every log line carries a `request_id`. Search for it:
+
+  `request_id:req-7a00093e`
+
+  Read the lines from all services and answer what the payment call to the outside network failed on.
+starter_files:
+  - path: scenario.json
+    content: |
+      {
+        "scenario": "bad-config",
+        "seed": 7
+      }
+checks:
+  - kind: sim_command_used
+    pattern: ^logs> .*request_id:req-7a00093e
+    label: Searched by request_id
+  - kind: sim_state
+    path: answer:peer
+    prompt: Which outside service did the call fail on?
+    options:
+      - npci-upi
+      - gst-api
+      - postgres
+      - sms-gateway
+    expected_fact: featured_peer
+  - kind: sim_state
+    path: answer:error_type
+    prompt: error_type on the failing line
+    options:
+      - DbError
+      - PoolTimeout
+      - DeadlineExceeded
+      - TlsError
+    expected: DeadlineExceeded
+hints:
+  - Type request_id:req-7a00093e in the Logs tab.
+  - 'Three lines come back: one from api-gateway and two from payments. The error line has a peer field.'
+solution: solution/
+unlocks:
+  - p2-w09-obs-005
+tags:
+  - observability
+  - logs
+  - request-id
+  - correlation

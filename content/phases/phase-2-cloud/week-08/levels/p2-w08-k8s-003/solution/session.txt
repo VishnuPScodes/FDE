@@ -1,0 +1,4 @@
+kubectl apply -f configmap.yaml
+kubectl apply -f deployment.yaml
+kubectl get pods
+kubectl logs deploy/invoice-api

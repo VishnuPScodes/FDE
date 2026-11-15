@@ -1,0 +1,93 @@
+id: p3-w10-llm-003
+title: Fit chat history into the context window
+phase: 3
+week: 10
+module: llm-fundamentals
+order: 3
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-tokens-context-and-cost.md
+task: |
+  Long WhatsApp-style chats overflow the model's context window. Trim them.
+
+  Write `fit_history(messages, context_window, reserve_output)`.
+  Each message is a dict with `role` and `content`. Use the provided `estimate_tokens`
+  (4 characters per token, rounded up, plus 4 tokens overhead per message).
+
+  Rules:
+
+  - The input budget is `context_window - reserve_output`.
+  - A message with role `system` always stays, in its place at the start.
+  - Drop the **oldest** non-system messages first until the total fits.
+  - Never drop the last message (the user's new question). If even
+    system + last message do not fit, raise `ValueError`.
+
+  Return the new list. Do not change the input list.
+starter_files:
+- path: main.py
+  content: |
+    import math
+
+
+    def estimate_tokens(message):
+        return math.ceil(len(message["content"]) / 4) + 4
+
+
+    def fit_history(messages, context_window, reserve_output):
+        pass
+- path: test_main.py
+  content: |
+    import pytest
+
+    from main import estimate_tokens, fit_history
+
+    SYSTEM = {"role": "system", "content": "You help Kotak customers with card issues."}  # 42 chars -> 11 + 4
+
+
+    def msg(role, chars):
+        return {"role": role, "content": "x" * chars}
+
+
+    def test_keeps_everything_when_it_fits():
+        history = [SYSTEM, msg("user", 40), msg("assistant", 40), msg("user", 40)]
+        assert fit_history(history, 1000, 200) == history
+
+
+    def test_drops_oldest_first_and_keeps_system():
+        history = [SYSTEM, msg("user", 400), msg("assistant", 400), msg("user", 40)]
+        # tokens: system 15, user 104, assistant 104, question 14. Budget is 150.
+        result = fit_history(history, 350, 200)
+        assert result == [SYSTEM, history[2], history[3]]
+
+
+    def test_does_not_mutate_input():
+        history = [SYSTEM, msg("user", 400), msg("user", 40)]
+        copy = list(history)
+        fit_history(history, 100, 50)
+        assert history == copy
+
+
+    def test_raises_when_question_alone_is_too_big():
+        with pytest.raises(ValueError):
+            fit_history([SYSTEM, msg("user", 4000)], 500, 100)
+
+
+    def test_estimate_helper():
+        assert estimate_tokens({"role": "user", "content": "abcde"}) == 6
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Split the list into system messages and the rest. Keep the last message aside so it is never dropped.
+- Remember the budget is `context_window - reserve_output`. The model needs room to answer.
+solution: solution/
+unlocks:
+- p3-w10-llm-004
+tags:
+- llm
+- context-window
+- truncation
+mobile_compatible: false

@@ -1,0 +1,75 @@
+id: p4-w18-write-002
+title: 'Fix a design doc: non-goals and alternatives'
+phase: 4
+week: 18
+module: design-docs
+order: 2
+difficulty: 3
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/01-design-docs.md
+task: >-
+  A teammate wrote a design doc for Gupta Traders, an Indore distributor, to read WhatsApp orders
+  into Tally. It has Context and Proposed design but no Non-goals and no Alternatives. The owner
+  already asked, "Will it also do billing and GST returns?"
+
+
+  Write the two missing sections. Non-goals must clearly answer the owner's question.
+starter_files:
+  - path: answer.md
+    content: |
+      # Fix a design doc: non-goals and alternatives
+
+      ## Non-goals
+      <!-- Answer the billing and GST question. -->
+
+      ## Alternatives considered
+      <!-- Two real options with the reason you did not pick them. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Non-goals'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Alternatives considered'
+  - kind: sim_state
+    path: word_count
+    min: 63
+    max: 231
+  - kind: sim_state
+    path: section:Non-goals
+    min_words: 25
+    contains_all:
+      - billing
+      - GST
+  - kind: sim_state
+    path: section:Alternatives considered
+    min_words: 30
+    contains_any:
+      - instead
+      - but
+      - because
+      - cost
+  - kind: checklist
+    label: Self-review
+    items:
+      - A busy reader can find the main point in the first two lines
+      - Every number has a source or is marked as an assumption
+      - I removed jargon the customer would not use
+  - kind: ai_rubric
+    rubric:
+      - Clear and concise for the intended reader
+      - Specific numbers and decisions, not vague claims
+      - Honest about risks and trade-offs
+    min_score: 3
+hints:
+  - The owner asked about billing and GST. Name both words in your Non-goals.
+  - An alternative needs a reason. "Because" is a good word to use.
+solution: solution/
+unlocks:
+- p4-w18-write-003
+tags:
+  - design-doc
+  - non-goals
+mobile_compatible: true

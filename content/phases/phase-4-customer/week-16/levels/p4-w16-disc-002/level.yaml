@@ -1,0 +1,94 @@
+id: p4-w16-disc-002
+title: Map stakeholders for a co-op bank
+phase: 4
+week: 16
+module: stakeholder-mapping
+order: 2
+difficulty: 2
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/01-stakeholder-mapping.md
+task: >
+  Meenachil Service Co-operative Bank in Pala, Kerala wants a tool that reads loan documents and
+  fills the core banking screens.
+
+
+  You met: the General Manager (asked for the project, reports to the board), three loan officers at
+  the counter, Thomas from IT (runs the core banking system, worried about data leaving the branch),
+  and the internal auditor (signs off any change to loan processing).
+
+
+  Write a stakeholder map in `answer.md`. Fill every section. In **Power and interest**, place each
+  person in a quadrant: manage closely, keep satisfied, keep informed, or monitor.
+starter_files:
+  - path: answer.md
+    content: |+
+      # Stakeholder map: loan document assistant
+
+      ## Sponsor
+      <!-- Who pays and is judged on the result? What do they want? -->
+
+      ## Users
+      <!-- Who will touch the tool every day? What do they fear? -->
+
+      ## IT and security
+      <!-- Who must approve access to data and systems? -->
+
+      ## Blockers
+      <!-- Who can stop or slow this project, and why? -->
+
+      ## Power and interest
+      <!-- Place each person: manage closely / keep satisfied / keep informed / monitor. -->
+
+checks:
+  - kind: sim_state
+    path: section:Sponsor
+    min_words: 12
+  - kind: sim_state
+    path: section:Users
+    min_words: 12
+  - kind: sim_state
+    path: section:IT and security
+    min_words: 12
+  - kind: sim_state
+    path: section:Blockers
+    min_words: 12
+    contains_any:
+      - auditor
+      - audit
+  - kind: sim_state
+    path: section:Power and interest
+    contains_all:
+      - manage closely
+      - keep informed
+  - kind: sim_state
+    path: word_count
+    min: 120
+    max: 700
+  - kind: checklist
+    label: Before you submit
+    items:
+      - Every person has a role and a reason, not just a team name
+      - I wrote what each person wants and what they fear
+      - I named who can stop the project
+  - kind: ai_rubric
+    rubric:
+      - Identifies the sponsor and their goal clearly
+      - Names concrete fears for users and IT
+      - Places stakeholders sensibly on power and interest
+    min_score: 3
+hints:
+  - >-
+    The auditor rarely asks for anything, but can stop go-live. That makes them a blocker to plan
+    for.
+  - >-
+    The General Manager has high power and high interest: manage closely. Loan officers have high
+    interest but less power: keep informed.
+solution: solution/
+unlocks:
+  - p4-w16-disc-003
+tags:
+  - stakeholders
+  - power-interest
+mobile_compatible: true

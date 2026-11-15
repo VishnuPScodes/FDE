@@ -1,0 +1,80 @@
+id: p3-w10-llm-009
+title: 'Prompt caching: stable keys and savings'
+phase: 3
+week: 10
+module: api-patterns
+order: 9
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/04-caching-and-batches.md
+task: |
+  A CA firm's bot sends the same 6,000-token GST rulebook with every question.
+  Prompt caching makes repeated prefixes cheaper, but only if the prefix is byte-for-byte identical.
+
+  Write two functions:
+
+  - `cache_key(system, tools)` returns a SHA-256 hex digest of the prefix. Serialise
+    `{"system": system, "tools": tools}` with `json.dumps(..., sort_keys=True, separators=(",", ":"))`
+    so the same content always gives the same key, even if dict keys arrive in another order.
+  - `caching_cost(prefix_tokens, suffix_tokens, calls, input_usd_per_m, write_multiplier=1.25, read_multiplier=0.1)`
+    returns a tuple `(without_cache, with_cache)` in dollars, each rounded to 4 places.
+    Without a cache every call pays full price for prefix + suffix.
+    With a cache the first call writes the prefix at `write_multiplier`, later calls read it at
+    `read_multiplier`. The suffix always pays full price.
+starter_files:
+- path: main.py
+  content: |
+    import hashlib
+    import json
+
+
+    def cache_key(system, tools):
+        pass
+
+
+    def caching_cost(prefix_tokens, suffix_tokens, calls, input_usd_per_m, write_multiplier=1.25, read_multiplier=0.1):
+        pass
+- path: test_main.py
+  content: |
+    from main import cache_key, caching_cost
+
+    TOOLS = [{"name": "lookup_hsn", "input_schema": {"type": "object", "properties": {"code": {"type": "string"}}}}]
+
+
+    def test_same_content_same_key():
+        reordered = [{"input_schema": {"properties": {"code": {"type": "string"}}, "type": "object"}, "name": "lookup_hsn"}]
+        assert cache_key("GST rules", TOOLS) == cache_key("GST rules", reordered)
+        assert len(cache_key("GST rules", TOOLS)) == 64
+
+
+    def test_any_change_breaks_the_key():
+        assert cache_key("GST rules", TOOLS) != cache_key("GST rules ", TOOLS)
+
+
+    def test_caching_saves_money():
+        without, with_cache = caching_cost(6000, 200, 1000, 4.0)
+        assert without == 24.8
+        assert with_cache == 3.2276
+
+
+    def test_single_call_costs_more_with_cache():
+        without, with_cache = caching_cost(6000, 200, 1, 4.0)
+        assert with_cache > without
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- '`sort_keys=True` sorts keys at every nesting level, which fixes the reordered tool schema.'
+- 'With caching: prefix cost = prefix × price × (write_multiplier + (calls − 1) × read_multiplier).'
+solution: solution/
+unlocks:
+- p3-w10-llm-010
+tags:
+- llm
+- api
+- prompt-caching
+- cost
+mobile_compatible: false

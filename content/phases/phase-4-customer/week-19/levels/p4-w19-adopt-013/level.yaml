@@ -1,0 +1,112 @@
+id: p4-w19-adopt-013
+title: Work out the payback period
+phase: 4
+week: 19
+module: roi-measurement
+order: 13
+difficulty: 3
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/03-roi-measurement.md
+task: 'Mehta Diagnostics in Pune will pay ₹1,50,000 once to set up a report-sorting tool. It saves about
+  ₹75,000 a month in staff time and costs ₹45,000 a month to run.
+
+
+  Work out the monthly net benefit, the payback period in months, and the net gain at the end of year
+  one. Headings: Inputs, Calculation, Result, Assumptions. Write rupees with commas.'
+starter_files:
+- path: answer.md
+  content: |
+    # Work out the payback period
+
+    ## Inputs
+    <!-- Every number you use. -->
+
+    ## Calculation
+    <!-- Each step. -->
+
+    ## Result
+    <!-- One clear sentence. -->
+
+    ## Assumptions
+    <!-- Every guess, marked. -->
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Inputs'
+- kind: file_contains
+  path: answer.md
+  expected: '## Calculation'
+- kind: file_contains
+  path: answer.md
+  expected: '## Result'
+- kind: file_contains
+  path: answer.md
+  expected: '## Assumptions'
+- kind: sim_state
+  path: word_count
+  min: 70
+  max: 224
+- kind: sim_state
+  path: section:Inputs
+  min_words: 12
+  contains_any:
+  - 1,50,000
+  - 75,000
+  - 45,000
+- kind: sim_state
+  path: section:Calculation
+  min_words: 20
+  contains_any:
+  - 30,000
+- kind: sim_state
+  path: section:Result
+  min_words: 10
+  contains_any:
+  - 2,10,000
+  - 210,000
+  label: Result states the year-one net gain
+- kind: sim_state
+  path: section:Assumptions
+  min_words: 15
+  contains_any:
+  - assume
+- kind: file_contains
+  path: answer.md
+  expected: 30,?000
+  is_regex: true
+  label: Net benefit each month is ₹30,000
+- kind: file_contains
+  path: answer.md
+  expected: (^|[^0-9.])(5|five) months
+  is_regex: true
+  label: Payback is 5 months
+- kind: file_contains
+  path: answer.md
+  expected: 2,?10,?000
+  is_regex: true
+  label: Year one net gain is ₹2,10,000
+- kind: checklist
+  label: Self-review
+  items:
+  - A non-technical person can follow it
+  - Every number has a source or is marked as an assumption
+  - It ends with a clear next step or conclusion
+- kind: ai_rubric
+  rubric:
+  - Every step is shown, and the running cost and setup cost are both taken off
+  - The result gives payback and year-one gain in one plain sentence
+  - Assumptions name what could make the saving smaller
+  min_score: 3
+hints:
+- Net benefit each month = saving minus running cost. Do not forget the running cost.
+- Payback in months = setup cost divided by the monthly net benefit. For year one, take the setup cost off twelve months of net benefit.
+solution: solution/
+unlocks:
+- p4-w19-adopt-014
+tags:
+- roi
+- payback
+- numbers
+mobile_compatible: true

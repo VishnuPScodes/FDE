@@ -1,0 +1,35 @@
+id: p2-w08-aws-007
+title: "Stop paying for forgotten servers"
+phase: 2
+week: 8
+module: aws-core
+order: 7
+difficulty: 3
+estimated_minutes: 15
+type: terminal
+environment: aws
+lesson: ../../lessons/01-aws-core.md
+task: "Three servers are running: fde-api (needed), dev-experiment (m5.xlarge) and old-demo (t3.large). Keep fde-api running and bring the estimated monthly bill under ₹900. Remember that a stopped instance still pays for its disk."
+starter_files:
+  - path: .aws-seed
+    content: "# A VPC with one public subnet and a locked-down web security group\nVPC=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=fde-vpc}]' --query Vpc.VpcId --output text)\nSUBNET=$(aws ec2 create-subnet --vpc-id $VPC --cidr-block 10.0.1.0/24 --availability-zone ap-south-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=fde-public-a}]' --query Subnet.SubnetId --output text)\nSG=$(aws ec2 create-security-group --group-name web-sg --description \"Web servers\" --vpc-id $VPC --query GroupId --output text)\naws ec2 authorize-security-group-ingress --group-id $SG --protocol tcp --port 22 --cidr 203.0.113.25/32\naws ec2 authorize-security-group-ingress --group-id $SG --protocol tcp --port 80 --cidr 0.0.0.0/0\naws ec2 run-instances --image-id ami-0abcdef1234567890 --instance-type t3.micro --subnet-id $SUBNET --security-group-ids $SG --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=fde-api}]'\naws ec2 run-instances --image-id ami-0abcdef1234567890 --instance-type m5.xlarge --subnet-id $SUBNET --security-group-ids $SG --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=dev-experiment}]'\naws ec2 run-instances --image-id ami-0abcdef1234567890 --instance-type t3.large --subnet-id $SUBNET --security-group-ids $SG --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=old-demo}]'\n"
+checks:
+  - kind: sim_state
+    path: "bill.total"
+    max: 900
+    label: "Estimated bill is under ₹900 a month"
+  - kind: sim_state
+    path: "ec2.instances"
+    contains: "type=t3.micro state=running"
+    label: "fde-api is still running"
+  - kind: sim_state
+    path: "ec2.instances"
+    contains: "Name=fde-api"
+    label: "fde-api still exists"
+hints:
+  - "Look at the Console panel: the estimated bill shows which servers cost the most."
+  - "stop-instances keeps the disk (small cost). terminate-instances deletes the server and its disk. Use terminate for things you no longer need."
+  - "Find an id with describe-instances --filters Name=tag:Name,Values=old-demo --query Reservations[0].Instances[0].InstanceId --output text."
+solution: solution/
+unlocks: [p2-w08-aws-008]
+tags: [aws, ec2, cost]

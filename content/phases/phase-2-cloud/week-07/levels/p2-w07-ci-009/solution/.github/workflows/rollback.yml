@@ -1,0 +1,12 @@
+name: Rollback
+on:
+  workflow_dispatch:
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/deploy.sh production --rollback
+        env:
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}

@@ -1,0 +1,107 @@
+id: p4-w18-write-010
+title: Shorten a rambling update to five lines
+phase: 4
+week: 18
+module: exec-memos
+order: 10
+difficulty: 3
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/02-exec-memos.md
+task: 'A teammate wrote 400 words for Gupta Traders'' owner about the order reader: 140 orders tested
+  at 96% accuracy, a kg versus quintal mix-up fixed, two suppliers who send photos instead of emails,
+  clerk training pending, and a request for the names of the two suppliers who send photos. The owner reads on his phone
+  between calls.
+
+
+  Rewrite it under four headings: Status in one line, Done this week, Next week, Need from you. Keep it
+  under 80 words.'
+starter_files:
+- path: answer.md
+  content: |
+    # Shorten a long update
+
+    ## Status in one line
+    <!-- Green, amber or red, and why, in under 20 words. -->
+
+    ## Done this week
+    <!-- Two items at most. -->
+
+    ## Next week
+    <!-- Two items at most. -->
+
+    ## Need from you
+    <!-- One ask with a date, or "nothing". -->
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Status in one line'
+- kind: file_contains
+  path: answer.md
+  expected: '## Done this week'
+- kind: file_contains
+  path: answer.md
+  expected: '## Next week'
+- kind: file_contains
+  path: answer.md
+  expected: '## Need from you'
+- kind: sim_state
+  path: word_count
+  min: 46
+  max: 95
+- kind: sim_state
+  path: section:Status in one line
+  min_words: 6
+  contains_any:
+  - amber
+  - green
+  - red
+- kind: sim_state
+  path: section:Done this week
+  min_words: 8
+  contains_any:
+  - '96'
+  - tested
+  - fixed
+- kind: sim_state
+  path: section:Next week
+  min_words: 8
+  contains_any:
+  - add
+  - train
+- kind: sim_state
+  path: section:Need from you
+  min_words: 6
+  contains_any:
+  - by
+  - thursday
+  - please
+  - nothing
+- kind: file_contains
+  path: answer.md
+  expected: '96'
+  label: Keeps the accuracy figure
+- kind: checklist
+  label: Self-review
+  items:
+  - I could read this on a phone in 20 seconds
+  - Every number has a source or is marked as an assumption
+  - The ask has a date
+- kind: ai_rubric
+  rubric:
+  - Short and scannable
+  - Keeps the facts that matter, drops the rest
+  - Ends with a clear ask
+  min_score: 3
+hints:
+- Cut anything the reader cannot act on. Keep the figure he will repeat to others.
+- A status needs a colour and one reason.
+solution: solution/
+unlocks:
+- p4-w18-write-011
+tags:
+- memo
+- status
+- writing
+mobile_compatible: true

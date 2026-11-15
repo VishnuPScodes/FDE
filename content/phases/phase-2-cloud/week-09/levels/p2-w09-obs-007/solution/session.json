@@ -1,0 +1,12 @@
+{
+  "history": [
+    "metrics> process_resident_memory_bytes",
+    "metrics> kube_pod_container_restarts_total",
+    "logs> msg:\"container terminated\""
+  ],
+  "report": {
+    "rootCause": "memory-leak",
+    "service": "payments",
+    "evidence": "payments memory grew until the pod was OOMKilled and restarts went from 0 to 1 at 10:51."
+  }
+}

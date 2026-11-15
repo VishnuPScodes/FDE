@@ -1,0 +1,86 @@
+id: p3-w10-llm-004
+title: Softmax with temperature
+phase: 3
+week: 10
+module: llm-fundamentals
+order: 4
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/02-sampling-temperature-top-p.md
+task: |
+  A model scores every possible next token with a number called a logit.
+  Sampling turns those logits into probabilities.
+
+  Write `softmax(logits, temperature)`. `logits` is a dict like `{"refund": 2.0, "sorry": 1.0}`.
+  Return a dict of probabilities, each rounded to 4 decimal places.
+
+  - Divide each logit by `temperature` before applying softmax.
+  - Subtract the largest scaled logit before `math.exp` so big numbers do not overflow.
+  - `temperature == 0` means greedy: the top token gets 1.0 and every other token 0.0.
+    If two tokens tie for the top, the one that sorts first alphabetically wins.
+  - A negative temperature raises `ValueError`.
+starter_files:
+- path: main.py
+  content: |
+    import math
+
+
+    def softmax(logits, temperature):
+        pass
+- path: test_main.py
+  content: |
+    import pytest
+
+    from main import softmax
+
+    LOGITS = {"refund": 2.0, "sorry": 1.0, "hello": 0.0}
+
+
+    def test_temperature_one():
+        assert softmax(LOGITS, 1.0) == {"refund": 0.6652, "sorry": 0.2447, "hello": 0.09}
+
+
+    def test_low_temperature_is_sharper():
+        probs = softmax(LOGITS, 0.5)
+        assert probs["refund"] == 0.8668
+        assert probs["refund"] > softmax(LOGITS, 1.0)["refund"]
+
+
+    def test_high_temperature_is_flatter():
+        probs = softmax(LOGITS, 5.0)
+        assert probs["hello"] > 0.25
+
+
+    def test_zero_temperature_is_greedy():
+        assert softmax(LOGITS, 0) == {"refund": 1.0, "sorry": 0.0, "hello": 0.0}
+        assert softmax({"b": 1.0, "a": 1.0}, 0) == {"b": 0.0, "a": 1.0}
+
+
+    def test_large_logits_do_not_overflow():
+        assert softmax({"x": 1000.0, "y": 999.0}, 1.0) == {"x": 0.7311, "y": 0.2689}
+
+
+    def test_negative_temperature():
+        with pytest.raises(ValueError):
+            softmax(LOGITS, -1)
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Divide, do not multiply: `value / temperature`. A small temperature makes big gaps bigger.'
+- 'For temperature 0 pick the best token with `min(logits, key=lambda t: (-logits[t], t))` to break ties by name.'
+feedback:
+- when:
+    stdout_contains: OverflowError
+  message: Subtract the largest scaled logit before calling math.exp.
+solution: solution/
+unlocks:
+- p3-w10-llm-005
+tags:
+- llm
+- sampling
+- temperature
+mobile_compatible: false

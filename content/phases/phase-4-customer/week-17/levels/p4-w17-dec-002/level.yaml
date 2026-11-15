@@ -1,0 +1,77 @@
+id: p4-w17-dec-002
+title: Data and Constraints for a clinic chain
+phase: 4
+week: 17
+module: gudcmarr-framework
+order: 2
+difficulty: 2
+estimated_minutes: 15
+type: decomposition
+environment: writing
+lesson: ../../lessons/01-gudcmarr-framework.md
+task: >-
+  Sunrise Clinics runs eight clinics in Hyderabad. About 18% of booked patients do not turn up.
+  Bookings come by phone and WhatsApp. Patient names and numbers sit in an old desktop software on
+  each front desk PC.
+
+
+  Write **Data** (what exists, where, how clean) and **Constraints** (privacy, devices, language,
+  budget, people). Write your assumptions in plain words.
+starter_files:
+  - path: answer.md
+    content: |
+      # Data and Constraints for a clinic chain
+
+      ## Data
+      <!-- What exists, where it lives, how clean it is. -->
+
+      ## Constraints
+      <!-- Privacy, devices, languages, money, people. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Data'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Constraints'
+  - kind: sim_state
+    path: word_count
+    min: 67
+    max: 246
+  - kind: sim_state
+    path: section:Data
+    min_words: 25
+    contains_any:
+      - assume
+      - phone
+      - desktop
+  - kind: sim_state
+    path: section:Constraints
+    min_words: 25
+    contains_any:
+      - privacy
+      - DPDP
+      - consent
+  - kind: checklist
+    label: Self-review
+    items:
+      - Every heading has real content, not a placeholder
+      - The Goal has a number
+      - I wrote my assumptions in plain words
+  - kind: ai_rubric
+    rubric:
+      - Goal is measurable and tied to a business result
+      - MVP is small and testable
+      - Assumptions are stated honestly
+    min_score: 3
+hints:
+  - Data is about where the information lives and how messy it is, not about what you will build.
+  - In India, mention consent and local languages. They change what you can build.
+solution: solution/
+unlocks:
+  - p4-w17-dec-003
+tags:
+  - decomposition
+  - data
+  - constraints
+mobile_compatible: true

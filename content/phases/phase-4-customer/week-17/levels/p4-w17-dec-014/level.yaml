@@ -1,0 +1,101 @@
+id: p4-w17-dec-014
+title: From an app request to a small MVP
+phase: 4
+week: 17
+module: decomp-drills
+order: 14
+difficulty: 4
+estimated_minutes: 20
+type: decomposition
+environment: writing
+lesson: ../../lessons/02-decomposition-drills.md
+task: |-
+  The owner of a milk delivery service in Pune (40 drivers, 3,500 homes) says: "Build us an app for our drivers." Customers complain that deliveries come at random times, and drivers forget to mark undelivered packets, so about 6% of deliveries each day are disputed.
+
+  In `answer.md`, write what the customer said, the **Real problem**, a small **MVP** that is not an app, and what you will leave out for now under **Not yet**.
+timed: true
+starter_files:
+- path: answer.md
+  content: |+
+    # From an app request to a small MVP
+
+    ## Customer said
+    <!-- Their words. -->
+
+    ## Real problem
+    <!-- The pain with a number. -->
+
+    ## MVP
+    <!-- Smallest test, not an app. -->
+
+    ## Not yet
+    <!-- What you leave out, and why. -->
+
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Real problem'
+- kind: file_contains
+  path: answer.md
+  expected: '## MVP'
+- kind: file_contains
+  path: answer.md
+  expected: '## Not yet'
+- kind: sim_state
+  path: section:Real problem
+  min_words: 15
+  contains_any:
+  - '%'
+  - minutes
+  - per day
+  - a day
+  - complain
+- kind: sim_state
+  path: section:MVP
+  min_words: 20
+  contains_any:
+  - whatsapp
+  - sms
+  - message
+  - sheet
+- kind: sim_state
+  path: section:MVP
+  contains_any:
+  - week
+  - one route
+  - two routes
+  - three routes
+  - pilot
+  label: MVP is scoped in time or size
+- kind: sim_state
+  path: section:Not yet
+  min_words: 12
+- kind: sim_state
+  path: word_count
+  min: 80
+  max: 350
+- kind: checklist
+  label: Self-review
+  items:
+  - My MVP is not an app
+  - I can test the MVP in two to four weeks
+  - I said what I am leaving out and why
+- kind: ai_rubric
+  rubric:
+  - Separates the stated solution from the real problem
+  - MVP is far smaller than the requested app
+  - Out-of-scope items are named with a reason
+  min_score: 3
+hints:
+- Ask what the app would change. The real problem is usually a missing message or a missing record, not
+  a missing app.
+- Find the smallest thing that tells customers when to expect milk and gives you a record of each delivery.
+  Try it on a couple of routes for a couple of weeks before anything bigger.
+solution: solution/
+unlocks:
+- p4-w17-dec-015
+tags:
+- decomposition
+- mvp
+- scope
+mobile_compatible: true

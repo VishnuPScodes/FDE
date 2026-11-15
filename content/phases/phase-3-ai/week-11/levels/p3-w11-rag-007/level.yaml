@@ -1,0 +1,84 @@
+id: p3-w11-rag-007
+title: Filter by metadata before ranking
+phase: 3
+week: 11
+module: embeddings-vector-search
+order: 7
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/02-embeddings-and-vector-search.md
+task: |
+  A Bengaluru support bot must only quote policies for the customer's own state and the
+  current year. Filter first, then rank.
+
+  Write `matches(metadata, filters)` and `search(query_vector, chunks, k, filters=None)`.
+
+  - Each chunk is `{"id", "vector", "metadata"}`.
+  - A filter value that is a list means "any of these". Any other value means "equal to".
+  - A filter key missing from a chunk's metadata means the chunk does not match.
+  - `search` returns the top `k` chunk ids by cosine similarity (use the provided `cosine`),
+    highest first, ties by id. With no filters, search all chunks.
+starter_files:
+- path: main.py
+  content: |
+    import math
+
+
+    def cosine(a, b):
+        norm = math.sqrt(sum(x * x for x in a)) * math.sqrt(sum(y * y for y in b))
+        return 0.0 if norm == 0 else sum(x * y for x, y in zip(a, b)) / norm
+
+
+    def matches(metadata, filters):
+        pass
+
+
+    def search(query_vector, chunks, k, filters=None):
+        pass
+- path: test_main.py
+  content: |
+    from main import matches, search
+
+    CHUNKS = [
+        {"id": "ka-2024", "vector": [1.0, 0.1], "metadata": {"state": "KA", "year": 2024, "lang": "en"}},
+        {"id": "mh-2024", "vector": [1.0, 0.0], "metadata": {"state": "MH", "year": 2024, "lang": "en"}},
+        {"id": "ka-2021", "vector": [1.0, 0.0], "metadata": {"state": "KA", "year": 2021, "lang": "kn"}},
+        {"id": "ka-hi", "vector": [0.2, 1.0], "metadata": {"state": "KA", "year": 2024, "lang": "hi"}},
+        {"id": "untagged", "vector": [1.0, 0.0], "metadata": {}},
+    ]
+
+
+    def test_matches():
+        assert matches({"state": "KA", "year": 2024}, {"state": "KA"})
+        assert matches({"state": "KA"}, {"state": ["KA", "TN"]})
+        assert not matches({"state": "MH"}, {"state": ["KA", "TN"]})
+        assert not matches({}, {"state": "KA"})
+
+
+    def test_filtered_search():
+        assert search([1.0, 0.0], CHUNKS, 2, {"state": "KA", "year": 2024}) == ["ka-2024", "ka-hi"]
+
+
+    def test_list_filter():
+        assert search([1.0, 0.0], CHUNKS, 3, {"lang": ["hi", "kn"]}) == ["ka-2021", "ka-hi"]
+
+
+    def test_no_filter():
+        assert search([1.0, 0.0], CHUNKS, 3) == ["ka-2021", "mh-2024", "untagged"]
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Filter first, then take the top k. Taking the top k and then filtering can leave you with fewer than k results.
+- '`metadata.get(key, value) == value` treats a missing key as a match. Check `key not in metadata` explicitly.'
+solution: solution/
+unlocks:
+- p3-w11-rag-008
+tags:
+- rag
+- vector-search
+- metadata
+mobile_compatible: false

@@ -1,0 +1,91 @@
+id: p3-w15-ops-008
+title: "Send easy questions to the cheap model"
+phase: 3
+week: 15
+module: cost-latency
+order: 4
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/02-cost-and-latency.md
+task: |
+  Most questions are easy: "What are your branch hours?" Only a few need the big, expensive model. **Routing** sends each question to the cheapest model that can handle it.
+
+  Write `estimate_difficulty(prompt)` returning 1, 2 or 3 (case does not matter):
+
+  - `3` if the prompt contains any of `"step by step"`, `"prove"`, `"legal"`.
+  - else `2` if the prompt is longer than 300 characters, or contains any of `"compare"`, `"summarise"`, `"summarize"`, `"why"`.
+  - else `1`.
+
+  Write `choose_model(difficulty, models, max_inr=None)`. Each model is `{"name", "tier", "inr_per_call"}`.
+
+  - Eligible models have `tier >= difficulty`. Pick the cheapest eligible one (ties: alphabetical name).
+  - If none is eligible, fall back to the models with the highest tier and pick the cheapest of those.
+  - If `max_inr` is given and the chosen model costs more, return `None` (the caller must refuse or degrade, not overspend).
+  - Return the model **name**. An empty model list returns `None`.
+starter_files:
+  - path: main.py
+    content: |
+      def estimate_difficulty(prompt):
+          pass
+
+
+      def choose_model(difficulty, models, max_inr=None):
+          pass
+  - path: test_main.py
+    content: |
+      from main import choose_model, estimate_difficulty
+
+      MODELS = [
+          {"name": "large", "tier": 3, "inr_per_call": 2.0},
+          {"name": "small", "tier": 1, "inr_per_call": 0.05},
+          {"name": "medium", "tier": 2, "inr_per_call": 0.4},
+      ]
+
+
+      def test_difficulty_levels():
+          assert estimate_difficulty("What are your branch hours?") == 1
+          assert estimate_difficulty("Why was I charged twice?") == 2
+          assert estimate_difficulty("Compare the two loans") == 2
+          assert estimate_difficulty("x" * 301) == 2
+          assert estimate_difficulty("x" * 300) == 1
+          assert estimate_difficulty("Explain STEP BY STEP why this fails") == 3
+          assert estimate_difficulty("Is this clause LEGAL?") == 3
+
+
+      def test_cheapest_eligible():
+          assert choose_model(1, MODELS) == "small"
+          assert choose_model(2, MODELS) == "medium"
+          assert choose_model(3, MODELS) == "large"
+
+
+      def test_tie_is_alphabetical():
+          models = [{"name": "b", "tier": 2, "inr_per_call": 1.0}, {"name": "a", "tier": 2, "inr_per_call": 1.0}]
+          assert choose_model(2, models) == "a"
+
+
+      def test_fallback_to_best_tier_when_none_qualifies():
+          models = [{"name": "small", "tier": 1, "inr_per_call": 0.05}, {"name": "medium", "tier": 2, "inr_per_call": 0.4}]
+          assert choose_model(3, models) == "medium"
+
+
+      def test_budget_cap_returns_none():
+          assert choose_model(3, MODELS, max_inr=1.0) is None
+          assert choose_model(3, MODELS, max_inr=2.0) == "large"
+          assert choose_model(1, MODELS, max_inr=0.01) is None
+
+
+      def test_empty_models():
+          assert choose_model(1, []) is None
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Lower-case the prompt once (`text = prompt.lower()`) and check each keyword with `in`. Check tier 3 words before tier 2 words."
+  - "`min(eligible, key=lambda m: (m[\"inr_per_call\"], m[\"name\"]))` handles the cost and the alphabetical tie in one line."
+  - "Check the budget last, after you have chosen a model. Return `None` rather than a cheaper model that cannot do the job."
+solution: solution/
+unlocks: [p3-w15-ops-009]
+tags: [routing, cost, models]

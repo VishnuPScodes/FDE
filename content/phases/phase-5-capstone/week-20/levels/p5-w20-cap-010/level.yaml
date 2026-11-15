@@ -1,0 +1,54 @@
+id: p5-w20-cap-010
+title: Spot good discovery questions
+phase: 5
+week: 20
+module: capstone-discovery
+order: 5
+difficulty: 2
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/02-discovery-for-real.md
+task: Pick the answer a good field engineer would give in each discovery situation.
+checks:
+- kind: sim_state
+  action: multiple_choice
+  label: Best discovery question
+  question: Which is the best discovery question to ask a clinic owner?
+  options:
+  - Walk me through what happens from the moment a patient books to the moment they arrive
+  - Don't you think a WhatsApp bot would solve your no-shows?
+  - Would you pay for an app?
+  - Do you like technology?
+  expected: Walk me through what happens from the moment a patient books to the moment they arrive
+- kind: sim_state
+  action: multiple_choice
+  label: Answering a solution request
+  question: The owner says, 'I need an app for patients.' What is the best reply?
+  options:
+  - What is happening today that makes you want an app?
+  - Great, I will start building tonight
+  - Apps are expensive, a website is better
+  - Which framework do you prefer?
+  expected: What is happening today that makes you want an app?
+- kind: sim_state
+  action: multiple_choice
+  label: Useful baseline
+  question: Which note from discovery is the most useful baseline for later?
+  options:
+  - 7-8 no-shows a day over the last two weeks, counted from the booking sheet
+  - Quite a lot of patients miss slots
+  - It feels like it is getting worse
+  - Everyone struggles with this
+  expected: 7-8 no-shows a day over the last two weeks, counted from the booking sheet
+hints:
+- Open questions start with how, what or walk me through. They cannot be answered with yes or no.
+- A baseline needs a number, a time span and a source you can check again later.
+solution: solution/
+unlocks:
+- p5-w20-cap-011
+tags:
+- capstone
+- discovery
+- quiz
+mobile_compatible: true

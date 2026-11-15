@@ -1,0 +1,9 @@
+{
+  "history": [
+    "logs> service:payments level:error | count by status"
+  ],
+  "answers": {
+    "status": "500",
+    "error_type": "DbError"
+  }
+}

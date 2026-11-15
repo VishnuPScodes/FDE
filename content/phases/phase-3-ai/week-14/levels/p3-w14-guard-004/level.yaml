@@ -1,0 +1,73 @@
+id: p3-w14-guard-004
+title: "Block or escalate with a rule list"
+phase: 3
+week: 14
+module: guardrails
+order: 14
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-guardrails.md
+task: |
+  A bank's chat assistant needs simple, explainable rules. Write `check_message(text, rules)`.
+
+  `rules` is a list of `{"name": ..., "pattern": ..., "action": "block" | "escalate"}`. A pattern is a regex.
+
+  - Test each rule with `re.search`, ignoring case.
+  - `reasons` is the list of names of all matching rules, in the order of `rules`.
+  - `action` is the strictest action among the matches: `"block"` beats `"escalate"`, and `"escalate"` beats `"allow"`. With no match the action is `"allow"`.
+  - Return `{"action": ..., "reasons": [...]}`.
+starter_files:
+  - path: main.py
+    content: |
+      import re
+
+      SEVERITY = {"allow": 0, "escalate": 1, "block": 2}
+
+
+      def check_message(text, rules):
+          pass
+  - path: test_main.py
+    content: |
+      from main import check_message
+
+      RULES = [
+          {"name": "disable_controls", "pattern": r"(disable|turn off|bypass).{0,20}(fraud|kyc|otp)", "action": "block"},
+          {"name": "legal_threat", "pattern": r"legal notice|consumer court|ombudsman", "action": "escalate"},
+          {"name": "share_otp", "pattern": r"\botp\b", "action": "escalate"},
+      ]
+
+
+      def test_allow():
+          assert check_message("What is my credit card limit?", RULES) == {"action": "allow", "reasons": []}
+
+
+      def test_escalate():
+          assert check_message("I will go to the Ombudsman.", RULES) == {"action": "escalate", "reasons": ["legal_threat"]}
+
+
+      def test_block_beats_escalate_and_lists_all_reasons():
+          result = check_message("BYPASS the OTP check or I send a legal notice", RULES)
+          assert result["action"] == "block"
+          assert result["reasons"] == ["disable_controls", "legal_threat", "share_otp"]
+
+
+      def test_order_of_reasons_follows_rules():
+          result = check_message("legal notice about my otp", RULES)
+          assert result == {"action": "escalate", "reasons": ["legal_threat", "share_otp"]}
+
+
+      def test_no_rules():
+          assert check_message("anything", []) == {"action": "allow", "reasons": []}
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Keep a severity table: `{\"allow\": 0, \"escalate\": 1, \"block\": 2}` and take the highest."
+  - "Do not stop at the first match. The audit log should list every rule that fired."
+  - "Without `re.IGNORECASE`, `DISABLE the fraud check` slips through."
+solution: solution/
+unlocks: [p3-w14-guard-005]
+tags: [guardrails, policy, audit]

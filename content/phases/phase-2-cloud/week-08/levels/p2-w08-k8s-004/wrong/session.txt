@@ -1,0 +1,4 @@
+kubectl apply -f deployment.yaml
+kubectl rollout status deployment/orders-api
+kubectl set image deployment/orders-api orders-api=ghcr.io/fde-labs/orders-api:1.2.0
+kubectl rollout status deployment/orders-api

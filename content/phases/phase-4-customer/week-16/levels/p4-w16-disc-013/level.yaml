@@ -1,0 +1,82 @@
+id: p4-w16-disc-013
+title: Annualise the cost of manual stock tracking
+phase: 4
+week: 16
+module: discovery-interviews
+order: 11
+difficulty: 2
+estimated_minutes: 15
+type: writing
+environment: writing
+lesson: ../../lessons/04-quantifying-pain.md
+task: |-
+  Hubli Cold Storage keeps stock in paper registers. From your interviews: three clerks each spend 2 hours a day updating registers, over 26 working days a month. Their loaded cost is about ₹300 an hour. Separately, about 1.5% of the ₹80 lakh of stock held each month spoils because old lots are missed.
+
+  In `answer.md`, work out the clerk hours and rupees per month, then per year. Annualise the spoilage too. List every guess under **Assumptions**, and finish with a short problem statement.
+starter_files:
+- path: answer.md
+  content: |
+    # Cost of manual stock tracking
+
+    ## Calculation
+    <!-- Hours, then rupees, with the maths shown. -->
+
+    ## Annual cost
+    <!-- Clerk time per year, and spoilage per year. -->
+
+    ## Assumptions
+    <!-- Anything you estimated rather than heard. -->
+
+    ## Problem statement
+    <!-- Two or three sentences. Who, what, how much. No solution. -->
+checks:
+- kind: sim_state
+  path: section:Calculation
+  contains_all:
+  - '156'
+  - 46,800
+  min_words: 10
+- kind: sim_state
+  path: section:Annual cost
+  contains_any:
+  - 5,61,600
+  - 561,600
+- kind: sim_state
+  path: section:Annual cost
+  contains_any:
+  - 14.4 lakh
+  - 14,40,000
+  - 1,440,000
+  label: Spoilage per year is annualised
+- kind: sim_state
+  path: section:Assumptions
+  min_words: 10
+- kind: sim_state
+  path: section:Problem statement
+  min_words: 25
+  contains_any:
+  - hours
+  - ₹
+- kind: checklist
+  label: Before you submit
+  items:
+  - Every number has a source or is listed as an assumption
+  - I did not count the same hours twice
+  - My problem statement does not name a solution
+- kind: ai_rubric
+  rubric:
+  - Maths is shown and correct
+  - Estimates are separated from facts
+  - The problem statement is understandable in 30 seconds
+  min_score: 3
+hints:
+- 'Hours first: clerks × hours a day × working days gives monthly hours. Then rupees, then multiply by 12.'
+- Spoilage is a percentage of the stock value each month. Work out one month, then annualise it like the clerk time.
+solution: solution/
+unlocks:
+- p4-w16-disc-014
+tags:
+- quantify
+- problem-statement
+- writing
+mobile_compatible: true

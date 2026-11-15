@@ -1,0 +1,98 @@
+id: p4-w19-adopt-008
+title: Write a one-page staff guide
+phase: 4
+week: 19
+module: change-management
+order: 8
+difficulty: 2
+estimated_minutes: 15
+type: writing
+environment: writing
+lesson: ../../lessons/02-change-management.md
+task: >-
+  Write a one page guide for the loan officers at the co-operative bank. Use plain words, short
+  sentences, and nothing that needs an IT person to explain.
+
+
+  Headings: What changes, What stays the same, How to get help, When the tool is wrong.
+starter_files:
+  - path: answer.md
+    content: |
+      # Write a one-page staff guide
+
+      ## What changes
+      <!-- Two or three clear changes. -->
+
+      ## What stays the same
+      <!-- Reassure on what did not change. -->
+
+      ## How to get help
+      <!-- A name, a number, a time. -->
+
+      ## When the tool is wrong
+      <!-- What to do, and no blame. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## What changes'
+  - kind: file_contains
+    path: answer.md
+    expected: '## What stays the same'
+  - kind: file_contains
+    path: answer.md
+    expected: '## How to get help'
+  - kind: file_contains
+    path: answer.md
+    expected: '## When the tool is wrong'
+  - kind: sim_state
+    path: word_count
+    min: 88
+    max: 321
+  - kind: sim_state
+    path: section:What changes
+    min_words: 20
+    contains_any:
+      - file
+      - list
+  - kind: sim_state
+    path: section:What stays the same
+    min_words: 15
+    contains_any:
+      - you
+      - decide
+  - kind: sim_state
+    path: section:How to get help
+    min_words: 12
+    contains_any:
+      - whatsapp
+      - call
+      - phone
+  - kind: sim_state
+    path: section:When the tool is wrong
+    min_words: 20
+    contains_any:
+      - wrong
+      - mark
+      - report
+  - kind: checklist
+    label: Self-review
+    items:
+      - A non-technical person can follow it
+      - Every number has a source or is marked as an assumption
+      - It ends with a clear next step
+  - kind: ai_rubric
+    rubric:
+      - Clear and plain language for the audience
+      - Specific, believable detail
+      - Honest about limits
+    min_score: 3
+hints:
+  - Use "you" and short sentences. Avoid technical words.
+  - '"When the tool is wrong" should promise no blame, and one easy action.'
+solution: solution/
+unlocks:
+- p4-w19-adopt-009
+tags:
+  - adoption
+  - guide
+mobile_compatible: true

@@ -1,0 +1,155 @@
+id: p4-w16-disc-006
+title: Listen to the frontline
+phase: 4
+week: 16
+module: discovery-interviews
+order: 4
+difficulty: 3
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/02-open-questions.md
+task: >
+  Anitha Joseph is a loan officer at a co-operative bank in Pala, Kerala. She is nervous about your
+  visit.
+
+
+  Frontline staff know the workarounds that managers never see. Find out her workaround, how long a
+  loan takes, and how often files are sent back. Use no more than 10 questions and at most one
+  leading or yes/no question.
+
+
+  In `notes.md`, record the workaround under **Workarounds**.
+starter_files:
+  - path: persona.json
+    content: |
+      {
+        "name": "Anitha Joseph",
+        "role": "Loan Officer",
+        "company": "Meenachil Service Co-operative Bank, Pala, Kerala",
+        "opening": "Hello. My manager said you want to see how I work. I hope this is not about cutting staff.",
+        "facts": [
+          {
+            "id": "day",
+            "triggers": [
+              "walk me through",
+              "typical day",
+              "normal day",
+              "your day",
+              "day look"
+            ],
+            "reply": "I open around 25 loan files a day. Most are gold loans and small farm loans."
+          },
+          {
+            "id": "workaround",
+            "triggers": [
+              "slow",
+              "system",
+              "stuck",
+              "when the",
+              "down",
+              "members send"
+            ],
+            "reply": "Honestly? Members WhatsApp me photos of their land documents. I save them on my phone and type the details in later."
+          },
+          {
+            "id": "time",
+            "triggers": [
+              "how long",
+              "how much time",
+              "minutes",
+              "take"
+            ],
+            "reply": "A simple gold loan takes 40 minutes. About 25 of those go in typing the same details into two screens."
+          },
+          {
+            "id": "rework",
+            "triggers": [
+              "mistake",
+              "error",
+              "wrong",
+              "rework",
+              "redo",
+              "sent back"
+            ],
+            "requires": [
+              "time"
+            ],
+            "reply": "Head office sends back about one file in ten because a survey number or an Aadhaar digit is mistyped."
+          },
+          {
+            "id": "worry",
+            "triggers": [
+              "worry",
+              "concern",
+              "feel",
+              "afraid",
+              "new tool",
+              "change"
+            ],
+            "requires": [
+              "day"
+            ],
+            "reply": "If a new tool means more screens, I will go back to my notebook. Nobody asked us the last time."
+          }
+        ],
+        "deflections": [
+          "I don't know about that. I only see my counter.",
+          "You should ask the branch manager about that.",
+          "Sorry, a member is waiting. Can you ask me something about my work?"
+        ],
+        "max_turns": 10
+      }
+  - path: notes.md
+    content: |+
+      # Notes: loan counter, Pala branch
+
+      ## Problem
+      <!-- In her words. -->
+
+      ## Workarounds
+      <!-- What she does that is not in any manual. -->
+
+      ## Numbers
+      <!-- Time per loan, files per day, error rate. -->
+
+      ## Concerns
+      <!-- What would make her reject a new tool? -->
+
+checks:
+  - kind: sim_state
+    path: facts_uncovered
+    contains_all:
+      - workaround
+      - time
+      - rework
+    label: Uncover the workaround, the time per loan, and the rework rate
+  - kind: sim_state
+    path: turns
+    max: 10
+  - kind: sim_state
+    path: leading_questions
+    max: 1
+  - kind: sim_state
+    path: section:Workarounds
+    contains_any:
+      - whatsapp
+  - kind: sim_state
+    path: section:Numbers
+    contains_any:
+      - 40 minutes
+      - one in ten
+      - 1 in 10
+      - 10%
+hints:
+  - Ask about a normal day first. People relax when they talk about what they know.
+  - Ask what she does when the system is slow. That is where workarounds live.
+solution: solution/
+unlocks:
+  - p4-w16-disc-007
+tags:
+  - interview
+  - roleplay
+  - frontline
+  - banking
+mobile_compatible: true

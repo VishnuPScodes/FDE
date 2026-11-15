@@ -1,0 +1,118 @@
+id: p6-w24-mock-010
+title: 'Mock round 4: the angry lab owner after an outage'
+phase: 6
+week: 24
+module: mock-loop
+order: 10
+difficulty: 5
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/01-mock-loop.md
+task: >-
+  Mock customer round. Dr. Farah Sheikh owns a diagnostic lab in Hyderabad. Your report-delivery
+  tool went down yesterday and patients did not get their results. She is angry.
+
+
+  In at most 9 questions with no leading questions, learn the impact, the timeline, what she needs
+  right now, and what she needs in order to trust the tool again. Do not defend yourself or blame a
+  vendor. Then write a short recovery message in `notes.md`.
+starter_files:
+  - path: persona.json
+    content: |
+      {
+        "name": "Dr. Farah Sheikh",
+        "role": "Owner",
+        "company": "Sheikh Diagnostics, Hyderabad",
+        "opening": "Yesterday your system sent nothing for five hours. I had patients standing at my counter. What do you have to say?",
+        "facts": [
+          {
+            "id": "impact",
+            "triggers": ["impact", "what happened", "tell me more", "affected", "cost you", "how many patients"],
+            "reply": "About 140 patients waited for reports. Two doctors had to phone results one by one, and one patient left angry."
+          },
+          {
+            "id": "timeline",
+            "triggers": ["when", "timeline", "what time", "how long", "start"],
+            "reply": "It started around 10 am and I only noticed at 11 when the counter filled up. Nobody told me anything."
+          },
+          {
+            "id": "immediate",
+            "triggers": ["right now", "need today", "immediately", "first", "most urgent", "need from me"],
+            "requires": ["impact"],
+            "reply": "I need every pending report delivered today, and a message I can send the patients who were affected."
+          },
+          {
+            "id": "trust",
+            "triggers": ["trust", "confidence", "prevent", "again", "future", "rebuild"],
+            "requires": ["timeline"],
+            "reply": "I want to be told within 15 minutes if something breaks, and a written explanation by Friday. Then I can keep using it."
+          }
+        ],
+        "deflections": [
+          "That is not an answer. Ask me what you need to ask.",
+          "I do not have time for that. Next question."
+        ],
+        "max_turns": 12
+      }
+  - path: notes.md
+    content: |
+      # Recovery message for Sheikh Diagnostics
+
+      ## Acknowledgement
+
+      ## Immediate fix
+
+      ## Next step
+checks:
+  - kind: sim_state
+    path: facts_uncovered
+    contains_all:
+      - impact
+      - timeline
+      - immediate
+      - trust
+  - kind: sim_state
+    path: turns
+    max: 9
+  - kind: sim_state
+    path: leading_questions
+    max: 0
+  - kind: sim_state
+    path: section:Acknowledgement
+    min_words: 12
+    contains_any:
+      - sorry
+      - 140
+      - patients
+  - kind: sim_state
+    path: section:Immediate fix
+    min_words: 15
+    contains_any:
+      - today
+      - pending
+      - reports
+  - kind: sim_state
+    path: section:Next step
+    min_words: 12
+    contains_any:
+      - 15 minutes
+      - Friday
+      - alert
+  - kind: ai_rubric
+    rubric:
+      - Message owns the problem without excuses
+      - Commitments match what the customer asked for
+    min_score: 3
+hints:
+  - Do not explain or defend first. Ask what happened and how many patients were affected.
+  - Ask when it started and how she found out. Her answer shows the communication gap.
+  - Ask what she needs today and what she needs to trust the tool again, then promise exactly that.
+solution: solution/
+unlocks:
+  - p6-w24-mock-011
+tags:
+  - mock
+  - roleplay
+  - escalation
+mobile_compatible: true

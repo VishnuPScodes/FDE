@@ -1,0 +1,88 @@
+id: p5-w21-cap-003
+title: Plan daily build milestones
+phase: 5
+week: 21
+module: capstone-build
+order: 7
+difficulty: 2
+estimated_minutes: 25
+type: writing
+environment: writing
+lesson: ../../lessons/01-architecture-and-milestones.md
+task: |-
+  Split your build into daily milestones and keep a short daily log this week.
+
+  **Milestones** has at least five dated steps, each small enough for one day. **Daily Log** has one or two lines per day: what you did and what broke. **Check-in Plan** says when you meet the customer. **Definition of Done** says when real users are using it on real work.
+starter_files:
+- path: answer.md
+  content: |
+    # Build plan
+
+    ## Milestones
+
+
+    ## Daily Log
+
+
+    ## Check-in Plan
+
+
+    ## Definition of Done
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Milestones'
+- kind: file_contains
+  path: answer.md
+  expected: '## Daily Log'
+- kind: file_contains
+  path: answer.md
+  expected: '## Check-in Plan'
+- kind: file_contains
+  path: answer.md
+  expected: '## Definition of Done'
+- kind: sim_state
+  path: word_count
+  min: 150
+  max: 600
+- kind: sim_state
+  path: section:Milestones
+  min_words: 40
+  contains_any:
+  - day 1
+  - mon
+  - nov
+  - '1.'
+- kind: sim_state
+  path: section:Daily Log
+  min_words: 20
+- kind: sim_state
+  path: section:Check-in Plan
+  min_words: 10
+- kind: sim_state
+  path: section:Definition of Done
+  min_words: 12
+  contains_any:
+  - real users
+  - real work
+  - customer
+  - patients
+- kind: checklist
+  label: Self-review
+  items:
+  - Day 1 gets something working end to end, even if ugly
+  - I update the daily log each day
+- kind: ai_rubric
+  rubric:
+  - Milestones are small and dated
+  - Done is defined by real usage, not by features
+  min_score: 3
+hints:
+- 'The first milestone should be end to end: one real record in, one result out.'
+- Done means a real user used it on real work, not that the code is finished.
+solution: solution/
+unlocks:
+- p5-w21-cap-004
+tags:
+- capstone
+- planning

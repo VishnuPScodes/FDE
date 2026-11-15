@@ -1,0 +1,97 @@
+id: p5-w22-cap-012
+title: Plan the handover session with the front desk
+phase: 5
+week: 22
+module: capstone-measure
+order: 9
+difficulty: 3
+estimated_minutes: 30
+type: writing
+environment: writing
+lesson: ../../lessons/02-harden-and-hand-over.md
+task: |-
+  Your runbook is written. Now plan the 30-minute session where Meena proves she can run the system without you. You watch; she does every step herself.
+
+  **Meena Does It** lists at least three numbered tasks she performs while you only watch. **Outage Drill** pretends the reminders have stopped and says what she does, step by step. **Ownership** names each account that moves to the clinic and the date you remove your own access. Use plain words.
+starter_files:
+- path: answer.md
+  content: |
+    # Handover session plan
+
+    ## Before The Session
+
+
+    ## Meena Does It
+
+
+    ## Outage Drill
+
+
+    ## Ownership
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Before The Session'
+- kind: file_contains
+  path: answer.md
+  expected: '## Meena Does It'
+- kind: file_contains
+  path: answer.md
+  expected: '## Outage Drill'
+- kind: file_contains
+  path: answer.md
+  expected: '## Ownership'
+- kind: sim_state
+  path: word_count
+  min: 120
+  max: 380
+- kind: sim_state
+  path: section:Before The Session
+  min_words: 12
+- kind: file_contains
+  path: answer.md
+  label: At least three numbered tasks in Meena Does It
+  is_regex: true
+  expected: '## Meena Does It[^#]*\n\s*1\.[^#]*\n\s*2\.[^#]*\n\s*3\.'
+- kind: sim_state
+  path: section:Meena Does It
+  min_words: 30
+- kind: sim_state
+  path: section:Outage Drill
+  min_words: 25
+  contains_any:
+  - call
+  - by hand
+  - printed list
+  - manual
+- kind: sim_state
+  path: section:Ownership
+  min_words: 20
+  contains_any:
+  - remove my access
+  - remove my own access
+  - revoke
+  - my access
+- kind: checklist
+  label: Self-review
+  items:
+  - Meena does every step; I only watch
+  - The drill ends with patients still being reminded, even without the system
+  - Each account has a named owner after handover
+- kind: ai_rubric
+  rubric:
+  - Tasks are concrete actions Meena performs, not explanations given to her
+  - The outage drill keeps patients served without the builder's help
+  - Ownership names who holds each account and when the builder's access ends
+  min_score: 3
+hints:
+- Write tasks as actions she takes, starting with a verb, such as "Open the status page and read today's count".
+- In the drill, switch off the reminders on purpose. Her fallback is the old way of working, such as calling from the printed list.
+- 'Ownership: the WhatsApp Business number, the Google Sheet and the hosting account. Give each an owner and a date.'
+solution: solution/
+unlocks:
+- p5-w22-cap-006
+tags:
+- capstone
+- handover
+- runbook

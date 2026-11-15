@@ -1,0 +1,84 @@
+id: p3-w11-rag-014
+title: Drop near-duplicate chunks before indexing
+phase: 3
+week: 11
+module: embeddings-vector-search
+order: 14
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/02-embeddings-and-vector-search.md
+task: |
+  A bank's FAQ site repeats the same answer on five pages. If all five are indexed, one question returns the same text five times and crowds out other answers.
+
+  Write `dedupe_chunks(chunks, threshold=0.95)`. Each chunk is `{"id": str, "vector": list[float]}`.
+
+  - Go through the chunks in order and keep a chunk unless its cosine similarity with any **already kept** chunk is `>= threshold`.
+  - A zero vector has similarity `0.0` with everything (no division by zero), so it is always kept.
+  - Return the ids of the kept chunks, in the original order.
+starter_files:
+- path: main.py
+  content: |
+    import math
+
+
+    def cosine(a, b):
+        pass
+
+
+    def dedupe_chunks(chunks, threshold=0.95):
+        pass
+- path: test_main.py
+  content: |
+    import pytest
+
+    from main import cosine, dedupe_chunks
+
+
+    def test_cosine_basics():
+        assert cosine([1, 0], [1, 0]) == pytest.approx(1.0)
+        assert cosine([1, 0], [0, 1]) == pytest.approx(0.0)
+        assert cosine([0, 0], [1, 1]) == 0.0
+
+
+    CHUNKS = [
+        {"id": "faq-1", "vector": [1.0, 0.0, 0.0]},
+        {"id": "faq-2", "vector": [0.99, 0.05, 0.0]},
+        {"id": "loan-1", "vector": [0.0, 1.0, 0.0]},
+        {"id": "faq-3", "vector": [2.0, 0.0, 0.0]},
+        {"id": "empty", "vector": [0.0, 0.0, 0.0]},
+        {"id": "empty-2", "vector": [0.0, 0.0, 0.0]},
+    ]
+
+
+    def test_drops_near_duplicates_keeps_first():
+        assert dedupe_chunks(CHUNKS) == ["faq-1", "loan-1", "empty", "empty-2"]
+
+
+    def test_strict_threshold_keeps_more():
+        assert dedupe_chunks(CHUNKS, threshold=0.9999) == ["faq-1", "faq-2", "loan-1", "empty", "empty-2"]
+
+
+    def test_compares_against_kept_only():
+        chain = [
+            {"id": "a", "vector": [1.0, 0.0]},
+            {"id": "b", "vector": [1.0, 0.3]},
+            {"id": "c", "vector": [1.0, 0.6]},
+        ]
+        assert dedupe_chunks(chain, threshold=0.95) == ["a", "c"]
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Compare each new chunk only with the `kept` list, using `any(cosine(...) >= threshold for ...)`.
+- Return `0.0` from `cosine` when either norm is zero before you divide.
+solution: solution/
+unlocks:
+- p3-w11-rag-015
+tags:
+- rag
+- embeddings
+- dedupe
+mobile_compatible: false

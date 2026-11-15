@@ -1,0 +1,50 @@
+id: p1-w05-ts-015
+title: Validate an invoice payload
+phase: 1
+week: 5
+module: typescript-essentials
+order: 14
+difficulty: 4
+estimated_minutes: 18
+type: code
+environment: ts
+lesson: ../../lessons/01-types-and-functions.md
+task: "Implement `parseInvoice(input: unknown)` returning `{ ok: true, value: Invoice }` or `{ ok: false, errors: string[] }`. Collect every problem rather than stopping at the first: `id` must be a non-empty string, `amountPaise` a positive integer, `status` one of draft, sent, paid."
+starter_files:
+  - path: main.ts
+    content: |-
+      type Invoice = { id: string; amountPaise: number; status: 'draft' | 'sent' | 'paid' };
+      type ParseResult = { ok: true; value: Invoice } | { ok: false; errors: string[] };
+
+      function parseInvoice(input: unknown): ParseResult {
+        return { ok: false, errors: ['not implemented'] };
+      }
+
+      test('accepts a valid payload', () => {
+        expect(parseInvoice({ id: 'INV-1', amountPaise: 5000, status: 'sent' })).toEqual({
+          ok: true,
+          value: { id: 'INV-1', amountPaise: 5000, status: 'sent' },
+        });
+      });
+      test('rejects non-objects', () => {
+        expect(parseInvoice(null)).toEqual({ ok: false, errors: ['expected an object'] });
+      });
+      test('collects every field error', () => {
+        expect(parseInvoice({ id: '', amountPaise: 12.5, status: 'void' })).toEqual({
+          ok: false,
+          errors: ['id must be a non-empty string', 'amountPaise must be a positive integer', 'status must be draft, sent or paid'],
+        });
+      });
+      test('reports a single bad field', () => {
+        const result = parseInvoice({ id: 'INV-2', amountPaise: -5, status: 'paid' });
+        expect(result).toEqual({ ok: false, errors: ['amountPaise must be a positive integer'] });
+      });
+checks:
+  - kind: vitest_passes
+    label: All behaviour checks pass
+hints:
+  - "Return early with `expected an object` if the input is not a non-null object."
+  - "Push one message per failing field into an errors array; succeed only when it is empty."
+solution: solution/
+unlocks: [p1-w06-etl-001]
+tags: [typescript, validation, unknown]

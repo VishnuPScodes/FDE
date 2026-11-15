@@ -1,0 +1,52 @@
+id: p2-w09-obs-007
+title: Memory climbs, pods restart
+phase: 2
+week: 9
+module: metrics-tracing
+order: 3
+difficulty: 3
+estimated_minutes: 14
+type: console
+environment: observability
+lesson: ../../lessons/02-metrics-and-tracing.md
+task: |-
+  Around 10:50 some payments requests fail with "connection refused", then recover. Nothing is broken in a logs filter you have tried.
+
+  Check resource metrics:
+
+  - `process_resident_memory_bytes`
+  - `kube_pod_container_restarts_total`
+
+  Then open the **Incident report** tab. Pick the root cause, the affected service, and write one sentence of evidence that names a metric or log.
+starter_files:
+  - path: scenario.json
+    content: |
+      {
+        "scenario": "memory-leak",
+        "seed": 7
+      }
+checks:
+  - kind: sim_command_used
+    pattern: ^metrics> .*(process_resident_memory_bytes|kube_pod_container_restarts_total)
+    label: Looked at memory or restart metrics
+  - kind: sim_state
+    path: report.root_cause
+    expected_fact: root_cause
+  - kind: sim_state
+    path: report.service
+    expected_fact: incident_service
+  - kind: sim_state
+    path: report.evidence
+    pattern: oom|memory|restart
+hints:
+  - A gauge that climbs steadily and then drops back to zero is a classic leak shape.
+  - You can also search logs for msg:"container terminated" to see the reason.
+  - 'Evidence example: "payments memory rose to the 768MB limit, then restarts went 0 to 1."'
+solution: solution/
+unlocks:
+  - p2-w09-obs-008
+tags:
+  - observability
+  - metrics
+  - memory
+  - restarts

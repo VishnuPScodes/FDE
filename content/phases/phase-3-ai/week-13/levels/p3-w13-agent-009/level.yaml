@@ -1,0 +1,38 @@
+id: p3-w13-agent-009
+title: Run parallel tool calls in one turn
+phase: 3
+week: 13
+module: agent-loops
+order: 9
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/02-agent-loops.md
+task: |
+  A Bengaluru e-commerce seller asks: "Do we have the steel bottle in Pune, Kochi and Delhi?" The model asks for three `check_stock` calls in one reply. `agent.py` already has the loop. It calls your `execute_tool_calls(tool_calls, registry)` in `parallel.py`.
+
+  Return one tool message per tool call, in the same order as the calls, using `dispatch()`. Then:
+
+  - One failing call must not stop the others. Its error just becomes that call's message.
+  - If two calls in the same turn have the same `name` and the same `arguments`, run the tool only once. Each call still gets its own message with its own `tool_call_id` and the same content.
+
+  Compare arguments with `json.dumps(arguments, sort_keys=True)`.
+starter_files:
+  - path: parallel.py
+  - path: agent.py
+  - path: dispatcher.py
+  - path: schema_check.py
+  - path: fake_llm.py
+  - path: test_parallel.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_parallel.py
+    label: Parallel tool call tests pass
+hints:
+  - "Keep a dict `cache = {}` from the call key to the tool message you got the first time."
+  - "For a repeat, copy the cached message and swap in the new id: `{**cached, \"tool_call_id\": call[\"id\"]}`."
+  - "`dispatch()` never raises, so a plain loop already isolates failures."
+solution: solution/
+unlocks: [p3-w13-agent-010]
+tags: [agents, parallel-tool-calls, e-commerce]

@@ -1,0 +1,163 @@
+id: p4-w16-disc-005
+title: Interview a sceptical CFO
+phase: 4
+week: 16
+module: discovery-interviews
+order: 3
+difficulty: 3
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/02-open-questions.md
+task: >
+  Rajesh Khanna is CFO of Nirmal Hospitals, a chain of five hospitals in Delhi NCR. Insurance claims
+  keep getting rejected.
+
+
+  CFOs think in money and decisions. Uncover the claim volume, the rejection rate, what it costs,
+  and how a purchase gets approved. Some facts only come out after others, so follow the thread.
+  Keep it to 9 questions or fewer.
+
+
+  In `notes.md`, add a **Decision** section naming who approves and who must clear security.
+starter_files:
+  - path: persona.json
+    content: |
+      {
+        "name": "Rajesh Khanna",
+        "role": "Chief Financial Officer",
+        "company": "Nirmal Hospitals, Delhi NCR (5 hospitals)",
+        "opening": "Good afternoon. I keep hearing AI can fix our insurance claims. Convince me you understand the problem first.",
+        "facts": [
+          {
+            "id": "claim-volume",
+            "triggers": [
+              "how many",
+              "volume",
+              "per month",
+              "a month",
+              "number of claims"
+            ],
+            "reply": "We file about 2,400 cashless insurance claims a month across the five hospitals."
+          },
+          {
+            "id": "rejection-rate",
+            "triggers": [
+              "reject",
+              "denied",
+              "denial",
+              "rate",
+              "percent",
+              "short paid",
+              "short-paid"
+            ],
+            "reply": "About 9% are rejected or short-paid. Most are missing documents or the wrong procedure code."
+          },
+          {
+            "id": "cost",
+            "triggers": [
+              "cost",
+              "money",
+              "lose",
+              "losing",
+              "rupees",
+              "impact",
+              "revenue",
+              "financial"
+            ],
+            "requires": [
+              "claim-volume"
+            ],
+            "reply": "We write off roughly ₹38 lakh a quarter. And six people in billing spend their days chasing insurers."
+          },
+          {
+            "id": "approval",
+            "triggers": [
+              "approve",
+              "approval",
+              "sign off",
+              "decide",
+              "decision",
+              "budget",
+              "buy"
+            ],
+            "requires": [
+              "cost"
+            ],
+            "reply": "Anything above ₹10 lakh goes to the board. Below that I can sign, but Sunita, our IT head, must clear data security first."
+          },
+          {
+            "id": "success",
+            "triggers": [
+              "success",
+              "measure",
+              "six months",
+              "good look",
+              "win",
+              "ideal"
+            ],
+            "reply": "If rejections fall below 4% within six months, I will call it a win."
+          }
+        ],
+        "deflections": [
+          "I am a finance person. Ask me about numbers and decisions.",
+          "That detail sits with the billing team, not me.",
+          "Let us not jump to solutions. What else do you need to understand?"
+        ],
+        "max_turns": 10
+      }
+  - path: notes.md
+    content: |+
+      # Notes: Nirmal Hospitals claims
+
+      ## Problem
+      <!-- In one or two sentences. -->
+
+      ## Numbers
+      <!-- Volume, rate, rupees. -->
+
+      ## Decision
+      <!-- Who signs, who can block, what limit applies. -->
+
+      ## Success
+      <!-- How the CFO will judge this. -->
+
+checks:
+  - kind: sim_state
+    path: facts_uncovered
+    contains_all:
+      - claim-volume
+      - rejection-rate
+      - cost
+      - approval
+    label: Uncover volume, rejection rate, cost and approval path
+  - kind: sim_state
+    path: turns
+    max: 9
+  - kind: sim_state
+    path: leading_questions
+    max: 1
+  - kind: sim_state
+    path: section:Decision
+    contains_all:
+      - Sunita
+    contains_any:
+      - board
+      - 10 lakh
+  - kind: sim_state
+    path: section:Numbers
+    contains_any:
+      - 38 lakh
+      - ₹38
+hints:
+  - The CFO won't talk about cost until he knows you understand the volume. Ask about volume first.
+  - Once you know the cost, ask how a decision like this gets approved and who else must say yes.
+solution: solution/
+unlocks:
+  - p4-w16-disc-006
+tags:
+  - interview
+  - roleplay
+  - cfo
+  - healthcare
+mobile_compatible: true

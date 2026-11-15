@@ -1,0 +1,99 @@
+id: p3-w14-inj-004
+title: "Block risky tools once untrusted text is in context"
+phase: 3
+week: 14
+module: prompt-injection
+order: 10
+difficulty: 4
+estimated_minutes: 30
+type: code
+environment: python
+lesson: ../../lessons/02-prompt-injection.md
+task: |
+  Assume one injection will get through. Limit the damage. Each tool has an effect: `read`, `write` or `external` (sends data outside the company). Once the agent has read anything untrusted, the session is "tainted".
+
+  In `main.py`, `TOOLS` maps tool names to effects. Write `decide(tool, tainted, approved=False)` returning `"allow"`, `"ask"` or `"deny"`:
+
+  - Unknown tool: `"deny"`.
+  - `read`: `"allow"`.
+  - `write`: `"allow"` if the session is not tainted. If tainted, `"allow"` only when `approved` is true, otherwise `"ask"`.
+  - `external`: if tainted, `"deny"` even when approved. If not tainted, `"allow"` when approved, otherwise `"ask"`.
+
+  Then complete `Session`:
+
+  - `see(text, trusted)` records that the agent read some text. Reading untrusted text sets `tainted` to `True` and it never goes back to `False`.
+  - `check(tool, approved=False)` returns `decide(tool, self.tainted, approved)`.
+starter_files:
+  - path: main.py
+    content: |
+      TOOLS = {
+          "get_claim_status": "read",
+          "search_policy_docs": "read",
+          "update_claim_note": "write",
+          "approve_claim": "write",
+          "send_email": "external",
+      }
+
+
+      def decide(tool, tainted, approved=False):
+          pass
+
+
+      class Session:
+          def __init__(self):
+              self.tainted = False
+
+          def see(self, text, trusted):
+              pass
+
+          def check(self, tool, approved=False):
+              pass
+  - path: test_main.py
+    content: |
+      from main import Session, decide
+
+
+      def test_unknown_tool():
+          assert decide("delete_database", False, True) == "deny"
+
+
+      def test_reads_always_allowed():
+          assert decide("get_claim_status", True) == "allow"
+          assert decide("search_policy_docs", False) == "allow"
+
+
+      def test_write_rules():
+          assert decide("approve_claim", False) == "allow"
+          assert decide("approve_claim", True) == "ask"
+          assert decide("approve_claim", True, approved=True) == "allow"
+
+
+      def test_external_rules():
+          assert decide("send_email", False) == "ask"
+          assert decide("send_email", False, approved=True) == "allow"
+          assert decide("send_email", True) == "deny"
+          assert decide("send_email", True, approved=True) == "deny"
+
+
+      def test_session_gets_tainted_and_stays_tainted():
+          session = Session()
+          assert session.check("send_email", approved=True) == "allow"
+          session.see("Policy FAQ from our own CMS", trusted=True)
+          assert session.tainted is False
+          session.see("Email body from a customer", trusted=False)
+          assert session.tainted is True
+          session.see("Another trusted note", trusted=True)
+          assert session.tainted is True
+          assert session.check("send_email", approved=True) == "deny"
+          assert session.check("approve_claim") == "ask"
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Return early for the unknown-tool case: `effect = TOOLS.get(tool)`; `None` means deny."
+  - "In `see`, do `if not trusted: self.tainted = True`. Never set it back to False."
+  - "`external` plus `tainted` is the dangerous mix: private data, outside text and a way out. Deny it."
+solution: solution/
+unlocks: [p3-w14-guard-001]
+tags: [prompt-injection, agents, least-privilege]

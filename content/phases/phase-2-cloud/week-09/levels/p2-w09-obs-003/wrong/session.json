@@ -1,0 +1,9 @@
+{
+  "history": [
+    "logs> level:error | count by service"
+  ],
+  "answers": {
+    "peer": "postgres",
+    "service": "payments"
+  }
+}

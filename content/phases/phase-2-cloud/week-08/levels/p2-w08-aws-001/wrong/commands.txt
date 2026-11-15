@@ -1,0 +1,2 @@
+aws s3api create-bucket --bucket fde-invoices-mumbai --create-bucket-configuration LocationConstraint=ap-south-1
+aws s3api delete-public-access-block --bucket fde-invoices-mumbai

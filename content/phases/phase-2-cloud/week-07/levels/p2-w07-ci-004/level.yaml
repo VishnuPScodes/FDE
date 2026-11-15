@@ -1,0 +1,35 @@
+id: p2-w07-ci-004
+title: "Speed up builds with caching"
+phase: 2
+week: 7
+module: github-actions-cicd
+order: 19
+difficulty: 2
+estimated_minutes: 15
+type: console
+environment: ci
+lesson: ../../lessons/05-github-actions-pipelines.md
+task: "Every run downloads the same packages again. Turn on pip caching in setup-python, then push to main twice. The first run saves the cache and the second run must restore it."
+starter_files:
+  - path: "app.py"
+    content: "def order_total(price, qty):\n    return price * qty\n\n\ndef apply_discount(price, percent):\n    return price - price * percent / 100\n"
+  - path: "test_app.py"
+    content: "from app import apply_discount, order_total\n\n\ndef test_order_total():\n    assert order_total(250, 3) == 750\n\n\ndef test_apply_discount():\n    assert apply_discount(200, 10) == 180\n"
+  - path: "requirements.txt"
+    content: "pytest==8.3.3\nruff==0.7.4\n"
+  - path: "README.md"
+    content: "# orders-api\n\nOrder service for Acme Pay.\n"
+  - path: ".github/workflows/ci.yml"
+    content: "name: CI\non: push\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-python@v5\n        with:\n          python-version: '3.12'\n      - run: pip install -r requirements.txt\n      - run: pytest\n"
+checks:
+  - {"kind": "sim_state", "path": "runs", "contains": "#2 CI push main completed/success", "label": "Two runs finished"}
+  - {"kind": "sim_state", "path": "all_logs", "contains": "pip cache is not found", "label": "First run had no cache"}
+  - {"kind": "sim_state", "path": "log", "contains": "Cache restored from key", "label": "Second run restored the cache"}
+  - {"kind": "sim_state", "path": "caches", "contains": "pip", "label": "A pip cache exists"}
+hints:
+  - "setup-python can cache pip packages itself. Look for its cache input."
+  - "Add cache: pip under with: for actions/setup-python@v5."
+  - "Push twice. Use the Run workflow button two times and compare the logs."
+solution: solution/
+unlocks: [p2-w07-ci-005]
+tags: ["ci", "caching"]

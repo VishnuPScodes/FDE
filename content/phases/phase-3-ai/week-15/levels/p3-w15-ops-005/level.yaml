@@ -1,0 +1,97 @@
+id: p3-w15-ops-005
+title: "Work out the rupee cost of every call"
+phase: 3
+week: 15
+module: cost-latency
+order: 1
+difficulty: 2
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/02-cost-and-latency.md
+task: |
+  Finance will ask "what did the chatbot cost us this week, in rupees?" Your traces already hold token counts. Now turn them into money.
+
+  Prices are in US dollars per **one million** tokens:
+
+  ```python
+  PRICES = {
+      "small": {"input": 0.25, "output": 1.25},
+      "large": {"input": 3.00, "output": 15.00},
+  }
+  ```
+
+  Write `call_cost_inr(model, usage, prices, usd_inr=83.0)`. `usage` has `input_tokens`, `output_tokens` and optionally `cached_input_tokens` (default 0). Cached tokens are **part of** `input_tokens` and are billed at 10% of the input price. Return the cost in rupees, rounded to 4 places. An unknown model raises `KeyError`.
+
+  Write `cost_report(calls, prices, usd_inr=83.0)`. `calls` is a list of `{"model": ..., "usage": {...}}`. Return `{"total_inr": ..., "by_model": {model: inr}}`. Add up the **unrounded** costs, then round each number to 4 places at the end. `by_model` has only models that appeared.
+starter_files:
+  - path: main.py
+    content: |
+      PRICES = {
+          "small": {"input": 0.25, "output": 1.25},
+          "large": {"input": 3.00, "output": 15.00},
+      }
+
+
+      def call_cost_inr(model, usage, prices, usd_inr=83.0):
+          pass
+
+
+      def cost_report(calls, prices, usd_inr=83.0):
+          pass
+  - path: test_main.py
+    content: |
+      import pytest
+
+      from main import PRICES, call_cost_inr, cost_report
+
+
+      def test_simple_call():
+          usage = {"input_tokens": 1_000_000, "output_tokens": 1_000_000}
+          # small: $0.25 + $1.25 = $1.50 -> 124.5 rupees
+          assert call_cost_inr("small", usage, PRICES) == 124.5
+
+
+      def test_small_call_is_rounded_to_four_places():
+          usage = {"input_tokens": 1200, "output_tokens": 300}
+          # (1200*0.25 + 300*1.25) / 1e6 = 0.000675 USD -> 0.056025 INR
+          assert call_cost_inr("small", usage, PRICES) == 0.056
+
+
+      def test_cached_tokens_cost_ten_percent():
+          usage = {"input_tokens": 10_000, "output_tokens": 0, "cached_input_tokens": 8_000}
+          # uncached 2000*3 + cached 8000*0.3 = 6000 + 2400 = 8400 -> 0.0084 USD -> 0.6972 INR
+          assert call_cost_inr("large", usage, PRICES) == 0.6972
+
+
+      def test_custom_exchange_rate():
+          usage = {"input_tokens": 1_000_000, "output_tokens": 0}
+          assert call_cost_inr("large", usage, PRICES, usd_inr=90.0) == 270.0
+
+
+      def test_unknown_model():
+          with pytest.raises(KeyError):
+              call_cost_inr("huge", {"input_tokens": 1, "output_tokens": 1}, PRICES)
+
+
+      def test_report_sums_unrounded_costs():
+          calls = [{"model": "small", "usage": {"input_tokens": 1200, "output_tokens": 300}} for _ in range(3)]
+          calls.append({"model": "large", "usage": {"input_tokens": 1_000_000, "output_tokens": 100_000}})
+          report = cost_report(calls, PRICES)
+          # small: 3 * 0.056025 = 0.168075 ; large: (3.0 + 1.5) * 83 = 373.5
+          assert report == {"total_inr": 373.6681, "by_model": {"small": 0.1681, "large": 373.5}}
+
+
+      def test_empty_report():
+          assert cost_report([], PRICES) == {"total_inr": 0.0, "by_model": {}}
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Prices are per **million** tokens, so divide token counts by 1,000,000 after multiplying."
+  - "Split the input: `fresh = input_tokens - cached`. Fresh tokens pay full price, cached tokens pay `price * 0.1`."
+  - "In the report, keep a running total per model without rounding, and round only when you build the final dict."
+solution: solution/
+unlocks: [p3-w15-ops-006]
+tags: [cost, tokens, inr]

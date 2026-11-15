@@ -1,0 +1,48 @@
+id: p5-w21-cap-006
+title: Deploy to a live URL
+phase: 5
+week: 21
+module: capstone-build
+order: 10
+difficulty: 3
+estimated_minutes: 60
+type: realworld
+environment: realworld
+lesson: ../../lessons/02-ship-it-free.md
+task: |-
+  Deploy your capstone so it runs without your laptop.
+
+  1. Push your code to a public GitHub repo with a `README.md` (what it does, how to run it, who it is for).
+  2. Deploy on a no-card free tier: Render, Cloudflare Workers/Pages, Vercel, Netlify or Hugging Face Spaces.
+  3. Add a `/health` route that returns `ok` with status 200.
+  4. Put secrets in the platform's environment variables. Never in the repo.
+  5. Fill `submission.json` with your health URL (for example `https://clinic-reminders.onrender.com/health`) and your repo as `owner/name`.
+
+  We will call the URL and check your repo has a README.
+starter_files:
+- path: submission.json
+  content: |
+    {
+      "url": "",
+      "repo": ""
+    }
+checks:
+- kind: live_url
+  url_field: url
+  expect_status: 200
+  contains: ok
+  label: Health URL returns 200 and ok
+- kind: github_repo
+  require_file: README.md
+  label: Repo has a README
+hints:
+- If the URL times out, your free service may be asleep. Open it in a browser and try again after a minute.
+- The repo field is owner/name, for example priya-kulkarni/clinic-reminders, not the full https link.
+- Localhost URLs only work on your machine. The checker needs a public https URL.
+solution: solution/
+unlocks:
+- p5-w21-cap-007
+tags:
+- capstone
+- deploy
+- realworld

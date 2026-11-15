@@ -1,0 +1,28 @@
+id: p1-w04-sm-004
+title: Respond to a leaked secret
+phase: 1
+week: 4
+module: secrets-management
+order: 4
+difficulty: 2
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/03-secrets-and-pii.md
+task: A client secret was accidentally committed to a public repository. Choose the best response.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: What should you do first after a secret is exposed?
+    options:
+      - Revoke and rotate the secret, then remove it from the code and check access logs
+      - Delete the commit and keep using the same secret
+      - Wait to see whether anyone notices
+      - Rename the variable so it is harder to find
+    expected: Revoke and rotate the secret, then remove it from the code and check access logs
+    label: Select the correct incident response
+hints:
+  - Assume anything that was public has already been copied.
+  - Deleting a commit does not undo exposure; only a new secret does.
+unlocks: [p1-w04-sm-005]
+tags: [secrets, rotation, incident-response]

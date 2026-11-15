@@ -1,0 +1,114 @@
+id: p3-w10-llm-008
+title: Validate JSON output and retry with feedback
+phase: 3
+week: 10
+module: api-patterns
+order: 8
+difficulty: 4
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-messages-streaming-structured-output.md
+task: |
+  You extract GST invoice fields with a model. Models sometimes return broken JSON
+  or miss a field. Never pass that downstream.
+
+  Write `extract_invoice(client, invoice_text, max_attempts=3)`:
+
+  - Call `client.complete(prompt)` which returns a string.
+  - The reply must be a JSON object with `invoice_number` (str), `gstin` (str, exactly 15 characters)
+    and `total_inr` (int or float, not bool).
+  - Strip a ```json code fence if the model wrapped its reply in one.
+  - If the reply is invalid, call again. The new prompt must be the original prompt plus
+    `"\n\nYour last reply was invalid: <reason>. Reply with JSON only."`
+  - Return the parsed dict on success. After `max_attempts` invalid replies, raise `ValueError`.
+
+  Use `build_prompt(invoice_text)` (provided) for the first prompt.
+starter_files:
+- path: main.py
+  content: |
+    import json
+
+
+    def build_prompt(invoice_text):
+        return (
+            "Extract invoice_number, gstin and total_inr from the invoice below. "
+            "Reply with one JSON object only.\n\n<invoice>\n" + invoice_text + "\n</invoice>"
+        )
+
+
+    def validate(data):
+        """Return an error string, or None when data is valid."""
+        pass
+
+
+    def extract_invoice(client, invoice_text, max_attempts=3):
+        pass
+- path: test_main.py
+  content: |
+    import pytest
+
+    from main import build_prompt, extract_invoice
+
+    GOOD = '{"invoice_number": "INV-2024-118", "gstin": "29ABCDE1234F1Z5", "total_inr": 11800}'
+
+
+    class FakeClient:
+        def __init__(self, replies):
+            self.replies = list(replies)
+            self.prompts = []
+
+        def complete(self, prompt):
+            self.prompts.append(prompt)
+            return self.replies.pop(0)
+
+
+    def test_first_reply_valid():
+        client = FakeClient([GOOD])
+        assert extract_invoice(client, "Invoice text")["total_inr"] == 11800
+        assert len(client.prompts) == 1
+
+
+    def test_code_fence_is_stripped():
+        client = FakeClient(["```json\n" + GOOD + "\n```"])
+        assert extract_invoice(client, "x")["gstin"] == "29ABCDE1234F1Z5"
+
+
+    def test_retries_with_reason():
+        client = FakeClient(["Sure! Here it is:", '{"invoice_number": "A", "gstin": "SHORT", "total_inr": 5}', GOOD])
+        result = extract_invoice(client, "Invoice 118")
+        assert result["invoice_number"] == "INV-2024-118"
+        assert len(client.prompts) == 3
+        assert client.prompts[1].startswith(build_prompt("Invoice 118"))
+        assert "Your last reply was invalid:" in client.prompts[1]
+        assert "gstin" in client.prompts[2]
+
+
+    def test_bool_total_is_invalid():
+        bad = '{"invoice_number": "A", "gstin": "29ABCDE1234F1Z5", "total_inr": true}'
+        with pytest.raises(ValueError):
+            extract_invoice(FakeClient([bad, bad]), "x", max_attempts=2)
+
+
+    def test_gives_up():
+        client = FakeClient(["nope"] * 3)
+        with pytest.raises(ValueError):
+            extract_invoice(client, "x")
+        assert len(client.prompts) == 3
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Write `validate(data)` first. Return a short reason string for each problem and `None` when all is well.
+- '`isinstance(True, int)` is `True` in Python. Check for `bool` before checking for numbers.'
+- Build every retry prompt from the original prompt, not from the previous retry prompt, so reasons do not pile up.
+solution: solution/
+unlocks:
+- p3-w10-llm-009
+tags:
+- llm
+- api
+- structured-output
+- retry
+mobile_compatible: false

@@ -1,0 +1,73 @@
+id: p3-w12-eval-004
+title: 'Version the dataset with a fingerprint'
+phase: 3
+week: 12
+module: golden-datasets
+order: 4
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-golden-datasets.md
+task: |
+  When a score changes, you must know whether the model changed or the dataset changed. So version the dataset.
+
+  Write two functions:
+
+  - `dataset_version(rows)`: return the first 12 hex characters of the SHA-256 of a canonical JSON string. Sort rows by `id`,
+    then dump the list with `json.dumps(sorted_rows, sort_keys=True, separators=(",", ":"))`. Encode as UTF-8.
+    Row order and key order must **not** change the result.
+  - `diff_versions(old, new)`: both are lists of rows. Return `{"added": [...], "removed": [...], "changed": [...]}` with
+    sorted ids. `changed` means the id is in both but the rows are not equal.
+starter_files:
+- path: main.py
+  content: |
+    import hashlib
+    import json
+
+
+    def dataset_version(rows):
+        pass
+
+
+    def diff_versions(old, new):
+        pass
+- path: test_main.py
+  content: |
+    from main import dataset_version, diff_versions
+
+    A = {"id": "a", "question": "q1", "relevant_ids": ["x#1"]}
+    B = {"id": "b", "question": "q2", "relevant_ids": ["y#2"]}
+
+
+    def test_version_shape_and_order_independence():
+        v = dataset_version([A, B])
+        assert len(v) == 12 and all(c in "0123456789abcdef" for c in v)
+        assert dataset_version([B, A]) == v
+        reordered = {"relevant_ids": ["x#1"], "question": "q1", "id": "a"}
+        assert dataset_version([reordered, B]) == v
+
+
+    def test_version_changes_on_edit():
+        edited = dict(A, question="q1 changed")
+        assert dataset_version([edited, B]) != dataset_version([A, B])
+
+
+    def test_diff():
+        new = [dict(A, question="edited"), {"id": "c", "question": "q3", "relevant_ids": []}]
+        assert diff_versions([A, B], new) == {"added": ["c"], "removed": ["b"], "changed": ["a"]}
+        assert diff_versions([A], [A]) == {"added": [], "removed": [], "changed": []}
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Without `sort_keys=True` and a sort by id, the same data can hash differently. That makes version numbers useless.'
+- 'Index both lists by id: `{r["id"]: r for r in rows}`. Then dict key sets (`-` and `&`) give added, removed and common ids.'
+solution: solution/
+unlocks:
+- p3-w12-eval-015
+tags:
+- evals
+- versioning
+mobile_compatible: false

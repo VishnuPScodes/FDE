@@ -1,0 +1,10 @@
+{
+  "history": [
+    "logs> service:payments level:error | count by status",
+    "logs> service:payments level:error | count by error_type"
+  ],
+  "answers": {
+    "status": "503",
+    "error_type": "PoolTimeout"
+  }
+}

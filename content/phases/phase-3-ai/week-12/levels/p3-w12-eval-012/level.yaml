@@ -1,0 +1,74 @@
+id: p3-w12-eval-012
+title: 'Cohen''s kappa: does the judge agree with humans?'
+phase: 3
+week: 12
+module: llm-as-judge
+order: 3
+difficulty: 4
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-llm-as-judge.md
+task: |
+  Before you trust a judge, compare it with a human on the same answers. Raw agreement is misleading: two graders who both
+  say "pass" 90 percent of the time will agree a lot by luck. Cohen's kappa removes the luck.
+
+  Write `cohen_kappa(a, b)` for two equal-length lists of labels:
+
+  - `po` = fraction of positions where `a[i] == b[i]`.
+  - `pe` = sum over every label of `(share of label in a) * (share of label in b)`.
+  - `kappa = (po - pe) / (1 - pe)`, rounded to 4 places. If `pe == 1`, return `1.0`.
+
+  Also write `agreement_label(kappa)`: below 0.2 (including negatives) is `"slight"`, below 0.4 `"fair"`, below 0.6 `"moderate"`,
+  below 0.8 `"substantial"`, otherwise `"almost perfect"`.
+starter_files:
+- path: main.py
+  content: |
+    def cohen_kappa(a, b):
+        pass
+
+
+    def agreement_label(kappa):
+        pass
+- path: test_main.py
+  content: |
+    from main import cohen_kappa, agreement_label
+
+    HUMAN = [1, 1, 0, 0, 1, 0, 1, 0]
+    JUDGE = [1, 1, 0, 1, 1, 0, 0, 0]
+
+
+    def test_kappa():
+        assert cohen_kappa(HUMAN, JUDGE) == 0.5
+
+
+    def test_perfect_and_chance():
+        assert cohen_kappa(HUMAN, HUMAN) == 1.0
+        assert cohen_kappa([1, 1, 1], [1, 1, 1]) == 1.0
+        assert cohen_kappa([1, 0, 1, 0], [0, 1, 0, 1]) == -1.0
+
+
+    def test_lazy_judge_scores_low():
+        human = ["pass"] * 9 + ["fail"]
+        lazy = ["pass"] * 10      # 90 percent raw agreement, zero skill
+        assert cohen_kappa(human, lazy) == 0.0
+
+
+    def test_labels():
+        assert [agreement_label(x) for x in (-0.3, 0.1, 0.3, 0.5, 0.7, 0.9)] == [
+            "slight", "slight", "fair", "moderate", "substantial", "almost perfect"]
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- '`collections.Counter(a)[label] / n` is the share of a label. Use `set(a) | set(b)` so labels that appear in only one list count too.'
+- 'Watch `pe == 1`: that happens when both graders only ever use one label, and the formula would divide by zero.'
+solution: solution/
+unlocks:
+- p3-w12-eval-013
+tags:
+- evals
+- llm-judge
+- kappa
+mobile_compatible: false

@@ -1,0 +1,101 @@
+id: p5-w20-cap-007
+title: Agree data-handling rules
+phase: 5
+week: 20
+module: capstone-scoping
+order: 3
+difficulty: 3
+estimated_minutes: 25
+type: writing
+environment: writing
+lesson: ../../lessons/03-scope-on-one-page.md
+task: |-
+  Write the data rules you and your customer agree on. India's DPDP Act expects a clear purpose, consent and care with personal data. Even a small shop deserves this.
+
+  Fill in `answer.md`. Say which fields are personal, how consent is taken, where data is stored, who can see it and when it is deleted.
+starter_files:
+- path: answer.md
+  content: |
+    # Data-handling rules
+
+    ## Data Sources
+
+
+    ## Personal Data
+
+
+    ## Consent
+
+
+    ## Storage and Access
+
+
+    ## Retention and Deletion
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Data Sources'
+- kind: file_contains
+  path: answer.md
+  expected: '## Personal Data'
+- kind: file_contains
+  path: answer.md
+  expected: '## Consent'
+- kind: file_contains
+  path: answer.md
+  expected: '## Storage and Access'
+- kind: file_contains
+  path: answer.md
+  expected: '## Retention and Deletion'
+- kind: sim_state
+  path: word_count
+  min: 120
+  max: 500
+- kind: sim_state
+  path: section:Personal Data
+  min_words: 12
+  contains_any:
+  - name
+  - phone
+  - email
+  - address
+  - aadhaar
+  - pan
+- kind: sim_state
+  path: section:Consent
+  min_words: 15
+  contains_any:
+  - consent
+  - permission
+  - opt
+- kind: sim_state
+  path: section:Storage and Access
+  min_words: 15
+- kind: sim_state
+  path: section:Retention and Deletion
+  min_words: 12
+  contains_any:
+  - delete
+  - remove
+  - days
+  - weeks
+- kind: checklist
+  label: Self-review
+  items:
+  - I will not copy real personal data to my own laptop
+  - My customer has read and agreed to these rules
+- kind: ai_rubric
+  rubric:
+  - Personal fields are identified
+  - Consent and deletion are concrete
+  min_score: 3
+hints:
+- Personal data includes names and phone numbers, not only Aadhaar and PAN.
+- 'Deletion needs a trigger or a date: ''deleted 30 days after the pilot ends''.'
+solution: solution/
+unlocks:
+- p5-w20-cap-008
+tags:
+- capstone
+- dpdp
+- privacy

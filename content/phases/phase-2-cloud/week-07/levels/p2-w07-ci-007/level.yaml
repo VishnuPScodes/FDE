@@ -1,0 +1,39 @@
+id: p2-w07-ci-007
+title: "Protect production with an approval"
+phase: 2
+week: 7
+module: github-actions-cicd
+order: 22
+difficulty: 3
+estimated_minutes: 18
+type: console
+environment: ci
+lesson: ../../lessons/05-github-actions-pipelines.md
+task: "The production deploy fails because it cannot see the production secret. Put the production job in the production environment. That environment needs a reviewer, so the run will pause. Push to main, then approve the deployment. Version 1.4.0 must reach production."
+starter_files:
+  - path: "app.py"
+    content: "def order_total(price, qty):\n    return price * qty\n\n\ndef apply_discount(price, percent):\n    return price - price * percent / 100\n"
+  - path: "test_app.py"
+    content: "from app import apply_discount, order_total\n\n\ndef test_order_total():\n    assert order_total(250, 3) == 750\n\n\ndef test_apply_discount():\n    assert apply_discount(200, 10) == 180\n"
+  - path: "requirements.txt"
+    content: "pytest==8.3.3\nruff==0.7.4\n"
+  - path: "README.md"
+    content: "# orders-api\n\nOrder service for Acme Pay.\n"
+  - path: "scripts/deploy.sh"
+    content: "#!/usr/bin/env bash\n# Simulated deploy helper.\n# Usage: scripts/deploy.sh <staging|production> <version|--rollback>\n"
+  - path: ".ci/world.json"
+    content: "{\"registryVersions\": [\"1.3.0\", \"1.4.0\"]}"
+  - path: ".github/workflows/release.yml"
+    content: "name: Release\non:\n  push:\n    branches: [main]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-python@v5\n        with:\n          python-version: '3.12'\n      - run: pip install -r requirements.txt\n      - run: pytest\n  deploy-staging:\n    needs: test\n    runs-on: ubuntu-latest\n    environment: staging\n    steps:\n      - uses: actions/checkout@v4\n      - run: bash scripts/deploy.sh staging 1.4.0\n        env:\n          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}\n  deploy-production:\n    needs: deploy-staging\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: bash scripts/deploy.sh production 1.4.0\n        env:\n          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}\n"
+checks:
+  - {"kind": "sim_state", "path": "runs", "contains": "Release push main completed/success", "label": "The release run finished green"}
+  - {"kind": "sim_command_used", "command": "approve", "label": "You approved the deployment"}
+  - {"kind": "sim_state", "path": "deployments", "contains": "staging 1.4.0 success", "label": "Staging runs 1.4.0"}
+  - {"kind": "sim_state", "path": "deployments", "contains": "production 1.4.0 success", "label": "Production runs 1.4.0"}
+hints:
+  - "Environments hold their own secrets and rules. Add environment: production to the production job."
+  - "Push main. The run shows 'waiting for approval'. Use the Approve button or type approve."
+  - "The staging job already has environment: staging. Copy that pattern."
+solution: solution/
+unlocks: [p2-w07-ci-008]
+tags: ["ci", "environments", "approval"]

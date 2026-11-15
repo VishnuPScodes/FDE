@@ -1,0 +1,10 @@
+{
+  "history": [
+    "logs> level:warn | count by peer",
+    "logs> level:warn | limit 3"
+  ],
+  "answers": {
+    "peer": "gst-api",
+    "service": "invoices"
+  }
+}

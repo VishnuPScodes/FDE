@@ -1,0 +1,68 @@
+id: p2-w08-k8s-003
+title: "Fix a crash with a ConfigMap"
+phase: 2
+week: 8
+module: kubernetes-basics
+order: 3
+difficulty: 3
+estimated_minutes: 18
+type: terminal
+environment: kubernetes
+lesson: ../../lessons/03-kubernetes-basics.md
+task: "The invoice-api pod keeps crashing. Apply both files, read the pod logs to find the missing setting, and fix configmap.yaml. The GST region for Karnataka is IN-KA. Apply again until the pod is Running."
+starter_files:
+  - path: configmap.yaml
+    content: |
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: invoice-config
+      data:
+        DB_HOST: postgres.default.svc
+  - path: deployment.yaml
+    content: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: invoice-api
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: invoice
+        template:
+          metadata:
+            labels:
+              app: invoice
+          spec:
+            containers:
+              - name: invoice-api
+                image: ghcr.io/fde-labs/invoice-api:1.4.0
+                ports:
+                  - containerPort: 8000
+                envFrom:
+                  - configMapRef:
+                      name: invoice-config
+checks:
+  - kind: "sim_command_used"
+    command: "kubectl logs"
+    label: "Read the logs"
+  - kind: "sim_state"
+    path: "object"
+    kind_name: "ConfigMap"
+    name: "invoice-config"
+    contains: "\"GST_REGION\":\"IN-KA\""
+    label: "ConfigMap sets GST_REGION"
+  - kind: "sim_state"
+    path: "pods"
+    selector: "app=invoice"
+    status: "Running"
+    count: 1
+    label: "invoice-api pod is Running"
+hints:
+  - "kubectl get pods shows CrashLoopBackOff. Run kubectl logs deploy/invoice-api to read the error."
+  - "Environment variable names are case sensitive. The app wants GST_REGION exactly."
+  - "Add the key under data: in configmap.yaml, then kubectl apply -f configmap.yaml."
+solution: solution/
+unlocks: [p2-w08-k8s-004]
+tags: [kubernetes, configmap, crashloop]

@@ -1,0 +1,85 @@
+id: p4-w16-disc-008
+title: Write a five whys analysis
+phase: 4
+week: 16
+module: discovery-interviews
+order: 6
+difficulty: 2
+estimated_minutes: 15
+type: writing
+environment: writing
+lesson: ../../lessons/03-five-whys-and-shadowing.md
+task: >
+  Sahyadri Family Clinic in Pune has a 22% no-show rate. Here is what you learned on site:
+
+
+  - Reception staff say patients "just forget".
+
+  - Reminders go out by SMS, but the logs show they are sent between 11 pm and 1 am.
+
+  - The SMS job waits for the nightly billing export to finish.
+
+  - Last year the billing export moved from 6 pm to 10 pm after a new GST report was added.
+
+
+  Write a five whys analysis in `answer.md`. Finish with a root cause the clinic can change, and one
+  thing to test first.
+starter_files:
+  - path: answer.md
+    content: |+
+      # Five whys: missed appointments
+
+      ## Problem
+      <!-- The symptom, with a number. -->
+
+      ## Five whys
+      <!-- Why 1 ... Why 5. Each answer becomes the next question. -->
+
+      ## Root cause
+      <!-- A cause the clinic can change. -->
+
+      ## What to test first
+      <!-- A small, cheap test and how you will measure it. -->
+
+checks:
+  - kind: sim_state
+    path: section:Problem
+    contains_any:
+      - 22%
+      - 22 %
+      - 22 percent
+  - kind: sim_state
+    path: section:Five whys
+    min_words: 40
+    contains_all:
+      - why
+  - kind: sim_state
+    path: section:Root cause
+    min_words: 12
+    contains_any:
+      - billing
+      - export
+      - job
+      - schedule
+  - kind: sim_state
+    path: section:What to test first
+    contains_any:
+      - test
+      - pilot
+      - try
+      - measure
+  - kind: checklist
+    label: Before you submit
+    items:
+      - My root cause is something the clinic controls, not "patients are careless"
+      - Each why follows from the answer before it
+hints:
+  - The reminder timing is a clue. Why are reminders sent so late?
+  - Your root cause should point at the job schedule, not at patients.
+solution: solution/
+unlocks:
+  - p4-w16-disc-009
+tags:
+  - five-whys
+  - writing
+mobile_compatible: true

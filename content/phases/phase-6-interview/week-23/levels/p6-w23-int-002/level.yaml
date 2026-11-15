@@ -1,0 +1,69 @@
+id: p6-w23-int-002
+title: 'Drill: reconcile Tally and WhatsApp orders'
+phase: 6
+week: 23
+module: coding-drills
+order: 2
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-practical-coding.md
+task: |-
+  Timed drill, aim for 25 minutes. A Kerala wholesale distributor takes orders on WhatsApp and books them in Tally. The owner wants to know which orders do not match.
+
+  Implement `reconcile` in `reconcile.py`. Normalise IDs (trim, upper case) and amounts (drop "Rs" and commas) before you compare. Run `test_reconcile.py`.
+timed: true
+starter_files:
+- path: reconcile.py
+  content: |
+    def reconcile(tally: list[dict], whatsapp: list[dict]) -> dict:
+        """Match orders by order_id between a Tally export and a WhatsApp order log.
+
+        IDs may differ in case or spaces ("so-101 " == "SO-101").
+        Amounts are strings like "Rs 1,250.00" or "1250".
+        Return sorted lists of normalised IDs (upper case):
+          {"missing_in_tally": [...], "missing_in_whatsapp": [...], "amount_mismatch": [...]}
+        """
+        pass
+- path: test_reconcile.py
+  content: |
+    from reconcile import reconcile
+
+    TALLY = [
+        {"order_id": "SO-101", "amount": "1,250.00"},
+        {"order_id": "SO-102", "amount": "Rs 4,800"},
+        {"order_id": "SO-104", "amount": "990"},
+    ]
+    WHATSAPP = [
+        {"order_id": "so-101 ", "amount": "Rs 1250"},
+        {"order_id": "SO-102", "amount": "4,500"},
+        {"order_id": "SO-103", "amount": "2,000"},
+    ]
+
+
+    def test_reconcile():
+        assert reconcile(TALLY, WHATSAPP) == {
+            "missing_in_tally": ["SO-103"],
+            "missing_in_whatsapp": ["SO-104"],
+            "amount_mismatch": ["SO-102"],
+        }
+
+
+    def test_all_match():
+        rows = [{"order_id": "SO-1", "amount": "100"}]
+        assert reconcile(rows, rows) == {"missing_in_tally": [], "missing_in_whatsapp": [], "amount_mismatch": []}
+checks:
+- kind: pytest_passes
+  run: pytest -q test_reconcile.py
+hints:
+- Build a dict from normalised ID to numeric amount for each source.
+- 'Set operations on dict keys give you missing IDs in one line: w.keys() - t.keys().'
+- Compare amounts as numbers, not strings. '1,250.00' and 'Rs 1250' are the same.
+solution: solution/
+unlocks:
+- p6-w23-int-003
+tags:
+- interview
+- python
+- data

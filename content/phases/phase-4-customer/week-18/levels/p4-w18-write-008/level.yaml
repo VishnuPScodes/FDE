@@ -1,0 +1,114 @@
+id: p4-w18-write-008
+title: Write the bad-news memo
+phase: 4
+week: 18
+module: exec-memos
+order: 8
+difficulty: 4
+estimated_minutes: 25
+type: writing
+environment: writing
+lesson: ../../lessons/02-exec-memos.md
+task: >-
+  The clinic reminder pilot missed its target. You promised no-shows would fall from 18% to 14%.
+  After four weeks they are at 16%. You found the cause: 22% of phone numbers in the system are
+  wrong or missing, so many patients never got a message.
+
+
+  Write a memo to Dr. Rao with the headings: What happened, Impact, Cause, Fix, Decision needed. Own
+  the result. Do not blame the front desk.
+starter_files:
+  - path: answer.md
+    content: |
+      # Write the bad-news memo
+
+      ## What happened
+      <!-- Plain facts, the miss first. -->
+
+      ## Impact
+      <!-- Money and time. -->
+
+      ## Cause
+      <!-- The real reason, without blame. -->
+
+      ## Fix
+      <!-- What you will do and when. -->
+
+      ## Decision needed
+      <!-- The exact ask. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## What happened'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Impact'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Cause'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Fix'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Decision needed'
+  - kind: sim_state
+    path: word_count
+    min: 91
+    max: 334
+  - kind: sim_state
+    path: section:What happened
+    min_words: 20
+    contains_all:
+      - 16%
+      - 14%
+  - kind: sim_state
+    path: section:Impact
+    min_words: 15
+    contains_any:
+      - ₹
+      - lakh
+  - kind: sim_state
+    path: section:Cause
+    min_words: 20
+    contains_any:
+      - 22%
+      - phone
+  - kind: sim_state
+    path: section:Fix
+    min_words: 25
+    contains_any:
+      - week
+      - verify
+      - clean
+  - kind: sim_state
+    path: section:Decision needed
+    min_words: 10
+    contains_any:
+      - approve
+      - please
+      - by
+  - kind: checklist
+    label: Self-review
+    items:
+      - A busy reader can find the main point in the first two lines
+      - Every number has a source or is marked as an assumption
+      - I removed jargon the customer would not use
+      - I did not blame the customer's team
+  - kind: ai_rubric
+    rubric:
+      - Clear and concise for the intended reader
+      - Specific numbers and decisions, not vague claims
+      - Honest about risks and trade-offs
+      - Takes ownership without blaming others
+    min_score: 3
+hints:
+  - Say the miss in the first sentence, with both numbers.
+  - A bad-news memo still ends with a decision and a date.
+solution: solution/
+unlocks:
+- p4-w18-write-009
+tags:
+  - memo
+  - bad-news
+mobile_compatible: true

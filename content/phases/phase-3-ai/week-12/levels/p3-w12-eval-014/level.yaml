@@ -1,0 +1,80 @@
+id: p3-w12-eval-014
+title: 'Regression gate for CI'
+phase: 3
+week: 12
+module: llm-as-judge
+order: 5
+difficulty: 4
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-llm-as-judge.md
+task: |
+  Evals only help if a bad change cannot be merged. A regression gate compares new scores to a saved baseline and fails the CI job.
+
+  Write `regression_gate(baseline, current, max_drop=0.02, floors=None)`. `baseline` and `current` are dicts like `{"recall": 0.82, "judge_mean": 4.1}`.
+
+  - A metric **fails** if it is missing from `current`, or if `baseline - current` is greater than `max_drop` (round the drop to 4 places first,
+    so a drop of exactly 0.02 passes), or if `floors` has a minimum for it and `current` is below that minimum.
+  - Metrics that exist only in `current` are ignored. An improvement never fails.
+  - Return `{"passed": bool, "failures": sorted_metric_names}`.
+
+  Also write `exit_code(result)`: `0` when passed, `1` otherwise. CI treats a non-zero exit code as a failed build.
+starter_files:
+- path: main.py
+  content: |
+    def regression_gate(baseline, current, max_drop=0.02, floors=None):
+        pass
+
+
+    def exit_code(result):
+        pass
+- path: test_main.py
+  content: |
+    from main import regression_gate, exit_code
+
+    BASE = {"recall": 0.82, "mrr": 0.70, "judge_mean": 4.1}
+
+
+    def test_pass_within_tolerance_and_improvement():
+        cur = {"recall": 0.80, "mrr": 0.75, "judge_mean": 4.1, "new_metric": 0.1}
+        res = regression_gate(BASE, cur)
+        assert res == {"passed": True, "failures": []}
+        assert exit_code(res) == 0
+
+
+    def test_drop_too_large():
+        cur = {"recall": 0.79, "mrr": 0.70, "judge_mean": 3.9}
+        res = regression_gate(BASE, cur, max_drop=0.05)
+        assert res == {"passed": False, "failures": ["judge_mean"]}
+        assert exit_code(res) == 1
+
+
+    def test_missing_metric_fails():
+        res = regression_gate(BASE, {"recall": 0.9, "mrr": 0.9})
+        assert res["failures"] == ["judge_mean"]
+
+
+    def test_floor():
+        cur = {"recall": 0.82, "mrr": 0.70, "judge_mean": 4.1}
+        res = regression_gate(BASE, cur, floors={"recall": 0.9})
+        assert res == {"passed": False, "failures": ["recall"]}
+
+
+    def test_failures_sorted():
+        res = regression_gate(BASE, {"recall": 0.1, "mrr": 0.1, "judge_mean": 1}, max_drop=0.0)
+        assert res["failures"] == ["judge_mean", "mrr", "recall"]
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Loop over `baseline`, not `current`, so a metric that vanished from the new run is caught.'
+- 'Floating point: `0.82 - 0.80` is `0.019999...` or `0.0200001`. Use `round(base - now, 4)` before comparing with `max_drop`.'
+solution: solution/
+unlocks: [p3-w13-agent-001]
+tags:
+- evals
+- ci
+- regression
+mobile_compatible: false

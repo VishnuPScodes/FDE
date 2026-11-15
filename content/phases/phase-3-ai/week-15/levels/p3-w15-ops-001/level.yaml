@@ -1,0 +1,110 @@
+id: p3-w15-ops-001
+title: "Time each step with spans"
+phase: 3
+week: 15
+module: tracing-llm
+order: 1
+difficulty: 2
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-tracing-llm.md
+task: |
+  When a customer says "your chatbot is slow", you need to see which step was slow. A **span** is one timed step. A **trace** is all the spans of one request.
+
+  Write a `Tracer` class. It takes a `clock` function that returns the current time in milliseconds (the tests use a fake clock, so no real waiting).
+
+  `tracer.span(name, **attrs)` is a context manager (use `@contextmanager`). Each span is a dict stored in `tracer.spans` in the order spans **start**:
+
+  - `id`: 1, 2, 3 ... in start order.
+  - `parent_id`: the `id` of the span that was open when this one started, or `None`.
+  - `name`, `start` (clock value on entry), `attrs` (a copy of the keyword arguments), `status` (`"ok"`).
+  - `duration_ms`: clock on exit minus `start`.
+
+  `with tracer.span("x") as s:` gives you the span dict, so the code inside can add `s["attrs"]["k"] = v`.
+
+  If the code inside raises, set `status` to `"error"`, put `str(exc)` in `attrs["error"]`, still fill in `duration_ms`, and **re-raise** the error. A tracer must never hide a failure.
+starter_files:
+  - path: main.py
+    content: |
+      from contextlib import contextmanager
+
+
+      class Tracer:
+          def __init__(self, clock):
+              self.clock = clock
+              self.spans = []
+
+          def span(self, name, **attrs):
+              pass
+  - path: test_main.py
+    content: |
+      import pytest
+
+      from main import Tracer
+
+
+      def fake_clock(values):
+          ticks = iter(values)
+          return lambda: next(ticks)
+
+
+      def test_single_span():
+          tracer = Tracer(fake_clock([100, 130]))
+          with tracer.span("retrieve", k=5) as s:
+              s["attrs"]["hits"] = 3
+          assert tracer.spans == [
+              {"id": 1, "parent_id": None, "name": "retrieve", "start": 100, "duration_ms": 30,
+               "attrs": {"k": 5, "hits": 3}, "status": "ok"}
+          ]
+
+
+      def test_nested_spans_have_parents():
+          tracer = Tracer(fake_clock([0, 10, 15, 20, 28, 40]))
+          with tracer.span("agent"):
+              with tracer.span("retrieve"):
+                  pass
+              with tracer.span("generate"):
+                  pass
+          by_name = {s["name"]: s for s in tracer.spans}
+          assert [s["id"] for s in tracer.spans] == [1, 2, 3]
+          assert by_name["agent"]["parent_id"] is None
+          assert by_name["retrieve"]["parent_id"] == 1
+          assert by_name["generate"]["parent_id"] == 1
+          assert by_name["retrieve"]["duration_ms"] == 5
+          assert by_name["generate"]["duration_ms"] == 8
+          assert by_name["agent"]["duration_ms"] == 40
+
+
+      def test_error_is_recorded_and_reraised():
+          tracer = Tracer(fake_clock([0, 7]))
+          with pytest.raises(ValueError):
+              with tracer.span("parse"):
+                  raise ValueError("bad pdf")
+          span = tracer.spans[0]
+          assert span["status"] == "error"
+          assert span["attrs"]["error"] == "bad pdf"
+          assert span["duration_ms"] == 7
+
+
+      def test_sibling_after_error_has_no_stale_parent():
+          tracer = Tracer(fake_clock([0, 1, 2, 3]))
+          try:
+              with tracer.span("a"):
+                  raise RuntimeError("x")
+          except RuntimeError:
+              pass
+          with tracer.span("b"):
+              pass
+          assert tracer.spans[1]["parent_id"] is None
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Use `@contextmanager`. Code before `yield` runs on entry; the `finally` block runs on exit, even after an error."
+  - "Keep a stack (a list) of open spans. The parent is the top of the stack when you start. Push on entry, pop in `finally`."
+  - "Inside `except Exception as exc:` record the error and then write `raise` on its own line to re-raise it."
+solution: solution/
+unlocks: [p3-w15-ops-002]
+tags: [tracing, spans, llmops]

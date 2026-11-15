@@ -1,0 +1,53 @@
+id: p5-w22-cap-003
+title: Spot a misleading impact claim
+phase: 5
+week: 22
+module: capstone-measure
+order: 4
+difficulty: 2
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/01-measure-before-and-after.md
+task: Read each claim from a capstone report and pick the honest answer.
+checks:
+- kind: sim_state
+  action: multiple_choice
+  label: Points vs percent
+  question: No-shows went from 18% to 9%. Which sentence is correct?
+  options:
+  - No-shows fell by 9 percentage points, which is half the old rate
+  - No-shows fell by 9%
+  - No-shows fell by 200%
+  - No-shows fell to zero
+  expected: No-shows fell by 9 percentage points, which is half the old rate
+- kind: sim_state
+  action: multiple_choice
+  label: Outcome vs activity
+  question: Which is an outcome metric for the clinic?
+  options:
+  - Hours per day the front desk spends on reminder calls
+  - Number of WhatsApp messages the system sent
+  - Lines of code in the repo
+  - Number of deploys this week
+  expected: Hours per day the front desk spends on reminder calls
+- kind: sim_state
+  action: multiple_choice
+  label: Fair windows
+  question: Your baseline window had Diwali in it and the after window did not. What should you do?
+  options:
+  - Say so in the report, and also compare with a non-festival baseline week
+  - Hide it because it makes the result look better
+  - Pick whichever window gives the biggest number
+  - Drop the baseline and only report the after number
+  expected: Say so in the report, and also compare with a non-festival baseline week
+hints:
+- 18 to 9 is minus 9 points, and also minus 50% relative.
+- Activity counts what your system did. Outcomes count what changed for the customer.
+solution: solution/
+unlocks:
+- p5-w22-cap-004
+tags:
+- capstone
+- metrics
+mobile_compatible: true

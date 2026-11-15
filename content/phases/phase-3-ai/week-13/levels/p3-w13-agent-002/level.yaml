@@ -1,0 +1,40 @@
+id: p3-w13-agent-002
+title: Validate tool arguments before running them
+phase: 3
+week: 13
+module: tool-schemas
+order: 2
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-tool-schemas.md
+task: |
+  Models sometimes send wrong arguments: a missing field, a number as text, or a field they made up. Never run a tool on trust.
+
+  Write `validate_args(schema, args)` in `schema_check.py`. It returns a list of error strings. An empty list means the arguments are valid. Support this subset of JSON Schema:
+
+  - If `args` is not a dict, return `["arguments must be an object"]`.
+  - Each missing `required` field: `"missing required field: order_id"`.
+  - A field not in `properties` when `additionalProperties` is `False`: `"unexpected field: coupon"`.
+  - A wrong `type` (`string`, `integer`, `number`, `boolean`, `array`, `object`): `"amount_inr must be integer"`. In JSON, `true` is not a number, so reject Python `bool` for `integer` and `number`. Skip the other rules for that field.
+  - `enum`: `"reason must be one of: damaged, late, wrong_item"`.
+  - `pattern` (use `re.search`): `"order_id does not match pattern"`.
+  - `minimum` / `maximum`: `"amount_inr must be >= 1"` and `"amount_inr must be <= 200000"`.
+starter_files:
+  - path: schema_check.py
+  - path: test_schema_check.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_schema_check.py
+    label: Argument validation tests pass
+hints:
+  - "Map JSON types to Python types: `{\"string\": str, \"integer\": int, \"number\": (int, float), \"boolean\": bool, \"array\": list, \"object\": dict}`."
+  - "`isinstance(True, int)` is `True` in Python. Check for `bool` first when the schema wants a number."
+  - Loop over `args.items()`. Look up each key in `properties`. A missing rule means the field is unexpected.
+feedback:
+  - when: { stdout_contains: "test_bool_is_not_an_integer" }
+    message: Python treats `True` as the integer 1. JSON does not. Reject bools for integer and number fields.
+solution: solution/
+unlocks: [p3-w13-agent-003]
+tags: [tool-calling, json-schema, validation]

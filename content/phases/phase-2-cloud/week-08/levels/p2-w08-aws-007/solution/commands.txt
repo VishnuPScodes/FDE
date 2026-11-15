@@ -1,0 +1,3 @@
+A=$(aws ec2 describe-instances --filters Name=tag:Name,Values=dev-experiment --query 'Reservations[0].Instances[0].InstanceId' --output text)
+B=$(aws ec2 describe-instances --filters Name=tag:Name,Values=old-demo --query 'Reservations[0].Instances[0].InstanceId' --output text)
+aws ec2 terminate-instances --instance-ids $A $B

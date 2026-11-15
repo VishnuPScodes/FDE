@@ -1,0 +1,2 @@
+Render free web service, with secrets in environment variables
+Tell the customer about the slow first request and add a scheduled health ping

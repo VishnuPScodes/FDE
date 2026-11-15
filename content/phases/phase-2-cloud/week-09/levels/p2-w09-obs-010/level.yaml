@@ -1,0 +1,59 @@
+id: p2-w09-obs-010
+title: 'Full incident: use all three signals'
+phase: 2
+week: 9
+module: metrics-tracing
+order: 6
+difficulty: 4
+estimated_minutes: 25
+type: console
+environment: observability
+lesson: ../../lessons/02-metrics-and-tracing.md
+task: |-
+  Payments started failing at 10:40 and 66% of requests now return an error. You have no hint about the cause.
+
+  Use **all three signals**:
+
+  - **Logs**: group payments errors by `error_type` and read one message.
+  - **Traces**: run `errors 5` and open one trace to see which span fails.
+  - **Metrics**: check `tls_client_cert_expiry_seconds`. A negative value means the certificate is already past its end date.
+
+  Then fill the **Incident report** tab with the root cause, the affected service, and evidence.
+starter_files:
+  - path: scenario.json
+    content: |
+      {
+        "scenario": "cert-expiry",
+        "seed": 7
+      }
+checks:
+  - kind: sim_command_used
+    pattern: '^logs> '
+    label: Used the logs tab
+  - kind: sim_command_used
+    pattern: '^metrics> '
+    label: Used the metrics tab
+  - kind: sim_command_used
+    pattern: '^traces> '
+    label: Used the traces tab
+  - kind: sim_state
+    path: report.root_cause
+    expected_fact: root_cause
+  - kind: sim_state
+    path: report.service
+    expected_fact: incident_service
+  - kind: sim_state
+    path: report.evidence
+    pattern: tls|certificate|x509|expir
+hints:
+  - 'Start with: service:payments level:error | count by error_type. One type dominates.'
+  - Read an error line. The message text names the exact failure.
+  - Evidence should quote the message or the metric, not only say "it was broken".
+solution: solution/
+unlocks:
+  - p2-w09-sec-001
+tags:
+  - observability
+  - incident
+  - tls
+  - three-signals

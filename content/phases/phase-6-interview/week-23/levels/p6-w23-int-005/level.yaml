@@ -1,0 +1,136 @@
+id: p6-w23-int-005
+title: 'Mock: cut missed deliveries in Kerala'
+phase: 6
+week: 23
+module: decomp-mocks
+order: 1
+difficulty: 4
+estimated_minutes: 25
+type: decomposition
+environment: writing
+lesson: ../../lessons/02-decomposition-mocks.md
+task: |-
+  Timed mock, 25 minutes. Prompt from the interviewer:
+
+  > "We're a logistics company in Kochi with 300 delivery riders across Kerala. About 12% of deliveries fail on the first attempt. Leadership wants to use AI to fix this. Walk me through what you'd build."
+
+  Fill all eight headings in `answer.md`. Write assumptions where you would normally ask a question.
+timed: true
+starter_files:
+- path: answer.md
+  content: |
+    # Decomposition
+
+    ## Goal
+
+
+    ## Users
+
+
+    ## Data
+
+
+    ## Constraints
+
+
+    ## MVP
+
+
+    ## Architecture
+
+
+    ## Risks
+
+
+    ## Rollout
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Goal'
+- kind: file_contains
+  path: answer.md
+  expected: '## Users'
+- kind: file_contains
+  path: answer.md
+  expected: '## Data'
+- kind: file_contains
+  path: answer.md
+  expected: '## Constraints'
+- kind: file_contains
+  path: answer.md
+  expected: '## MVP'
+- kind: file_contains
+  path: answer.md
+  expected: '## Architecture'
+- kind: file_contains
+  path: answer.md
+  expected: '## Risks'
+- kind: file_contains
+  path: answer.md
+  expected: '## Rollout'
+- kind: sim_state
+  path: word_count
+  min: 220
+  max: 900
+- kind: sim_state
+  path: section:Goal
+  min_words: 12
+  contains_any:
+  - '%'
+  - from
+  - reduce
+  - cut
+  - increase
+  - per
+- kind: sim_state
+  path: section:Data
+  min_words: 15
+- kind: sim_state
+  path: section:Constraints
+  min_words: 12
+- kind: sim_state
+  path: section:MVP
+  min_words: 20
+- kind: sim_state
+  path: section:Architecture
+  min_words: 20
+- kind: sim_state
+  path: section:Risks
+  min_words: 25
+  contains_any:
+  - mitigat
+  - fallback
+  - human review
+  - manual
+- kind: sim_state
+  path: section:Rollout
+  min_words: 15
+  contains_any:
+  - pilot
+  - phase
+  - week
+- kind: time_limit
+  minutes: 25
+  advisory: true
+- kind: checklist
+  label: Self-review
+  items:
+  - I wrote my assumptions where I could not ask a question
+  - My MVP could ship in two to four weeks
+  - Every risk has a mitigation
+- kind: ai_rubric
+  rubric:
+  - Goal has a measurable metric
+  - MVP is small and tied to the goal
+  - Risks and rollout are realistic
+  min_score: 3
+hints:
+- 'Goal first: a number, a direction and a time frame. 12% to what, by when?'
+- 'Failed deliveries have causes: wrong address, customer not home, rider late. Your MVP should target one.'
+- Risks need mitigations. Use words like fallback or manual review.
+solution: solution/
+unlocks:
+- p6-w23-int-006
+tags:
+- interview
+- decomposition

@@ -1,0 +1,80 @@
+id: p3-w11-rag-006
+title: Cosine similarity and top-k search
+phase: 3
+week: 11
+module: embeddings-vector-search
+order: 6
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/02-embeddings-and-vector-search.md
+task: |
+  Vector search ranks chunks by how close their vectors are to the query vector.
+
+  Write:
+
+  - `cosine(a, b)`: dot product divided by the product of the lengths. Return 0.0 if either
+    vector is all zeros. Raise `ValueError` if the lengths differ.
+  - `top_k(query_vector, items, k)`: `items` is a list of `{"id": ..., "vector": [...]}`.
+    Return a list of `(id, score)` tuples for the `k` best matches, score rounded to 4 places,
+    highest first. Break ties by `id` ascending.
+starter_files:
+- path: main.py
+  content: |
+    import math
+
+
+    def cosine(a, b):
+        pass
+
+
+    def top_k(query_vector, items, k):
+        pass
+- path: test_main.py
+  content: |
+    import pytest
+
+    from main import cosine, top_k
+
+
+    def test_cosine():
+        assert cosine([1, 0], [1, 0]) == 1.0
+        assert cosine([1, 0], [0, 1]) == 0.0
+        assert round(cosine([1, 1], [1, 0]), 4) == 0.7071
+        assert cosine([0, 0], [1, 1]) == 0.0
+
+
+    def test_length_mismatch():
+        with pytest.raises(ValueError):
+            cosine([1, 2], [1, 2, 3])
+
+
+    def test_top_k():
+        items = [
+            {"id": "kyc#0", "vector": [0.0, 1.0, 0.0]},
+            {"id": "upi#2", "vector": [1.0, 1.0, 0.0]},
+            {"id": "upi#1", "vector": [1.0, 0.0, 0.0]},
+            {"id": "loan#4", "vector": [0.0, 0.0, 1.0]},
+        ]
+        assert top_k([1.0, 0.2, 0.0], items, 2) == [("upi#1", 0.9806), ("upi#2", 0.8321)]
+
+
+    def test_ties_by_id():
+        items = [{"id": "b", "vector": [1, 0]}, {"id": "a", "vector": [2, 0]}]
+        assert top_k([1, 0], items, 2) == [("a", 1.0), ("b", 1.0)]
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- A plain dot product is not cosine. Divide by both lengths so long vectors do not win just for being long.
+- 'Sort with `key=lambda pair: (-pair[1], pair[0])` for highest score first and ids as a tie-breaker.'
+solution: solution/
+unlocks:
+- p3-w11-rag-007
+tags:
+- rag
+- vector-search
+- cosine
+mobile_compatible: true

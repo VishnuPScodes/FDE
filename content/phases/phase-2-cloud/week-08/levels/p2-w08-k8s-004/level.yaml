@@ -1,0 +1,66 @@
+id: p2-w08-k8s-004
+title: "Roll out and roll back"
+phase: 2
+week: 8
+module: kubernetes-basics
+order: 4
+difficulty: 3
+estimated_minutes: 18
+type: terminal
+environment: kubernetes
+lesson: ../../lessons/03-kubernetes-basics.md
+task: "Apply deployment.yaml (orders-api 1.0.0, 3 replicas). Then ship release 1.2.0 with kubectl set image and watch it with kubectl rollout status. Release 1.2.0 is broken. Roll back with kubectl rollout undo so 3 healthy pods run 1.0.0 again."
+starter_files:
+  - path: deployment.yaml
+    content: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: orders-api
+      spec:
+        replicas: 3
+        selector:
+          matchLabels:
+            app: orders
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxSurge: 1
+            maxUnavailable: 0
+        template:
+          metadata:
+            labels:
+              app: orders
+          spec:
+            containers:
+              - name: orders-api
+                image: ghcr.io/fde-labs/orders-api:1.0.0
+                ports:
+                  - containerPort: 8080
+                readinessProbe:
+                  httpGet:
+                    path: /healthz
+                    port: 8080
+checks:
+  - kind: "sim_command_used"
+    command: "kubectl rollout undo"
+    label: "Rolled back with rollout undo"
+  - kind: "sim_state"
+    path: "object"
+    kind_name: "Deployment"
+    name: "orders-api"
+    contains: "\"image\":\"ghcr.io/fde-labs/orders-api:1.0.0\""
+    label: "Deployment is back on 1.0.0"
+  - kind: "sim_state"
+    path: "pods"
+    selector: "app=orders"
+    status: "Running"
+    count: 3
+    label: "Three pods are Running"
+hints:
+  - "kubectl set image deployment/orders-api orders-api=ghcr.io/fde-labs/orders-api:1.2.0 starts the update."
+  - "Because maxUnavailable is 0, the old pods keep serving while the new one crashes. rollout status never finishes."
+  - "kubectl rollout undo deployment/orders-api returns to the previous revision. Use kubectl rollout history to see revisions."
+solution: solution/
+unlocks: [p2-w08-k8s-005]
+tags: [kubernetes, rollout, rollback]

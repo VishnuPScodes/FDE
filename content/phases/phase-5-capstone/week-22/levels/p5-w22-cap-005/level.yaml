@@ -1,0 +1,97 @@
+id: p5-w22-cap-005
+title: Write the runbook and hand over
+phase: 5
+week: 22
+module: capstone-measure
+order: 8
+difficulty: 3
+estimated_minutes: 40
+type: writing
+environment: writing
+lesson: ../../lessons/02-harden-and-hand-over.md
+task: |-
+  Write a runbook your customer can use without you. Then move ownership to them.
+
+  Write for a non-engineer. **Daily Check** is a step anyone can do in one minute. **Common Problems** covers at least two problems with plain steps and a manual fallback. **Ownership Handover** lists accounts, keys and repo access, and who now owns each.
+starter_files:
+- path: answer.md
+  content: |
+    # Runbook
+
+    ## What It Does
+
+
+    ## Daily Check
+
+
+    ## Common Problems
+
+
+    ## Contacts
+
+
+    ## Ownership Handover
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## What It Does'
+- kind: file_contains
+  path: answer.md
+  expected: '## Daily Check'
+- kind: file_contains
+  path: answer.md
+  expected: '## Common Problems'
+- kind: file_contains
+  path: answer.md
+  expected: '## Contacts'
+- kind: file_contains
+  path: answer.md
+  expected: '## Ownership Handover'
+- kind: sim_state
+  path: word_count
+  min: 140
+  max: 650
+- kind: sim_state
+  path: section:Daily Check
+  min_words: 15
+- kind: sim_state
+  path: section:Common Problems
+  min_words: 40
+  contains_any:
+  - fallback
+  - manual
+  - as before
+  - by hand
+- kind: sim_state
+  path: section:Contacts
+  min_words: 6
+- kind: sim_state
+  path: section:Ownership Handover
+  min_words: 20
+  contains_any:
+  - owner
+  - transferred
+  - access
+  - account
+- kind: checklist
+  label: Self-review
+  items:
+  - My customer did the daily check once while I watched
+  - My customer owns the accounts and keys now, or has a dated plan to
+  - I ran a short training session with the people who use it
+- kind: ai_rubric
+  rubric:
+  - Runbook is readable by a non-engineer
+  - Every problem has a fallback that keeps the business running
+  min_score: 3
+hints:
+- Read your runbook as if you were the front desk person on a busy Monday. Remove any jargon.
+- If the system is down, what does the business do? Write that fallback down.
+- 'List every account: hosting, WhatsApp, database, GitHub, domain. Who owns each one after today?'
+solution: solution/
+unlocks:
+- p5-w22-cap-012
+tags:
+- capstone
+- runbook
+- handover

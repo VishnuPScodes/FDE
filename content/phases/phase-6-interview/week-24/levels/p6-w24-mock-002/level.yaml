@@ -1,0 +1,167 @@
+id: p6-w24-mock-002
+title: 'Mock round 2: the sceptical bank CTO'
+phase: 6
+week: 24
+module: mock-loop
+order: 2
+difficulty: 5
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/01-mock-loop.md
+task: >-
+  Mock customer round. Arun Varghese is the CTO of a private bank in Kochi. He is polite but
+  sceptical about letting a model near customer documents.
+
+
+  In at most 9 questions with no leading questions, learn his main security worries, where data can
+  and cannot go, what evidence he needs, and who signs off. Then write what you would bring to the
+  next meeting in `notes.md`.
+starter_files:
+  - path: persona.json
+    content: |
+      {
+        "name": "Arun Varghese",
+        "role": "CTO",
+        "company": "Backwater Bank, Kochi",
+        "opening": "I will be honest. I am not comfortable with models touching our customer documents. Convince me.",
+        "facts": [
+          {
+            "id": "worries",
+            "triggers": [
+              "worry",
+              "worries",
+              "concern",
+              "uncomfortable",
+              "risk",
+              "what troubles",
+              "what bothers"
+            ],
+            "reply": "Three things: customer data leaving our network, decisions I cannot explain, and what the RBI auditor will say."
+          },
+          {
+            "id": "data-rule",
+            "triggers": [
+              "data",
+              "where can",
+              "allowed",
+              "leave",
+              "cloud"
+            ],
+            "requires": [
+              "worries"
+            ],
+            "reply": "Customer documents must never leave our network. Redacted, non-personal samples are fine to share."
+          },
+          {
+            "id": "evidence",
+            "triggers": [
+              "evidence",
+              "proof",
+              "what would you need",
+              "convince",
+              "need to see",
+              "show you"
+            ],
+            "requires": [
+              "worries"
+            ],
+            "reply": "I would need a data flow diagram and a sample audit log showing who saw what and when."
+          },
+          {
+            "id": "signoff",
+            "triggers": [
+              "who signs",
+              "who approves",
+              "who decides",
+              "sign off",
+              "who else",
+              "who needs"
+            ],
+            "reply": "Bindu, our information security head, signs off first. Then I do."
+          },
+          {
+            "id": "human",
+            "triggers": [
+              "human",
+              "review",
+              "check",
+              "oversight"
+            ],
+            "requires": [
+              "worries"
+            ],
+            "reply": "Anything customer facing must be approved by a person. No exceptions."
+          }
+        ],
+        "deflections": [
+          "I'm not sure what you mean. Can you ask that another way?",
+          "I'd rather you ask me how things work today."
+        ],
+        "max_turns": 12
+      }
+  - path: notes.md
+    content: |
+      # Notes: Kochi bank CTO
+
+      ## Concerns
+      <!-- His top worries. -->
+
+      ## Conditions
+      <!-- What must be true. -->
+
+      ## Next meeting
+      <!-- What you bring. -->
+checks:
+  - kind: sim_state
+    path: facts_uncovered
+    contains_all:
+      - worries
+      - data-rule
+      - evidence
+      - signoff
+  - kind: sim_state
+    path: turns
+    max: 9
+  - kind: sim_state
+    path: leading_questions
+    max: 0
+  - kind: sim_state
+    path: section:Concerns
+    min_words: 12
+    contains_any:
+      - data
+      - audit
+      - leak
+  - kind: sim_state
+    path: section:Conditions
+    min_words: 12
+    contains_any:
+      - inside
+      - network
+      - logs
+      - audit
+  - kind: sim_state
+    path: section:Next meeting
+    min_words: 12
+    contains_any:
+      - diagram
+      - plan
+      - security
+  - kind: ai_rubric
+    rubric:
+      - Learner listens to security worries without defending
+      - Next meeting items match the evidence Arun asked for
+    min_score: 3
+hints:
+  - Ask about worries before you defend anything. He wants to be heard.
+  - Ask where data can and cannot go. That sets your whole design.
+  - Ask what evidence he needs and who signs off, then bring exactly that.
+solution: solution/
+unlocks:
+  - p6-w24-mock-003
+tags:
+  - mock
+  - roleplay
+  - security
+mobile_compatible: true

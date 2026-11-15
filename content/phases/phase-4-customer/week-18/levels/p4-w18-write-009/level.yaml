@@ -1,0 +1,108 @@
+id: p4-w18-write-009
+title: Write a decision request to the CEO
+phase: 4
+week: 18
+module: exec-memos
+order: 9
+difficulty: 3
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/02-exec-memos.md
+task: 'Your loan-file checking pilot worked at one branch of a co-operative bank: each file check dropped from
+  45 to 20 minutes. Each branch checks about 140 files a month, and running the tool costs ₹20,000 per
+  branch per month. The CEO, Mr. Iyer, must decide whether to extend to all 6 branches. You need an answer
+  by Friday 21 November.
+
+
+  Write the request with four headings: Decision needed, Recommendation, Options, Risk if we wait. Lead
+  with the decision.'
+starter_files:
+- path: answer.md
+  content: |
+    # Write a decision request
+
+    ## Decision needed
+    <!-- One sentence: what you need, from whom, by when. -->
+
+    ## Recommendation
+    <!-- What you advise and why, with one number. -->
+
+    ## Options
+    <!-- Two options with cost and date. -->
+
+    ## Risk if we wait
+    <!-- One honest consequence. -->
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Decision needed'
+- kind: file_contains
+  path: answer.md
+  expected: '## Recommendation'
+- kind: file_contains
+  path: answer.md
+  expected: '## Options'
+- kind: file_contains
+  path: answer.md
+  expected: '## Risk if we wait'
+- kind: sim_state
+  path: word_count
+  min: 72
+  max: 229
+- kind: sim_state
+  path: section:Decision needed
+  min_words: 12
+  contains_any:
+  - friday
+  - 21 november
+  - 21 nov
+- kind: sim_state
+  path: section:Recommendation
+  min_words: 15
+  contains_any:
+  - recommend
+- kind: sim_state
+  path: section:Options
+  min_words: 25
+  contains_any:
+  - option a
+  - option b
+- kind: sim_state
+  path: section:Risk if we wait
+  min_words: 12
+  contains_any:
+  - if we wait
+  - delay
+  - lose
+  - lost
+- kind: file_contains
+  path: answer.md
+  expected: ₹\s?\d
+  is_regex: true
+  label: At least one rupee figure
+- kind: checklist
+  label: Self-review
+  items:
+  - The decision is in the first two lines
+  - Every number has a source or is marked as an assumption
+  - I gave a date for the answer
+- kind: ai_rubric
+  rubric:
+  - Clear and concise for the intended reader
+  - Specific numbers and decisions, not vague claims
+  - Honest about risks and trade-offs
+  - Opens with the decision and the deadline
+  - Recommends one option clearly
+  min_score: 3
+hints:
+- Put the ask first. The CEO should know what you need before reading why.
+- Give two options with a cost and date each, then say which one you pick. Work out the hours saved from the minutes per file and the files per month.
+solution: solution/
+unlocks:
+- p4-w18-write-010
+tags:
+- memo
+- decision
+- writing
+mobile_compatible: true

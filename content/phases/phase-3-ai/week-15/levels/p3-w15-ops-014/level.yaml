@@ -1,0 +1,83 @@
+id: p3-w15-ops-014
+title: "Rank spans by error rate"
+phase: 3
+week: 15
+module: tracing-llm
+order: 5
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-tracing-llm.md
+task: |
+  Latency is not the only thing traces tell you. When users say "the bot is flaky", the question is which step fails most often. A step that errors 2 times out of 4 matters more than one that errors 3 times out of 300.
+
+  Write `error_rates(spans)`. Each span is a dict with `name` and `status` (`"ok"` or `"error"`). Group spans by `name` and return a list of dicts `{"name", "calls", "errors", "error_rate"}`.
+
+  - `error_rate` is `errors / calls`, rounded to 3 places.
+  - Sort by `error_rate` highest first. Ties go to the name with more `calls`, then to the name in alphabetical order.
+  - Return `[]` for an empty list.
+starter_files:
+  - path: main.py
+    content: |
+      def error_rates(spans):
+          pass
+  - path: test_main.py
+    content: |
+      from main import error_rates
+
+
+      def span(name, status="ok"):
+          return {"name": name, "status": status}
+
+
+      def test_empty():
+          assert error_rates([]) == []
+
+
+      def test_groups_and_computes_rate():
+          spans = [span("retrieve"), span("retrieve", "error"), span("retrieve"), span("llm_call", "error")]
+          assert error_rates(spans) == [
+              {"name": "llm_call", "calls": 1, "errors": 1, "error_rate": 1.0},
+              {"name": "retrieve", "calls": 3, "errors": 1, "error_rate": 0.333},
+          ]
+
+
+      def test_rate_beats_raw_error_count():
+          spans = [span("big", "error")] * 3 + [span("big")] * 297 + [span("small", "error")] * 2 + [span("small")] * 2
+          names = [row["name"] for row in error_rates(spans)]
+          assert names == ["small", "big"]
+          assert error_rates(spans)[1]["error_rate"] == 0.01
+
+
+      def test_ties_prefer_more_calls_then_name():
+          spans = [span("b", "error"), span("b"), span("a", "error"), span("a"),
+                   span("c", "error"), span("c"), span("c", "error"), span("c")]
+          assert [row["name"] for row in error_rates(spans)] == ["c", "a", "b"]
+
+
+      def test_sort_on_the_real_rate_not_the_rounded_one():
+          # x: 1 of 3 (0.3333...), y: 333 of 1000 (0.333). Both round to 0.333, but x is really higher.
+          spans = [span("x", "error"), span("x"), span("x")] + [span("y", "error")] * 333 + [span("y")] * 667
+          rows = error_rates(spans)
+          assert [row["name"] for row in rows] == ["x", "y"]
+          assert rows[0]["error_rate"] == rows[1]["error_rate"] == 0.333
+
+
+      def test_clean_spans_have_zero_rate():
+          assert error_rates([span("rerank"), span("rerank")]) == [
+              {"name": "rerank", "calls": 2, "errors": 0, "error_rate": 0.0}]
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Keep a dict from name to a small counter, and update `calls` for every span and `errors` only when `status == \"error\"`."
+  - "Sort with a tuple key. Use a minus sign to sort numbers highest first: `(-rate, -calls, name)`."
+  - "Round only when you build the output row, so tied rates compare on the real values."
+feedback:
+  - when: { stdout_contains: "test_rate_beats_raw_error_count" }
+    message: Sort by the error rate (errors divided by calls), not by the raw error count.
+solution: solution/
+unlocks: [p3-w15-project-001]
+tags: [tracing, errors, reliability]

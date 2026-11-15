@@ -1,0 +1,84 @@
+id: p3-w11-rag-009
+title: Keyword scoring with BM25
+phase: 3
+week: 11
+module: hybrid-search
+order: 9
+difficulty: 4
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-hybrid-search-and-citations.md
+task: |
+  Embeddings miss exact terms like `GSTR-3B` or a policy number. BM25 keyword scoring catches them.
+
+  Write `bm25_scores(query, docs, k1=1.5, b=0.75)`. `docs` maps a doc id to its text.
+  Use the provided `tokenize`. For each query term `t` that appears in at least one doc:
+
+  ```
+  idf(t)   = ln((N - n_t + 0.5) / (n_t + 0.5) + 1)
+  score   += idf(t) * f * (k1 + 1) / (f + k1 * (1 - b + b * len_d / avg_len))
+  ```
+
+  `N` is the number of docs, `n_t` the number of docs containing `t`, `f` how often `t` appears
+  in this doc, `len_d` its token count and `avg_len` the average token count. Count each
+  distinct query term once.
+
+  Return `{doc_id: score}` for every doc, rounded to 4 places (0.0 when nothing matches).
+starter_files:
+- path: main.py
+  content: |
+    import math
+    import re
+
+
+    def tokenize(text):
+        return re.findall(r"[a-z0-9-]+", text.lower())
+
+
+    def bm25_scores(query, docs, k1=1.5, b=0.75):
+        pass
+- path: test_main.py
+  content: |
+    from main import bm25_scores
+
+    DOCS = {
+        "d1": "File GSTR-3B by the 20th of every month",
+        "d2": "GSTR-1 lists outward supplies; GSTR-1 is due on the 11th",
+        "d3": "Late fee applies when the return is filed late",
+    }
+
+
+    def test_exact_term_wins():
+        scores = bm25_scores("gstr-3b due date", DOCS)
+        assert max(scores, key=scores.get) == "d1"
+        assert scores == {"d1": 1.0325, "d2": 0.9341, "d3": 0.0}
+
+
+    def test_repeated_term_scores_higher():
+        scores = bm25_scores("gstr-1", DOCS)
+        assert scores["d2"] > 0 and scores["d1"] == 0.0
+
+
+    def test_duplicate_query_terms_count_once():
+        assert bm25_scores("late late late", DOCS) == bm25_scores("late", DOCS)
+
+
+    def test_no_match():
+        assert bm25_scores("aadhaar", DOCS) == {"d1": 0.0, "d2": 0.0, "d3": 0.0}
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Tokenise every doc once up front, and compute `avg_len` from those token lists.
+- Loop over `set(tokenize(query))` so a repeated query word is counted once.
+- Python's `math.log` is the natural log, which is what the formula uses.
+solution: solution/
+unlocks:
+- p3-w11-rag-010
+tags:
+- rag
+- bm25
+- keyword-search
+mobile_compatible: false

@@ -1,0 +1,39 @@
+id: p2-w08-k8s-001
+title: "Run your first Deployment"
+phase: 2
+week: 8
+module: kubernetes-basics
+order: 1
+difficulty: 1
+estimated_minutes: 10
+type: terminal
+environment: kubernetes
+lesson: ../../lessons/03-kubernetes-basics.md
+task: "Write deployment.yaml for a Deployment named web with 2 replicas of nginx:1.27, pod label app: web and container port 80. Apply it and check that both pods reach Running."
+starter_files:
+  - path: deployment.yaml
+    content: |
+      # Write a Deployment named "web" here: 2 replicas, image nginx:1.27, label app: web.
+checks:
+  - kind: "sim_command_used"
+    command: "kubectl apply"
+    label: "Used kubectl apply"
+  - kind: "sim_state"
+    path: "object"
+    kind_name: "Deployment"
+    name: "web"
+    contains: "\"image\":\"nginx:1.27\""
+    label: "Deployment uses nginx:1.27"
+  - kind: "sim_state"
+    path: "pods"
+    selector: "app=web"
+    status: "Running"
+    count: 2
+    label: "Two web pods are Running"
+hints:
+  - "A Deployment needs apiVersion: apps/v1, kind: Deployment, metadata.name, and a spec with replicas, selector and template."
+  - "The selector.matchLabels must match template.metadata.labels exactly (app: web)."
+  - "Apply with kubectl apply -f deployment.yaml, then kubectl get pods."
+solution: solution/
+unlocks: [p2-w08-k8s-002]
+tags: [kubernetes, deployment, apply]

@@ -1,0 +1,27 @@
+id: p1-w04-jwt-005
+title: Spot the missing JWT check
+phase: 1
+week: 4
+module: jwt-rbac
+order: 5
+difficulty: 3
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/02-jwt-and-access-control.md
+task: An API receives a JWT whose signature is valid. Decide which additional check is still required before it grants access.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: Which check must the API still make on a validly signed JWT?
+    options:
+      - That the audience (`aud`) names this API and the token has not expired
+      - That the payload is readable when base64-decoded
+      - That the header says `typ: JWT`
+      - That the token is long enough to look random
+    expected: That the audience (`aud`) names this API and the token has not expired
+    label: Select the check that stops token reuse across APIs
+hints:
+  - A valid signature only proves the issuer signed it, not that it was meant for this API.
+  - Tokens issued for another audience must be rejected, as must expired ones.
+tags: [jwt, audience, validation]

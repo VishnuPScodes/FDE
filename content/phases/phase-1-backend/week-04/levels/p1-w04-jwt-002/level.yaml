@@ -22,4 +22,5 @@ checks:
 hints:
   - Remove `api:write` from the requested scopes.
   - A client should request the minimum permission set needed for its operation.
+unlocks: [p1-w04-jwt-003]
 tags: [jwt, scopes, rbac, least-privilege]

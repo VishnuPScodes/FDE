@@ -1,0 +1,105 @@
+id: p3-w14-guard-002
+title: "Make the model return valid JSON, with retries"
+phase: 3
+week: 14
+module: guardrails
+order: 12
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-guardrails.md
+task: |
+  Models sometimes add chat words, wrap JSON in code fences, or skip a field. Write `get_valid_json(ask, schema, max_tries=3)`.
+
+  `ask(feedback)` calls the model and returns its reply text. `feedback` is `None` on the first try, and after a failure it is the problem text. `schema` maps required key names to Python types, like `{"claim_id": str, "amount_inr": int}`.
+
+  On each try:
+
+  1. Strip the reply. If it is wrapped in a fence like ```` ```json ... ``` ````, take what is inside.
+  2. Parse it. Bad JSON gives feedback `"Invalid JSON: "` plus `error.msg`.
+  3. It must be a JSON object, else feedback `"Expected a JSON object"`.
+  4. Check every schema key. Collect problems as `"Missing key: name"` or `"Key name must be int"` (the type's `__name__`), joined with `"; "`. A `bool` is not an `int`.
+  5. No problems: return the dict.
+
+  After `max_tries` failures raise `GuardrailError("Gave up after 3 tries: <last feedback>")`.
+starter_files:
+  - path: main.py
+    content: |
+      import json
+      import re
+
+
+      class GuardrailError(Exception):
+          pass
+
+
+      def get_valid_json(ask, schema, max_tries=3):
+          pass
+  - path: test_main.py
+    content: |
+      import pytest
+
+      from main import GuardrailError, get_valid_json
+
+      SCHEMA = {"claim_id": str, "amount_inr": int}
+
+
+      def scripted(replies):
+          seen = []
+          queue = list(replies)
+
+          def ask(feedback):
+              seen.append(feedback)
+              return queue.pop(0)
+
+          return ask, seen
+
+
+      def test_first_try():
+          ask, seen = scripted(['{"claim_id": "CLM-1042", "amount_inr": 38500}'])
+          assert get_valid_json(ask, SCHEMA) == {"claim_id": "CLM-1042", "amount_inr": 38500}
+          assert seen == [None]
+
+
+      def test_code_fence_is_removed():
+          ask, _ = scripted(['```json\n{"claim_id": "CLM-1", "amount_inr": 5}\n```'])
+          assert get_valid_json(ask, SCHEMA)["amount_inr"] == 5
+
+
+      def test_retry_with_feedback():
+          ask, seen = scripted(["Sure! Here you go", '{"claim_id": "CLM-1"}', '{"claim_id": "CLM-1", "amount_inr": 9}'])
+          assert get_valid_json(ask, SCHEMA) == {"claim_id": "CLM-1", "amount_inr": 9}
+          assert seen[0] is None
+          assert seen[1].startswith("Invalid JSON: ")
+          assert seen[2] == "Missing key: amount_inr"
+
+
+      def test_type_errors_and_bool():
+          ask, seen = scripted(['{"claim_id": 7, "amount_inr": true}', '{"claim_id": "A", "amount_inr": 1}'])
+          get_valid_json(ask, SCHEMA)
+          assert seen[1] == "Key claim_id must be str; Key amount_inr must be int"
+
+
+      def test_not_an_object():
+          ask, seen = scripted(["[1, 2]", '{"claim_id": "A", "amount_inr": 1}'])
+          get_valid_json(ask, SCHEMA)
+          assert seen[1] == "Expected a JSON object"
+
+
+      def test_gives_up():
+          ask, seen = scripted(["nope", "nope", "nope", "never reached"])
+          with pytest.raises(GuardrailError, match="Gave up after 3 tries: Invalid JSON"):
+              get_valid_json(ask, SCHEMA, max_tries=3)
+          assert len(seen) == 3
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Use a loop `for _ in range(max_tries)` and keep `feedback` between rounds."
+  - "A fence regex: `re.fullmatch(r\"```(?:json)?\\s*(.*?)\\s*```\", reply, re.DOTALL)`."
+  - "`isinstance(True, int)` is `True` in Python. Reject bool explicitly when the expected type is int."
+solution: solution/
+unlocks: [p3-w14-guard-003]
+tags: [guardrails, structured-output, retry]

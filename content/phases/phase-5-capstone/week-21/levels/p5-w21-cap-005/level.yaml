@@ -1,0 +1,67 @@
+id: p5-w21-cap-005
+title: Summarise usage logs
+phase: 5
+week: 21
+module: capstone-build
+order: 9
+difficulty: 2
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-architecture-and-milestones.md
+task: 'Your service writes one usage line per event. In week 22 you will need numbers from these logs. Implement `summarize_usage` in `usage.py`: total events, unique users, counts per action and counts per day. Skip blank lines, malformed lines and lines with an empty user. Run `test_usage.py`.'
+starter_files:
+- path: usage.py
+  content: |
+    def summarize_usage(lines: list[str]) -> dict:
+        """Summarise usage log lines like
+        "2026-11-15T09:02:11 user=meena action=reminder_sent".
+
+        Return {"events": int, "unique_users": int,
+                "by_action": {action: count}, "by_day": {"YYYY-MM-DD": count}}.
+        Skip blank or malformed lines.
+        """
+        pass
+- path: test_usage.py
+  content: |
+    from usage import summarize_usage
+
+    LOG = [
+        "2026-11-15T09:02:11 user=meena action=reminder_sent",
+        "2026-11-15T09:05:40 user=meena action=status_viewed",
+        "2026-11-15T11:30:00 user=anjali action=status_viewed",
+        "",
+        "garbage line",
+        "2026-11-16T09:01:00 user=meena action=reminder_sent",
+        "2026-11-16T09:01:05 user= action=reminder_sent",
+    ]
+
+
+    def test_counts():
+        s = summarize_usage(LOG)
+        assert s["events"] == 4
+        assert s["unique_users"] == 2
+
+
+    def test_by_action_and_day():
+        s = summarize_usage(LOG)
+        assert s["by_action"] == {"reminder_sent": 2, "status_viewed": 2}
+        assert s["by_day"] == {"2026-11-15": 3, "2026-11-16": 1}
+
+
+    def test_empty():
+        assert summarize_usage([]) == {"events": 0, "unique_users": 0, "by_action": {}, "by_day": {}}
+checks:
+- kind: pytest_passes
+  run: pytest -q test_usage.py
+hints:
+- Split each line on spaces. A good line has exactly three parts.
+- Turn 'user=meena' into a key and value with split('=', 1). An empty value means skip the line.
+- The day is the part of the timestamp before the letter T.
+solution: solution/
+unlocks:
+- p5-w21-cap-006
+tags:
+- capstone
+- python
+- logs

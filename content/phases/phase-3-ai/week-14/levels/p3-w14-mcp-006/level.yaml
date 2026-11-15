@@ -1,0 +1,91 @@
+id: p3-w14-mcp-006
+title: "Serve MCP over stdio, one JSON line per message"
+phase: 3
+week: 14
+module: mcp-servers
+order: 6
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-mcp-servers.md
+task: |
+  Most MCP servers run as a program that reads lines from stdin and writes lines to stdout. Each line is one JSON-RPC message. You will write the loop, with a `handler` function (like your `handle()`) passed in.
+
+  Write `serve_lines(lines, handler)`. `lines` is a list of strings. Return a list of output strings, one per reply:
+
+  - Skip blank lines.
+  - Text that is not valid JSON: reply `{"jsonrpc": "2.0", "id": null, "error": {"code": -32700, "message": "Parse error"}}`.
+  - JSON that is a list (batches are not supported): same shape with code `-32600` and message `"Invalid Request"`.
+  - Otherwise call `handler(message)`. If it returns `None`, write nothing. If it returns a dict, write it as JSON with `json.dumps(response, ensure_ascii=False)`.
+  - If `handler` raises, and the message is a dict with an `"id"`, reply with code `-32603`, message `"Internal error"` and that id. A notification that crashes gets no reply.
+
+  One bad line must never stop the lines after it.
+starter_files:
+  - path: main.py
+    content: |
+      import json
+
+
+      def serve_lines(lines, handler):
+          pass
+  - path: test_main.py
+    content: |
+      import json
+
+      from main import serve_lines
+
+
+      def handler(message):
+          if message.get("method") == "boom":
+              raise RuntimeError("tool crashed")
+          if "id" not in message:
+              return None
+          return {"jsonrpc": "2.0", "id": message["id"], "result": {"echo": message["method"]}}
+
+
+      def run(lines):
+          out = serve_lines(lines, handler)
+          assert all("\n" not in line for line in out)
+          return [json.loads(line) for line in out]
+
+
+      def test_request_gets_one_line_reply():
+          out = run(['{"jsonrpc": "2.0", "id": 1, "method": "ping"}'])
+          assert out == [{"jsonrpc": "2.0", "id": 1, "result": {"echo": "ping"}}]
+
+
+      def test_notification_and_blank_lines_write_nothing():
+          assert run(["", '{"jsonrpc": "2.0", "method": "notifications/initialized"}', "   "]) == []
+
+
+      def test_parse_error_then_keep_going():
+          out = run(["{not json", '{"jsonrpc": "2.0", "id": 2, "method": "ping"}'])
+          assert out[0] == {"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": "Parse error"}}
+          assert out[1]["id"] == 2
+
+
+      def test_batch_is_invalid():
+          out = run(['[{"jsonrpc": "2.0", "id": 1, "method": "ping"}]'])
+          assert out == [{"jsonrpc": "2.0", "id": None, "error": {"code": -32600, "message": "Invalid Request"}}]
+
+
+      def test_handler_crash():
+          out = run(['{"jsonrpc": "2.0", "id": 7, "method": "boom"}', '{"jsonrpc": "2.0", "method": "boom"}'])
+          assert out == [{"jsonrpc": "2.0", "id": 7, "error": {"code": -32603, "message": "Internal error"}}]
+
+
+      def test_non_ascii_is_kept():
+          out = serve_lines(['{"jsonrpc": "2.0", "id": 3, "method": "\u20b9"}'], handler)
+          assert "\u20b9" in out[0]
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Wrap `json.loads` in try/except `ValueError`. `json.JSONDecodeError` is a subclass of it."
+  - "A reply must stay on one line. `json.dumps` does that unless you pass `indent`."
+  - "Wrap only the `handler` call in its own try/except, so one crash does not skip later lines."
+solution: solution/
+unlocks: [p3-w14-inj-001]
+tags: [mcp, stdio, json-rpc]

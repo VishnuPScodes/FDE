@@ -1,0 +1,136 @@
+id: p6-w24-mock-011
+title: 'Mock: decomposition for a lending startup'
+phase: 6
+week: 24
+module: mock-loop
+order: 11
+difficulty: 4
+estimated_minutes: 25
+type: decomposition
+environment: writing
+lesson: ../../lessons/01-mock-loop.md
+task: >-
+  Timed mock, 25 minutes. Interviewer prompt:
+
+
+  > "A Mumbai lending startup gives small loans to kirana shop owners. Loan officers spend about 45 minutes per application checking bank statements by hand, and 20% of applications are sent back for missing pages. Leadership wants AI to speed this up. Walk me through what you'd build."
+
+
+  Fill all eight headings in `answer.md`. Write assumptions where you would normally ask.
+timed: true
+starter_files:
+  - path: answer.md
+    content: |
+      # Mock: decomposition for a lending startup
+
+      ## Goal
+      <!-- One or two sentences. -->
+
+      ## Users
+      <!-- One or two sentences. -->
+
+      ## Data
+      <!-- One or two sentences. -->
+
+      ## Constraints
+      <!-- One or two sentences. -->
+
+      ## MVP
+      <!-- One or two sentences. -->
+
+      ## Architecture
+      <!-- One or two sentences. -->
+
+      ## Risks
+      <!-- One or two sentences. -->
+
+      ## Rollout
+      <!-- One or two sentences. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Goal'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Users'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Data'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Constraints'
+  - kind: file_contains
+    path: answer.md
+    expected: '## MVP'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Architecture'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Risks'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Rollout'
+  - kind: sim_state
+    path: word_count
+    min: 163
+    max: 596
+  - kind: sim_state
+    path: section:Goal
+    min_words: 12
+  - kind: sim_state
+    path: section:Users
+    min_words: 15
+  - kind: sim_state
+    path: section:Data
+    min_words: 15
+  - kind: sim_state
+    path: section:Constraints
+    min_words: 15
+  - kind: sim_state
+    path: section:MVP
+    min_words: 15
+  - kind: sim_state
+    path: section:Architecture
+    min_words: 15
+  - kind: sim_state
+    path: section:Risks
+    min_words: 15
+  - kind: sim_state
+    path: section:Rollout
+    min_words: 15
+  - kind: sim_state
+    path: section:Goal
+    contains_any:
+      - '%'
+      - from
+      - minutes
+      - lakh
+  - kind: sim_state
+    path: section:Data
+    contains_any:
+      - assume
+  - kind: checklist
+    label: Self-review
+    items:
+      - All eight headings are filled
+      - The Goal has a number
+      - I stated assumptions in plain words
+  - kind: ai_rubric
+    rubric:
+      - Goal is measurable
+      - MVP is small and testable
+      - Risks and rollout are concrete
+    min_score: 3
+hints:
+  - Pick one goal and one measure, such as minutes per application, and a guardrail such as default rate or wrong rejections.
+  - The 20% sent back for missing pages may need no AI at all. A page-count and date-gap check before the officer sees the file is a strong MVP.
+  - Keep a loan officer approving every decision. AI that rejects loans on its own is a regulatory and fairness risk.
+  - Say your assumptions in Data and Constraints, since you cannot ask questions here.
+solution: solution/
+unlocks:
+  - p6-w24-mock-012
+tags:
+  - mock
+  - decomposition
+mobile_compatible: true

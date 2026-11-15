@@ -1,0 +1,96 @@
+id: p4-w17-dec-008
+title: Repair a weak decomposition
+phase: 4
+week: 17
+module: decomp-drills
+order: 8
+difficulty: 3
+estimated_minutes: 15
+type: decomposition
+environment: writing
+lesson: ../../lessons/02-decomposition-drills.md
+task: |-
+  An eight-branch tuition centre network in Jaipur (2,000 students) has 18% of monthly fees paid late. A junior engineer wrote this plan:
+
+  - Goal: Improve efficiency of fee collection.
+  - MVP: Build a full app with reminders, online payments, receipts and analytics.
+  - Risks: Data quality.
+  - Rollout: Launch to all eight branches in month one.
+
+  In `answer.md`, list what is wrong with it under **Problems found**. Then rewrite the Goal, MVP and Rollout.
+timed: true
+starter_files:
+- path: answer.md
+  content: |+
+    # Repair a weak decomposition
+
+    ## Problems found
+    <!-- At least three problems. -->
+
+    ## Better Goal
+    <!-- Number, from, to, date. -->
+
+    ## Better MVP
+    <!-- Smallest test. -->
+
+    ## Better Rollout
+    <!-- Pilot, length, deciding number. -->
+
+checks:
+- kind: sim_state
+  path: section:Problems found
+  min_words: 25
+  contains_any:
+  - number
+- kind: sim_state
+  path: section:Better Goal
+  min_words: 12
+  contains_any:
+  - from
+  - '%'
+- kind: sim_state
+  path: section:Better MVP
+  min_words: 12
+  contains_any:
+  - one branch
+  - single branch
+  - pilot
+  - two weeks
+  - four weeks
+  - one month
+  label: MVP is a small test in one branch or a short window
+- kind: sim_state
+  path: section:Better Rollout
+  min_words: 12
+  contains_any:
+  - week
+  - pilot
+  label: Rollout starts with a timed pilot
+- kind: sim_state
+  path: word_count
+  min: 70
+  max: 320
+- kind: checklist
+  label: Self-review
+  items:
+  - Each problem I list is fixed in my rewrite
+  - The new Goal has a number and a date
+  - The new MVP is small enough to test in four weeks
+- kind: ai_rubric
+  rubric:
+  - Names the real weaknesses in the weak plan
+  - Rewritten Goal is measurable
+  - Rewritten MVP is small and testable
+  min_score: 3
+hints:
+- 'Look for four problems: no number in the Goal, an MVP that is the whole product, a Risk with no fix,
+  and a Rollout with no pilot.'
+- Make the new MVP something that one branch can test in four weeks, such as a single WhatsApp reminder.
+solution: solution/
+unlocks:
+- p4-w17-dec-009
+tags:
+- decomposition
+- review
+- drill
+mobile_compatible: true

@@ -1,0 +1,32 @@
+import hashlib
+from collections import OrderedDict
+
+
+class CachedLLM:
+    def __init__(self, llm, capacity=100):
+        self.llm = llm
+        self.capacity = capacity
+        self.hits = 0
+        self.misses = 0
+        self._store = OrderedDict()
+
+    def _key(self, model, prompt):
+        normalised = " ".join(prompt.split())
+        return hashlib.sha256((model + "\0" + normalised).encode("utf-8")).hexdigest()
+
+    def ask(self, model, prompt):
+        key = self._key(model, prompt)
+        if key in self._store:
+            self._store.move_to_end(key)
+            self.hits += 1
+            return {"text": self._store[key], "cached": True}
+        text = self.llm(model, prompt)
+        self.misses += 1
+        self._store[key] = text
+        if len(self._store) > self.capacity:
+            self._store.popitem(last=False)
+        return {"text": text, "cached": False}
+
+    def hit_rate(self):
+        total = self.hits + self.misses
+        return round(self.hits / total, 4) if total else 0.0

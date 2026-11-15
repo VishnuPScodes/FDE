@@ -1,0 +1,151 @@
+id: p4-w18-write-013
+title: Find the hard date behind a wish list
+phase: 4
+week: 18
+module: scope-negotiation
+order: 13
+difficulty: 4
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/03-scope-negotiation.md
+task: |-
+  Harpreet Kaur is operations director at Kaur Cold Chain, a refrigerated trucking firm in Ludhiana. She wants a route optimiser, a driver app, fuel theft alerts and a customer tracking portal, all before the busy season.
+
+  In at most 8 questions with no leading questions, find the biggest problem, what it costs each month, the hard date driving it, the smallest first piece, who signs off, and how success will be measured. Then write the agreed scope in `notes.md`, including the hard date in **Phase one**.
+starter_files:
+- path: persona.json
+  content: |
+    {
+      "name": "Harpreet Kaur",
+      "role": "Operations Director",
+      "company": "Kaur Cold Chain, Ludhiana",
+      "opening": "Sat sri akal. We want a route optimiser, a driver app, fuel theft alerts and a tracking portal for customers, all before the busy season. Where do we begin?",
+      "facts": [
+        {
+          "id": "problem",
+          "triggers": ["biggest problem", "what hurts", "hurting", "pain", "not working", "whats not working", "worst", "worry"],
+          "reply": "Temperature claims. Pharma customers deduct money when we cannot prove a load stayed between 2 and 8 degrees. The truck sensors record it, but nobody pulls the data."
+        },
+        {
+          "id": "cost",
+          "triggers": ["cost", "how much", "money", "deduct", "lose", "losing", "what happens if", "if nothing changes"],
+          "requires": ["problem"],
+          "reply": "Deductions come to about ₹6 lakh a month across our 30 pharma trucks."
+        },
+        {
+          "id": "hard-date",
+          "triggers": ["deadline", "by when", "when do you need", "timeline", "date", "audit", "why now", "busy season"],
+          "reply": "Our biggest pharma client audits us on 1 March. If we cannot show trip-wise temperature records by then, we may lose the contract."
+        },
+        {
+          "id": "phase-one",
+          "triggers": ["smallest", "start with", "one thing", "most important", "must have", "only one"],
+          "requires": ["problem"],
+          "reply": "If every pharma trip had a one-page temperature report from the sensor data before 1 March, that alone would matter. Route planning and the driver app can wait."
+        },
+        {
+          "id": "decider",
+          "triggers": ["who decides", "who signs", "sign off", "approve", "who else", "budget"],
+          "reply": "My father is the managing director. He signs anything over ₹2 lakh, and he wants the plan in writing."
+        },
+        {
+          "id": "success",
+          "triggers": ["how will we know", "measure", "success", "how do we know", "what would good"],
+          "requires": ["phase-one"],
+          "reply": "If we pass the March audit and deductions fall below ₹2 lakh a month by June, I will call it a success."
+        }
+      ],
+      "closing": "A load is leaving for Delhi and I need to see it off. Send me the plan in writing.",
+      "deflections": [
+        "I am not sure what you mean. Ask me how things work today.",
+        "Let us not talk about software yet. What else do you need to understand?"
+      ],
+      "max_turns": 12
+    }
+- path: notes.md
+  content: |
+    # Agreed scope: Kaur Cold Chain
+
+    ## Phase one
+    <!-- The one thing you will deliver first, and the date it must be ready. -->
+
+    ## Later phases
+    <!-- What waits, and when. -->
+
+    ## Success measure
+    <!-- A number and a date. -->
+
+    ## Next step
+    <!-- Who does what, by when. -->
+checks:
+- kind: sim_state
+  path: facts_uncovered
+  contains_all:
+  - problem
+  - cost
+  - hard-date
+  - phase-one
+  - decider
+  - success
+  label: Uncover the problem, its cost, the hard date, phase one, the decider and the success measure
+- kind: sim_state
+  path: turns
+  max: 8
+- kind: sim_state
+  path: leading_questions
+  max: 0
+- kind: sim_state
+  path: section:Phase one
+  min_words: 10
+  contains_all:
+  - temperature
+  - 1 march
+- kind: sim_state
+  path: section:Later phases
+  min_words: 10
+  contains_any:
+  - route
+  - driver app
+  - fuel
+  - portal
+- kind: sim_state
+  path: section:Success measure
+  min_words: 6
+  contains_any:
+  - 2 lakh
+  - ₹2,00,000
+  - '200000'
+- kind: sim_state
+  path: section:Next step
+  min_words: 8
+  contains_any:
+  - writing
+  - written
+  - managing director
+  - father
+- kind: checklist
+  label: Self-review
+  items:
+  - I listened before I proposed anything
+  - Deferred items have a named later phase, not a flat no
+  - Phase one fits before the hard date
+- kind: ai_rubric
+  rubric:
+  - Asks about the problem and its cost before agreeing to any feature
+  - Phase one is small enough to deliver before the 1 March audit
+  - Deferred items are placed in a later phase with a reason, not dropped
+  - Next step puts the plan in writing for the managing director, who has the final say
+  min_score: 3
+hints:
+- Ask what hurts most before you discuss any feature. A wish list often hides one urgent problem.
+- Ask why it has to happen now. A fixed date tells you how small phase one must be.
+- Ask who signs off. A decision-maker you have not met can undo the plan.
+solution: solution/
+unlocks:
+- p4-w18-write-014
+tags:
+- roleplay
+- scope
+- logistics
+mobile_compatible: true

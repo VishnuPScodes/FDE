@@ -1,0 +1,108 @@
+id: p3-w12-eval-011
+title: 'Run a judge over answers with a fake model'
+phase: 3
+week: 12
+module: llm-as-judge
+order: 2
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-llm-as-judge.md
+task: |
+  Real judges sometimes reply in the wrong format. Your runner must retry, then give up cleanly. To practise without an API key,
+  the tests pass in a `fake_judge`: a plain function that takes a prompt string and returns a reply string.
+
+  `build_judge_prompt` and `parse_judge` are already in `main.py`. Write `run_judge(judge, rubric, examples, retries=1)`:
+
+  - `examples` is a list of `{"id", "question", "answer"}`.
+  - For each example, build the prompt, call `judge(prompt)`, and parse it. If parsing gives `None`, call the judge again,
+    up to `retries` extra times. (So `retries=1` means at most 2 calls per example.)
+  - Return `{"scores": {id: score_or_None}, "mean": ..., "unparsed": [ids]}`. `mean` is the average of the real scores rounded to 2 places
+    (`0.0` if there are none). `unparsed` lists ids that never parsed, in input order.
+starter_files:
+- path: main.py
+  content: |
+    import re
+
+
+    def build_judge_prompt(rubric, question, answer):
+        lines = ["You are a strict grader. Score the answer from 1 to 5.", "Rubric:"]
+        lines += [f"- {item}" for item in rubric]
+        lines += [f"Question: {question}", f"Answer: {answer}", "Reply exactly as:",
+                  "SCORE: <1-5>", "REASON: <one sentence>"]
+        return "\n".join(lines)
+
+
+    def parse_judge(raw):
+        m = re.search(r"SCORE:\s*([1-5])\b", raw, re.IGNORECASE)
+        if not m:
+            return None
+        r = re.search(r"REASON:\s*(.+)", raw, re.IGNORECASE)
+        return {"score": int(m.group(1)), "reason": r.group(1).strip() if r else ""}
+
+
+    def run_judge(judge, rubric, examples, retries=1):
+        pass
+- path: test_main.py
+  content: |
+    from main import run_judge
+
+    RUBRIC = ["Correct", "Polite"]
+    EXAMPLES = [
+        {"id": "a", "question": "q1", "answer": "good answer"},
+        {"id": "b", "question": "q2", "answer": "flaky answer"},
+        {"id": "c", "question": "q3", "answer": "broken answer"},
+    ]
+
+
+    def make_fake():
+        calls = {"n": 0, "flaky": 0}
+
+        def fake_judge(prompt):
+            calls["n"] += 1
+            if "good answer" in prompt:
+                return "SCORE: 5\nREASON: fine"
+            if "flaky answer" in prompt:
+                calls["flaky"] += 1
+                return "hmm, not sure" if calls["flaky"] == 1 else "SCORE: 3\nREASON: ok"
+            return "no idea"
+
+        return fake_judge, calls
+
+
+    def test_retry_recovers_flaky():
+        judge, calls = make_fake()
+        out = run_judge(judge, RUBRIC, EXAMPLES[:2])
+        assert out == {"scores": {"a": 5, "b": 3}, "mean": 4.0, "unparsed": []}
+        assert calls["n"] == 3
+
+
+    def test_gives_up_and_reports():
+        judge, calls = make_fake()
+        out = run_judge(judge, RUBRIC, EXAMPLES)
+        assert out["scores"] == {"a": 5, "b": 3, "c": None}
+        assert out["unparsed"] == ["c"]
+        assert out["mean"] == 4.0
+        assert calls["n"] == 5  # a:1, b:2, c:2
+
+
+    def test_zero_retries():
+        judge, _ = make_fake()
+        out = run_judge(judge, RUBRIC, EXAMPLES[1:2], retries=0)
+        assert out == {"scores": {"b": None}, "mean": 0.0, "unparsed": ["b"]}
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Loop `for _ in range(retries + 1)` and `break` as soon as `parse_judge` returns something other than `None`.'
+- 'Do not count failed parses as zero. Keep `None` in `scores`, list the id in `unparsed`, and average only the real scores.'
+solution: solution/
+unlocks:
+- p3-w12-eval-012
+tags:
+- evals
+- llm-judge
+- retries
+mobile_compatible: false

@@ -1,0 +1,155 @@
+id: p4-w18-write-012
+title: Negotiate scope with the hospital COO
+phase: 4
+week: 18
+module: scope-negotiation
+order: 12
+difficulty: 4
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/03-scope-negotiation.md
+task: >-
+  Meenakshi Nair is COO of a 120-bed hospital in Kochi. The pilot is for discharge summaries. Now
+  she wants it to "also handle insurance claims, billing codes and doctor scheduling" before the
+  board meeting on 5 December.
+
+
+  In at most 8 questions with no leading questions, find the board's real question, the first thing
+  that must work, what is risky to add, and who must approve. Write the trade you offer in
+  `notes.md` as two options.
+starter_files:
+  - path: persona.json
+    content: |
+      {
+        "name": "Meenakshi Nair",
+        "role": "COO",
+        "company": "Lakeside Hospital, Kochi",
+        "opening": "Our discharge summary pilot is going well. I would like to add insurance claims, billing codes and doctor scheduling before the board meeting. Is that possible?",
+        "facts": [
+          {
+            "id": "board-question",
+            "triggers": [
+              "board",
+              "meeting on",
+              "what will they",
+              "what do they want"
+            ],
+            "reply": "The board will ask one thing: are doctors getting time back? They do not care about claims yet."
+          },
+          {
+            "id": "first-thing",
+            "triggers": [
+              "must work",
+              "matters most",
+              "most important",
+              "first thing",
+              "priority"
+            ],
+            "requires": [
+              "board-question"
+            ],
+            "reply": "Discharge summaries must work without errors. Doctors currently spend 40 minutes on each one."
+          },
+          {
+            "id": "risk",
+            "triggers": [
+              "risk",
+              "worry",
+              "concern",
+              "go wrong",
+              "afraid"
+            ],
+            "reply": "A wrong billing code could mean a rejected claim and angry insurers. I worry about that more than about speed."
+          },
+          {
+            "id": "approver",
+            "triggers": [
+              "who must",
+              "who approves",
+              "who signs",
+              "who else",
+              "approve"
+            ],
+            "reply": "Dr. Thomas, our medical director, must approve anything clinical. Finance head Sunil approves anything about claims."
+          },
+          {
+            "id": "timeline",
+            "triggers": [
+              "how long",
+              "timeline",
+              "weeks",
+              "how much time",
+              "when could"
+            ],
+            "reply": "Finance can only give us time after the new year, I think. Late January at best."
+          }
+        ],
+        "closing": "I have a ward round starting. Please send me your recommendation by email.",
+        "deflections": [
+          "I'm not sure what you mean. Can you ask that another way?",
+          "I'd rather you ask me how things work today."
+        ],
+        "max_turns": 12
+      }
+  - path: notes.md
+    content: |
+      # Scope options: Kochi hospital
+
+      ## Option A
+      <!-- Keep the date, smaller scope. -->
+
+      ## Option B
+      <!-- Bigger scope, later date. -->
+
+      ## Recommendation
+      <!-- Which option and why. -->
+checks:
+  - kind: sim_state
+    path: facts_uncovered
+    contains_all:
+      - board-question
+      - first-thing
+      - risk
+      - approver
+  - kind: sim_state
+    path: turns
+    max: 8
+  - kind: sim_state
+    path: leading_questions
+    max: 0
+  - kind: sim_state
+    path: section:Option A
+    min_words: 12
+    contains_any:
+      - 5 december
+      - discharge
+  - kind: sim_state
+    path: section:Option B
+    min_words: 12
+    contains_any:
+      - insurance
+      - january
+      - later
+  - kind: sim_state
+    path: section:Recommendation
+    min_words: 12
+    contains_any:
+      - option a
+      - recommend
+  - kind: ai_rubric
+    rubric:
+      - Learner offers two clear options with a trade-off
+      - The recommendation links to the board question
+    min_score: 3
+hints:
+  - Ask about the board first. The date is tied to what they will ask.
+  - Ask what worries her about adding claims. Her risk is your reason to defer.
+  - 'Offer two options: keep the date with less, or add more with a later date.'
+solution: solution/
+unlocks:
+- p4-w18-write-013
+tags:
+  - roleplay
+  - scope
+mobile_compatible: true

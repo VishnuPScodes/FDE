@@ -1,0 +1,92 @@
+id: p3-w12-eval-015
+title: 'Split dev and holdout sets deterministically'
+phase: 3
+week: 12
+module: golden-datasets
+order: 5
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-golden-datasets.md
+task: |
+  You tune prompts against your golden dataset. If you tune on every row, your score only tells you how well you memorised the data. Keep a **holdout** set you never look at while tuning.
+
+  Write `split_dataset(rows, holdout_pct=20)`. Each row has an `"id"`.
+
+  - Compute `bucket = int(hashlib.sha256(str(row["id"]).encode()).hexdigest(), 16) % 100`.
+  - A row goes to `"holdout"` when `bucket < holdout_pct`, otherwise to `"dev"`.
+  - Preserve the input order inside each list. Return `{"dev": [...], "holdout": [...]}`.
+  - Raise `ValueError` if `holdout_pct` is not between 0 and 100 inclusive.
+
+  Hashing the id (not shuffling) means a row stays in the same split when you add new rows or reorder the file.
+starter_files:
+- path: main.py
+  content: |
+    import hashlib
+
+
+    def split_dataset(rows, holdout_pct=20):
+        pass
+- path: test_main.py
+  content: |
+    import pytest
+
+    from main import split_dataset
+
+    ROWS = [{"id": f"q{i}", "question": f"question {i}"} for i in range(1000)]
+
+
+    def test_disjoint_and_complete():
+        out = split_dataset(ROWS)
+        ids = [r["id"] for r in out["dev"]] + [r["id"] for r in out["holdout"]]
+        assert sorted(ids) == sorted(r["id"] for r in ROWS)
+        assert len(set(ids)) == 1000
+
+
+    def test_roughly_the_requested_share():
+        out = split_dataset(ROWS, holdout_pct=20)
+        assert 150 <= len(out["holdout"]) <= 250
+
+
+    def test_stable_when_rows_reordered_or_added():
+        first = {r["id"] for r in split_dataset(ROWS)["holdout"]}
+        more = list(reversed(ROWS)) + [{"id": "new-1"}, {"id": "new-2"}]
+        second = {r["id"] for r in split_dataset(more)["holdout"]}
+        assert first <= second
+
+
+    def test_uses_the_sha256_bucket():
+        # buckets for q0..q9 are 54, 3, 21, 49, 6, 31, 88, 59, 69, 6
+        out = split_dataset(ROWS[:10])
+        assert [r["id"] for r in out["holdout"]] == ["q1", "q4", "q9"]
+        assert [r["id"] for r in split_dataset(ROWS[:10], 50)["holdout"]] == ["q1", "q2", "q3", "q4", "q5", "q9"]
+
+
+    def test_order_preserved():
+        dev = [r["id"] for r in split_dataset(ROWS)["dev"]]
+        assert dev == sorted(dev, key=lambda x: int(x[1:]))
+
+
+    def test_edges_and_validation():
+        assert split_dataset(ROWS, 0)["holdout"] == []
+        assert split_dataset(ROWS, 100)["dev"] == []
+        with pytest.raises(ValueError):
+            split_dataset(ROWS, 101)
+        with pytest.raises(ValueError):
+            split_dataset(ROWS, -1)
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Python's built-in `hash()` changes between runs for strings. Use `hashlib.sha256` so the split never changes.
+- Validate `holdout_pct` first, then loop once and append each row to one of two lists.
+solution: solution/
+unlocks:
+- p3-w12-eval-005
+tags:
+- evals
+- dataset
+- holdout
+mobile_compatible: false

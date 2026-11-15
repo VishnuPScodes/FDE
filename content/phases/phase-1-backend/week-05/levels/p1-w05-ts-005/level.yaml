@@ -1,0 +1,39 @@
+id: p1-w05-ts-005
+title: Show an optional nickname
+phase: 1
+week: 5
+module: typescript-essentials
+order: 4
+difficulty: 1
+estimated_minutes: 6
+type: code
+environment: ts
+lesson: ../../lessons/01-types-and-functions.md
+task: "Implement `displayName` so it returns the nickname when the customer has one and the full name otherwise."
+starter_files:
+  - path: main.ts
+    content: |-
+      type Customer = { id: string; name: string; nickname?: string };
+
+      function displayName(customer: Customer): string {
+        return customer.name;
+      }
+
+      test('uses the nickname when present', () => {
+        expect(displayName({ id: 'C-1', name: 'Asha Rao', nickname: 'Ash' })).toBe('Ash');
+      });
+      test('falls back to the full name', () => {
+        expect(displayName({ id: 'C-2', name: 'Ravi Nair' })).toBe('Ravi Nair');
+      });
+      test('ignores an empty nickname', () => {
+        expect(displayName({ id: 'C-3', name: 'Mina Das', nickname: '' })).toBe('Mina Das');
+      });
+checks:
+  - kind: vitest_passes
+    label: All behaviour checks pass
+hints:
+  - "An optional field has type `string | undefined`."
+  - "Check that the nickname is truthy before returning it."
+solution: solution/
+unlocks: [p1-w05-ts-006]
+tags: [typescript, optional-fields]

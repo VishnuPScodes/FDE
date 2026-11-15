@@ -1,0 +1,39 @@
+id: p3-w13-agent-001
+title: Write a tool schema for a policy lookup
+phase: 3
+week: 13
+module: tool-schemas
+order: 1
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/01-tool-schemas.md
+task: |
+  A Pune motor insurer wants its claims assistant to look up policies. Fill in `LOOKUP_POLICY` in `tools.py`.
+
+  The tool must be named `lookup_policy`. Give it a description of at least 40 characters that says what it returns and when the model should use it.
+
+  Its `input_schema` is a JSON Schema object with two properties:
+
+  - `policy_number`: a string that must look like `POL-204518` (the letters `POL-` and exactly six digits). Give it a description.
+  - `include_claims`: an optional boolean.
+
+  Only `policy_number` is required. Reject any other field with `additionalProperties`. Run the tests with `pytest -q test_tools.py`.
+starter_files:
+  - path: tools.py
+  - path: test_tools.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_tools.py
+    label: Tool schema tests pass
+hints:
+  - "The schema shape is `{\"type\": \"object\", \"properties\": {...}, \"required\": [...], \"additionalProperties\": False}`."
+  - "Anchor the pattern at both ends so extra digits fail: `^POL-[0-9]{6}$`."
+  - Optional fields go in `properties` but not in `required`.
+feedback:
+  - when: { stdout_contains: "additionalProperties" }
+    message: Set `additionalProperties` to `False` so the model cannot invent extra fields.
+solution: solution/
+unlocks: [p3-w13-agent-002]
+tags: [tool-calling, json-schema, insurance]

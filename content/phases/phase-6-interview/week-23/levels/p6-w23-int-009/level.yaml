@@ -1,0 +1,89 @@
+id: p6-w23-int-009
+title: Write two STAR stories
+phase: 6
+week: 23
+module: story-bank
+order: 1
+difficulty: 2
+estimated_minutes: 30
+type: writing
+environment: writing
+lesson: ../../lessons/03-customer-sims-and-stories.md
+task: |-
+  Write two full STAR stories in `answer.md`, one about ambiguity and one about a failure. Use your capstone or Projects A and B.
+
+  In each section, label the four parts: Situation, Task, Action, Result. Use "I" for your actions. Each Result needs a number or a clear change. Read each story aloud. It should take about 90 seconds.
+starter_files:
+- path: answer.md
+  content: |
+    # STAR stories
+
+    ## Ambiguity
+
+    Situation:
+    Task:
+    Action:
+    Result:
+
+    ## Failure
+
+    Situation:
+    Task:
+    Action:
+    Result:
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Ambiguity'
+- kind: file_contains
+  path: answer.md
+  expected: '## Failure'
+- kind: sim_state
+  path: word_count
+  min: 150
+  max: 600
+- kind: sim_state
+  path: section:Ambiguity
+  min_words: 70
+  contains_all:
+  - situation
+  - task
+  - action
+  - result
+- kind: sim_state
+  path: section:Failure
+  min_words: 70
+  contains_all:
+  - situation
+  - task
+  - action
+  - result
+- kind: sim_state
+  path: section:Failure
+  contains_any:
+  - learned
+  - learnt
+  - now i
+  - since then
+  - changed
+  label: Failure story says what you learned
+- kind: checklist
+  label: Self-review
+  items:
+  - Each story takes about 90 seconds to say aloud
+  - Actions use 'I', not 'we'
+- kind: ai_rubric
+  rubric:
+  - Each story has a clear result
+  - Failure story shows ownership and learning
+  min_score: 3
+hints:
+- 'Label the parts plainly: ''Situation:'', ''Task:'', ''Action:'', ''Result:''.'
+- A failure story must say what you learned or changed afterwards.
+solution: solution/
+unlocks:
+- p6-w23-int-010
+tags:
+- interview
+- behavioural
+- star

@@ -1,0 +1,139 @@
+id: p5-w20-cap-014
+title: Push back on a scope request
+phase: 5
+week: 20
+module: capstone-scoping
+order: 6
+difficulty: 3
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/03-scope-on-one-page.md
+task: |-
+  Dr. Anjali has just asked you to add online payments and a patient app to the scope. Do not say yes or no yet. Ask first.
+
+  In at most 8 questions find out why she wants it, how many patients are asking, how they pay today, what her priority is and when the pilot starts. Avoid leading questions.
+
+  Record the decision in `notes.md`. It must say `Out of Scope` and the pilot date `1 December`.
+starter_files:
+- path: persona.json
+  content: |-
+    {
+      "name": "Dr. Anjali Sharma",
+      "role": "Owner and lead physiotherapist",
+      "company": "Sharma Physiotherapy, Kothrud, Pune",
+      "opening": "Priya, before we start, I had an idea. Can we also add online payments and a patient app with logins? Everyone has one these days.",
+      "facts": [
+        {
+          "id": "why-payments",
+          "triggers": [
+            "why",
+            "what made you",
+            "what prompted",
+            "what is behind"
+          ],
+          "reply": "Honestly, two patients asked me last week if they could pay online. And my cousin's clinic has an app."
+        },
+        {
+          "id": "volume",
+          "triggers": [
+            "how many patients",
+            "how often",
+            "how many people",
+            "how many times"
+          ],
+          "requires": [
+            "why-payments"
+          ],
+          "reply": "Only two or three patients a week ask about paying online. Most pay by UPI at the desk."
+        },
+        {
+          "id": "workaround",
+          "triggers": [
+            "how do patients pay",
+            "how do they pay",
+            "pay today",
+            "paying today",
+            "what happens today",
+            "what happens now"
+          ],
+          "reply": "Meena shows them the clinic UPI QR code at the desk. It takes ten seconds."
+        },
+        {
+          "id": "priority",
+          "triggers": [
+            "priority",
+            "matters most",
+            "most important",
+            "rank"
+          ],
+          "requires": [
+            "volume"
+          ],
+          "reply": "Honestly the reminders matter most. If no-shows don't drop, nothing else matters."
+        },
+        {
+          "id": "pilot-date",
+          "triggers": [
+            "when",
+            "deadline",
+            "start"
+          ],
+          "reply": "The pilot starts on 1 December. I don't want anything to delay that."
+        }
+      ],
+      "deflections": [
+        "Hmm, I'm not sure what you mean. Could you ask it another way?",
+        "That's a yes or no question. Ask me how things actually work here."
+      ],
+      "max_turns": 12
+    }
+- path: notes.md
+  content: |
+    # Scope change notes
+
+    ## Request
+
+    ## Why she wants it
+
+    ## Decision
+checks:
+- kind: sim_state
+  path: facts_uncovered
+  contains_all:
+  - why-payments
+  - volume
+  - workaround
+  - priority
+  - pilot-date
+  label: Uncover the key facts
+- kind: sim_state
+  path: turns
+  max: 8
+  label: Finish in 8 questions
+- kind: sim_state
+  path: leading_questions
+  max: 1
+  label: At most one leading question
+- kind: file_contains
+  path: notes.md
+  expected: Out of Scope
+- kind: file_contains
+  path: notes.md
+  expected: 1 December
+- kind: ai_rubric
+  rubric:
+  - Learner asked why before agreeing or refusing
+  - Decision is tied to evidence and the pilot date
+  min_score: 3
+hints:
+- Start with why she thinks of it. The numbers question only makes sense after she explains.
+- Ask how patients pay today. A working workaround is the best reason to defer a feature.
+- Ask what matters most. Her own priority gives you a respectful reason to say not now.
+solution: solution/
+unlocks:
+- p5-w20-cap-015
+tags:
+- capstone
+- scope
+- roleplay

@@ -1,0 +1,8 @@
+{
+  "history": [
+    "logs> level:info | count by service"
+  ],
+  "answers": {
+    "service": "invoices"
+  }
+}

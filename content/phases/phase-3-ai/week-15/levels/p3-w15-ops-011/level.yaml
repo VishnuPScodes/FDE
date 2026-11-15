@@ -1,0 +1,86 @@
+id: p3-w15-ops-011
+title: "Fill a prompt template safely"
+phase: 3
+week: 15
+module: prompt-versioning
+order: 3
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-prompt-versioning.md
+task: |
+  A prompt template has holes like `{name}` and `{amount}`. If one is left empty, the model may see the literal text `{amount}` and make something up. Fill holes strictly, and give each prompt a short fingerprint so traces can say which exact text ran.
+
+  Write `render(template, variables)`:
+
+  - A hole is `{` + a name + `}` where the name matches `[a-z_][a-z0-9_]*`. Use `re.sub` with the pattern `\{([a-z_][a-z0-9_]*)\}`.
+  - Replace each hole with `str(variables[name])`.
+  - If any holes have no value, raise `KeyError` with the message `"missing: a, b"` (names sorted, without repeats), and do not return a half-filled prompt.
+  - Extra variables are ignored.
+  - Text that only looks like a hole is left alone, for example JSON such as `{"a": 1}` or `{Name}`.
+  - Substitution happens once. If a value itself contains `{other}`, it is **not** filled again.
+
+  Write `fingerprint(template)`: the first 8 hex characters of the SHA-256 of `template.strip()` encoded as UTF-8.
+starter_files:
+  - path: main.py
+    content: |
+      import hashlib
+      import re
+
+
+      def render(template, variables):
+          pass
+
+
+      def fingerprint(template):
+          pass
+  - path: test_main.py
+    content: |
+      import hashlib
+
+      import pytest
+
+      from main import fingerprint, render
+
+
+      def test_fills_holes_and_converts_numbers():
+          out = render("Hi {name}, your EMI of Rs {amount} is due on {day}.", {"name": "Meera", "amount": 4500, "day": "5th"})
+          assert out == "Hi Meera, your EMI of Rs 4500 is due on 5th."
+
+
+      def test_repeated_hole_and_extra_variables():
+          assert render("{x}-{x}", {"x": "a", "unused": 1}) == "a-a"
+
+
+      def test_missing_variables_raise_with_sorted_unique_names():
+          with pytest.raises(KeyError) as info:
+              render("{b} {a} {b} {c}", {"c": 1})
+          assert "missing: a, b" in str(info.value)
+
+
+      def test_lookalikes_are_untouched():
+          template = 'Reply as JSON like {"a": 1}. Keep {Name} and {} and { x } as they are. Hello {who}.'
+          assert render(template, {"who": "Ravi"}) == 'Reply as JSON like {"a": 1}. Keep {Name} and {} and { x } as they are. Hello Ravi.'
+
+
+      def test_values_are_not_expanded_again():
+          assert render("Q: {question}", {"question": "what is {secret}?", "secret": "hunter2"}) == "Q: what is {secret}?"
+
+
+      def test_fingerprint():
+          expected = hashlib.sha256(b"Answer from context.").hexdigest()[:8]
+          assert fingerprint("  Answer from context.\n") == expected
+          assert len(fingerprint("x")) == 8
+          assert fingerprint("a") != fingerprint("b")
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Compile the pattern once. `HOLE.findall(template)` lists every hole name; compare against `variables` to find what is missing."
+  - "Pass a function to `HOLE.sub(...)`. It is called once per match and its return value is the replacement, so values are never scanned again."
+  - "Raise `KeyError(\"missing: \" + \", \".join(sorted_names))` before building the output string."
+solution: solution/
+unlocks: [p3-w15-ops-012]
+tags: [prompts, templates, fingerprint]

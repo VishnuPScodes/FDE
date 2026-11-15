@@ -1,0 +1,28 @@
+id: p1-w04-sm-005
+title: Collect less personal data
+phase: 1
+week: 4
+module: secrets-management
+order: 5
+difficulty: 2
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/03-secrets-and-pii.md
+task: A feature only needs to greet users by first name. Choose the data handling that follows data minimization.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: Which approach follows data minimization?
+    options:
+      - Store only the first name the feature needs
+      - Store the full profile in case it is useful later
+      - Copy the user's government ID into the analytics table
+      - Keep every field forever so reports stay complete
+    expected: Store only the first name the feature needs
+    label: Select minimal collection
+hints:
+  - Data you never collect cannot leak.
+  - Collect only what the feature needs and keep it only as long as needed.
+unlocks: [p1-w04-sm-006]
+tags: [pii, privacy, minimization]

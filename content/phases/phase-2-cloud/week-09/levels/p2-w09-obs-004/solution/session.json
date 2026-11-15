@@ -1,0 +1,9 @@
+{
+  "history": [
+    "logs> request_id:req-7a00093e"
+  ],
+  "answers": {
+    "peer": "npci-upi",
+    "error_type": "DeadlineExceeded"
+  }
+}

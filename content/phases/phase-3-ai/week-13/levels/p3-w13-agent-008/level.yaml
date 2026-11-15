@@ -1,0 +1,35 @@
+id: p3-w13-agent-008
+title: Trim conversation memory without breaking tool pairs
+phase: 3
+week: 13
+module: agent-loops
+order: 8
+difficulty: 4
+estimated_minutes: 35
+type: code
+environment: python
+lesson: ../../lessons/02-agent-loops.md
+task: |
+  A long support chat no longer fits in the model's context window. Write `trim_history(messages, max_tokens)` in `memory.py`. Use `tokens(message)` from the starter to count.
+
+  - `messages[0]` is the system message. Always keep it, and count its tokens.
+  - Group the rest into units. An assistant message that has `tool_calls`, plus the `tool` messages right after it, is one unit. Every other message is a unit by itself.
+  - Walk the units from newest to oldest. Keep a unit if the total still fits in `max_tokens`. Stop at the first unit that does not fit, so you never leave a gap in the middle.
+  - Always keep the newest unit, even if it alone is over budget.
+  - Return the system message plus the kept units in their original order. Do not change the input list.
+
+  A tool message without the assistant message that asked for it makes real model APIs reject the request.
+starter_files:
+  - path: memory.py
+  - path: test_memory.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_memory.py
+    label: Memory trimming tests pass
+hints:
+  - "Build units first: start a new unit for every message that is not `role == \"tool\"`, and add tool messages to the current unit."
+  - "Walk `reversed(units)`. Add each unit's token total until the next one would go over, then `break`."
+  - Collect kept units in a list, reverse it back, and flatten.
+solution: solution/
+unlocks: [p3-w13-agent-009]
+tags: [agents, memory, context-window]

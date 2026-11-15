@@ -1,0 +1,42 @@
+id: p3-w15-project-001
+title: "Project B: ship a RAG or agent service with evals"
+phase: 3
+week: 15
+module: prompt-versioning
+order: 5
+difficulty: 4
+estimated_minutes: 180
+type: realworld
+environment: realworld
+lesson: ../../lessons/03-prompt-versioning.md
+task: |-
+  Project B checkpoint. Deploy the RAG or agent service you built in weeks 11 to 14, and prove it works with an eval report.
+
+  1. Deploy your service to any public host (Render, Railway, Fly.io, Cloud Run). It must have a `GET /health` endpoint that returns HTTP 200 and the word `ok`.
+  2. Add `EVALS.md` to the root of your repo. It should show: the golden set size, retrieval or task scores, your pass bar, p95 latency, and the average cost per question in rupees.
+  3. Add at least one trace example (a screenshot or a text tree from your tracer) and the prompt version you evaluated.
+  4. Keep API keys out of the repo. Use environment variables on the host.
+  5. Fill `submission.json` with your live health URL and repo as `owner/name`.
+starter_files:
+  - path: submission.json
+    content: |
+      {
+        "url": "",
+        "repo": ""
+      }
+checks:
+  - kind: github_repo
+    require_file: EVALS.md
+    label: Repo has EVALS.md
+  - kind: live_url
+    url_field: url
+    expect_status: 200
+    contains: ok
+    label: Service is live and healthy
+hints:
+  - "The file name is case-sensitive: `EVALS.md` at the root of the repo, not in a folder."
+  - "Free hosts sleep when idle. Open the health URL once in your browser to wake it before you submit."
+  - "A good EVALS.md is short: one table of scores, one line each for p95 latency and rupees per question, and one paragraph on what still fails."
+solution: solution/
+unlocks: []
+tags: [project, rag, agents, evals, realworld]

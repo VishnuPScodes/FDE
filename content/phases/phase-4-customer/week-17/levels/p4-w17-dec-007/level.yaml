@@ -1,0 +1,127 @@
+id: p4-w17-dec-007
+title: 'Full decomposition: medicine stock-outs'
+phase: 4
+week: 17
+module: decomp-drills
+order: 7
+difficulty: 4
+estimated_minutes: 25
+type: decomposition
+environment: writing
+lesson: ../../lessons/02-decomposition-drills.md
+task: >-
+  Timed drill, 25 minutes. A chain of 30 pharmacies in Tamil Nadu has frequent stock-outs of
+  fast-moving medicines while slow ones expire on shelves. Each store orders from a central
+  warehouse by phone and spreadsheet. Fill all eight headings and state assumptions.
+timed: true
+starter_files:
+  - path: answer.md
+    content: |
+      # Full decomposition: medicine stock-outs
+
+      ## Goal
+      <!-- Number, from, to, date. -->
+
+      ## Users
+      <!-- Who, and what each needs. -->
+
+      ## Data
+      <!-- Where it lives. How clean. -->
+
+      ## Constraints
+      <!-- Privacy, devices, budget, people. -->
+
+      ## MVP
+      <!-- Smallest test. -->
+
+      ## Architecture
+      <!-- Boxes and arrows. -->
+
+      ## Risks
+      <!-- Risk plus fix. -->
+
+      ## Rollout
+      <!-- Pilot, length, deciding number. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Goal'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Users'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Data'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Constraints'
+  - kind: file_contains
+    path: answer.md
+    expected: '## MVP'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Architecture'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Risks'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Rollout'
+  - kind: sim_state
+    path: word_count
+    min: 132
+    max: 484
+  - kind: sim_state
+    path: section:Goal
+    min_words: 12
+    contains_any:
+      - '%'
+      - from
+  - kind: sim_state
+    path: section:Users
+    min_words: 14
+  - kind: sim_state
+    path: section:Data
+    min_words: 14
+  - kind: sim_state
+    path: section:Constraints
+    min_words: 14
+  - kind: sim_state
+    path: section:MVP
+    min_words: 14
+  - kind: sim_state
+    path: section:Architecture
+    min_words: 14
+  - kind: sim_state
+    path: section:Risks
+    min_words: 14
+  - kind: sim_state
+    path: section:Rollout
+    min_words: 14
+    contains_any:
+      - week
+      - pilot
+  - kind: checklist
+    label: Self-review
+    items:
+      - Every heading has real content, not a placeholder
+      - The Goal has a number
+      - I wrote my assumptions in plain words
+  - kind: ai_rubric
+    rubric:
+      - Goal is measurable and tied to a business result
+      - MVP is small and testable
+      - Assumptions are stated honestly
+    min_score: 3
+hints:
+  - >-
+    Spend three minutes on Goal and Users, then move fast. A complete rough plan beats a perfect
+    Goal with no Rollout.
+  - Put a number in the Goal and keep the MVP small enough to test in two to four weeks.
+solution: solution/
+unlocks:
+  - p4-w17-dec-008
+tags:
+  - decomposition
+  - drill
+mobile_compatible: true

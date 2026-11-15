@@ -1,0 +1,72 @@
+id: p3-w10-llm-005
+title: Top-p (nucleus) filtering
+phase: 3
+week: 10
+module: llm-fundamentals
+order: 5
+difficulty: 3
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/02-sampling-temperature-top-p.md
+task: |
+  Top-p keeps only the most likely tokens whose probabilities add up to at least `p`,
+  then renormalises them.
+
+  Write `top_p_filter(probs, p)`:
+
+  - Sort tokens by probability, highest first (ties: alphabetical).
+  - Keep tokens until the running total is **at least** `p`. Always keep at least one.
+  - Renormalise the kept tokens so they sum to 1, rounded to 4 places.
+  - Return a dict of only the kept tokens.
+  - `p` must be in (0, 1]. Otherwise raise `ValueError`.
+starter_files:
+- path: main.py
+  content: |
+    def top_p_filter(probs, p):
+        pass
+- path: test_main.py
+  content: |
+    import pytest
+
+    from main import top_p_filter
+
+    PROBS = {"refund": 0.5, "sorry": 0.3, "hello": 0.15, "banana": 0.05}
+
+
+    def test_keeps_nucleus():
+        assert top_p_filter(PROBS, 0.8) == {"refund": 0.625, "sorry": 0.375}
+
+
+    def test_p_one_keeps_all():
+        assert top_p_filter(PROBS, 1.0) == PROBS
+
+
+    def test_tiny_p_keeps_top_token():
+        assert top_p_filter(PROBS, 0.01) == {"refund": 1.0}
+
+
+    def test_tie_break():
+        assert top_p_filter({"b": 0.5, "a": 0.5}, 0.4) == {"a": 1.0}
+
+
+    def test_bad_p():
+        with pytest.raises(ValueError):
+            top_p_filter(PROBS, 0)
+        with pytest.raises(ValueError):
+            top_p_filter(PROBS, 1.5)
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Sort with `key=lambda item: (-item[1], item[0])` to get highest first and alphabetical ties.'
+- Floating point sums like 0.5 + 0.3 can land at 0.7999999. Compare against `p - 1e-9`.
+solution: solution/
+unlocks:
+- p3-w10-llm-006
+tags:
+- llm
+- sampling
+- top-p
+mobile_compatible: false

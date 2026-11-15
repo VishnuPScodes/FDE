@@ -1,0 +1,54 @@
+id: p5-w21-cap-012
+title: Handle free-tier surprises
+phase: 5
+week: 21
+module: capstone-build
+order: 5
+difficulty: 2
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/02-ship-it-free.md
+task: Free hosting works, but it has traps. Pick the answer you would give a customer who is relying on your service.
+checks:
+- kind: sim_state
+  action: multiple_choice
+  label: Free host cold start
+  question: Your free web service sleeps when idle, so the 9:00 reminder job starts 40 seconds late. What is the best fix?
+  options:
+  - Add a keep-warm ping shortly before 9:00 and tell Meena about the delay risk
+  - Move to an enterprise plan
+  - Ignore it, the customer will not notice
+  - Run it from your laptop every night
+  expected: Add a keep-warm ping shortly before 9:00 and tell Meena about the delay risk
+- kind: sim_state
+  action: multiple_choice
+  label: Leaked token
+  question: You pushed the WhatsApp token to GitHub by mistake. What do you do first?
+  options:
+  - Revoke and rotate the token, then move the new one into an environment variable
+  - Delete the commit and hope nobody saw it
+  - Make the repo private and keep using the same token
+  - Wait and see if anyone uses it
+  expected: Revoke and rotate the token, then move the new one into an environment variable
+- kind: sim_state
+  action: multiple_choice
+  label: Health check
+  question: Which endpoint should the host use as its health check?
+  options:
+  - A /health route that returns 200 without calling WhatsApp or the sheet
+  - The route that sends every reminder
+  - The home page behind an admin token
+  - The sheet file directly
+  expected: A /health route that returns 200 without calling WhatsApp or the sheet
+hints:
+- Free services sleep. Plan for the first request being slow.
+- A leaked secret is already compromised. Rotating it comes before cleaning the history.
+solution: solution/
+unlocks:
+- p5-w21-cap-013
+tags:
+- capstone
+- deploy
+- quiz
+mobile_compatible: true

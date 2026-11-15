@@ -1,0 +1,79 @@
+id: p5-w20-cap-013
+title: Write the Out of Scope list
+phase: 5
+week: 20
+module: capstone-scoping
+order: 5
+difficulty: 2
+estimated_minutes: 25
+type: writing
+environment: writing
+lesson: ../../lessons/03-scope-on-one-page.md
+task: |-
+  Dr. Anjali has asked for online payments and a patient app with logins on top of the reminder MVP. Write the scope so that both ideas are explained, not just dropped.
+
+  Each Out of Scope item needs a reason. Next Steps says when the ideas will be looked at again.
+starter_files:
+- path: answer.md
+  content: |
+    # Scope: what we will and will not build
+
+    ## In Scope
+
+
+    ## Out of Scope
+
+
+    ## Next Steps
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## In Scope'
+- kind: file_contains
+  path: answer.md
+  expected: '## Out of Scope'
+- kind: file_contains
+  path: answer.md
+  expected: '## Next Steps'
+- kind: sim_state
+  path: word_count
+  min: 100
+  max: 350
+- kind: sim_state
+  path: section:In Scope
+  min_words: 20
+- kind: sim_state
+  path: section:Out of Scope
+  min_words: 30
+  contains_all:
+  - payment
+  - app
+  - because
+- kind: sim_state
+  path: section:Next Steps
+  min_words: 15
+  contains_any:
+  - after
+  - review
+  - later
+  - revisit
+- kind: checklist
+  label: Self-review
+  items:
+  - Every Out of Scope item has a reason
+  - A new reader can tell what the pilot will deliver
+- kind: ai_rubric
+  rubric:
+  - Scope is small enough to finish in the pilot
+  - Out of Scope items are explained respectfully, not just refused
+  min_score: 3
+hints:
+- 'Use the word because for each Out of Scope item: only a few patients ask, the desk UPI code already works.'
+- Next Steps should say when you will talk about payments again, for example after the pilot numbers are in.
+solution: solution/
+unlocks:
+- p5-w20-cap-014
+tags:
+- capstone
+- scope
+- writing

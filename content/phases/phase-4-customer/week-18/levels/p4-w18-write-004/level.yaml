@@ -1,0 +1,95 @@
+id: p4-w18-write-004
+title: Write measurable goals and non-goals
+phase: 4
+week: 18
+module: design-docs
+order: 4
+difficulty: 2
+estimated_minutes: 15
+type: writing
+environment: writing
+lesson: ../../lessons/01-design-docs.md
+task: 'Anand Pharmacies (14 shops, Coimbatore) loses sales when medicines run out: about 9% of daily orders
+  hit a stock-out. You will pilot a reorder suggestion tool at 3 shops.
+
+
+  Write three sections: Goals, Non-goals, How we will measure. Every goal needs a number and a date.'
+starter_files:
+- path: answer.md
+  content: |
+    # Write measurable goals and non-goals
+
+    ## Goals
+    <!-- Each goal has a number and a date. -->
+
+    ## Non-goals
+    <!-- At least two, and make them real. -->
+
+    ## How we will measure
+    <!-- Baseline, source, how often. -->
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Goals'
+- kind: file_contains
+  path: answer.md
+  expected: '## Non-goals'
+- kind: file_contains
+  path: answer.md
+  expected: '## How we will measure'
+- kind: sim_state
+  path: word_count
+  min: 71
+  max: 226
+- kind: sim_state
+  path: section:Goals
+  min_words: 25
+  contains_any:
+  - '%'
+  - ₹
+- kind: sim_state
+  path: section:Non-goals
+  min_words: 20
+  contains_any:
+  - not
+- kind: sim_state
+  path: section:How we will measure
+  min_words: 20
+  contains_any:
+  - baseline
+  - weekly
+  - every week
+  - count
+- kind: file_contains
+  path: answer.md
+  expected: \d+\s*%
+  is_regex: true
+  label: At least one goal uses a percentage
+- kind: file_contains
+  path: answer.md
+  expected: \d+\s*(days|weeks|months)|\d{1,2}(st|nd|rd|th)?\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)|(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d{1,2}\b
+  is_regex: true
+  label: At least one goal has a date or time limit
+- kind: checklist
+  label: Self-review
+  items:
+  - A busy reader can find the main point in the first two lines
+  - Every number has a source or is marked as an assumption
+  - I removed jargon the customer would not use
+- kind: ai_rubric
+  rubric:
+  - Every goal has a number, starts from the 9% baseline where relevant, and has a date
+  - Non-goals name tempting things that are deliberately out of scope for the pilot
+  - The measurement plan says where each number comes from and how often it is checked
+  min_score: 3
+hints:
+- A goal without a number cannot fail, so it cannot succeed either. Add a figure and a date.
+- 'Name the baseline: what the number is today, and where you read it from.'
+solution: solution/
+unlocks:
+- p4-w18-write-005
+tags:
+- design-doc
+- goals
+- writing
+mobile_compatible: true

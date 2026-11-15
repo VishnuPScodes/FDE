@@ -1,0 +1,79 @@
+id: p3-w15-ops-003
+title: "Print a trace as a tree"
+phase: 3
+week: 15
+module: tracing-llm
+order: 3
+difficulty: 2
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-tracing-llm.md
+task: |
+  A pile of spans is hard to read. A tree shows at a glance what ran inside what.
+
+  Write `trace_tree(spans)`. `spans` is a list of span dicts like the ones your `Tracer` makes (each has `id`, `parent_id`, `name`, `duration_ms`, `status`). Return a list of text lines.
+
+  - Each line is `"{indent}{name} {duration}ms"`. The indent is 2 spaces per level of depth. Roots have no indent.
+  - Format the duration with `f"{duration_ms:g}"`, so `40` prints as `40` and `12.5` as `12.5`.
+  - If a span's `status` is `"error"`, add ` [error]` at the end of its line.
+  - Children appear right under their parent, in `id` order. The `spans` list may arrive in any order.
+  - Several roots are fine; print them in `id` order, each with its own children.
+  - A span whose `parent_id` points to an id that is not in the list is treated as a root.
+starter_files:
+  - path: main.py
+    content: |
+      def trace_tree(spans):
+          pass
+  - path: test_main.py
+    content: |
+      from main import trace_tree
+
+
+      def span(id, parent, name, ms, status="ok"):
+          return {"id": id, "parent_id": parent, "name": name, "duration_ms": ms, "status": status}
+
+
+      def test_simple_tree():
+          spans = [
+              span(1, None, "agent", 120),
+              span(2, 1, "retrieve", 30),
+              span(3, 1, "llm.call", 80),
+              span(4, 3, "parse", 2.5),
+          ]
+          assert trace_tree(spans) == [
+              "agent 120ms",
+              "  retrieve 30ms",
+              "  llm.call 80ms",
+              "    parse 2.5ms",
+          ]
+
+
+      def test_order_of_input_does_not_matter():
+          spans = [span(4, 3, "parse", 2), span(3, 1, "llm.call", 80), span(2, 1, "retrieve", 30), span(1, None, "agent", 120)]
+          assert trace_tree(spans)[0] == "agent 120ms"
+          assert trace_tree(spans)[1] == "  retrieve 30ms"
+
+
+      def test_error_marker_and_two_roots():
+          spans = [span(1, None, "a", 5), span(2, None, "b", 9, "error"), span(3, 2, "c", 4)]
+          assert trace_tree(spans) == ["a 5ms", "b 9ms [error]", "  c 4ms"]
+
+
+      def test_orphan_is_root():
+          assert trace_tree([span(5, 99, "lost", 3)]) == ["lost 3ms"]
+
+
+      def test_empty():
+          assert trace_tree([]) == []
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Group children by `parent_id` in a dict first. Then walk down from each root with a small recursive function that carries the depth."
+  - "Sort spans by `id` before grouping, so the output does not depend on the input order."
+  - "A root is a span whose `parent_id` is `None` or is not one of the ids in the list."
+solution: solution/
+unlocks: [p3-w15-ops-004]
+tags: [tracing, trace-tree]

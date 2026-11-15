@@ -1,0 +1,79 @@
+id: p4-w16-disc-011
+title: Fix the leading questions
+phase: 4
+week: 16
+module: discovery-interviews
+order: 9
+difficulty: 2
+estimated_minutes: 12
+type: writing
+environment: writing
+lesson: ../../lessons/02-open-questions.md
+task: |-
+  You are preparing to meet Karthik Pillai, who runs Pillai Transport Services in Madurai with 60 trucks. Here are four questions from your first draft:
+
+  1. Don't you think GPS tracking would save you money?
+
+  2. Is your dispatch process slow?
+
+  3. Wouldn't a mobile app be easier for the drivers?
+
+  4. Surely billing errors are your biggest problem, right?
+
+  Rewrite each one as an open, neutral question in `answer.md`. At least one rewrite should start with "walk me through". Then say in one line per question what you fixed.
+starter_files:
+- path: answer.md
+  content: |
+    # Rewrite the questions
+
+    ## Rewrites
+    <!-- Four numbered open questions, one for each weak question. -->
+
+    ## What changed
+    <!-- One line per rewrite: why the new question works better. -->
+checks:
+- kind: sim_state
+  path: section:Rewrites
+  min_words: 40
+  contains_all:
+  - walk me through
+  contains_any:
+  - how
+  - what
+- kind: sim_state
+  path: section:What changed
+  min_words: 25
+  contains_any:
+  - open
+  - 'yes'
+  - leading
+  - own words
+  - assum
+- kind: sim_state
+  path: word_count
+  min: 80
+  max: 400
+- kind: checklist
+  label: Before you submit
+  items:
+  - None of my rewrites can be answered with yes or no
+  - None of my rewrites suggests the answer I want
+  - Each rewrite asks about their world, not my solution
+- kind: ai_rubric
+  rubric:
+  - Rewrites are open and neutral, not leading
+  - Each rewrite asks about the customer's current reality
+  - The explanations name what was wrong with the original
+  min_score: 3
+hints:
+- Open questions start with how, what, or "walk me through". They cannot be answered with yes or no.
+- Remove your own idea from the question. Ask what happens today instead of whether your solution would
+  help.
+solution: solution/
+unlocks:
+- p4-w16-disc-012
+tags:
+- questions
+- leading
+- writing
+mobile_compatible: true

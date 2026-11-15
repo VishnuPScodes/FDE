@@ -1,0 +1,157 @@
+id: p6-w24-mock-001
+title: 'Mock round 1: the vague pharma distributor'
+phase: 6
+week: 24
+module: mock-loop
+order: 1
+difficulty: 4
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/01-mock-loop.md
+task: >-
+  Mock customer round. Kiran Shetty runs operations at a pharma distributor in Mangaluru. He says:
+  "Our order process is slow. Can AI fix it?" That is all he gives you at first.
+
+
+  In at most 9 questions with no leading questions, find the real problem, how big it is, what has
+  been tried, who is affected and what success looks like. Then write your next steps in `notes.md`.
+starter_files:
+  - path: persona.json
+    content: |
+      {
+        "name": "Kiran Shetty",
+        "role": "Operations Head",
+        "company": "Coastal Pharma Distributors, Mangaluru",
+        "opening": "Our order process is slow. I have heard AI can fix this. Where would you start?",
+        "facts": [
+          {
+            "id": "problem",
+            "triggers": [
+              "walk me through",
+              "what happens",
+              "tell me more",
+              "how does",
+              "what is slow",
+              "what's slow"
+            ],
+            "reply": "Around 300 chemist shops send orders by phone, WhatsApp and email. Three people enter them in our billing system, and they finish around 8 pm."
+          },
+          {
+            "id": "impact",
+            "triggers": [
+              "impact",
+              "what does that",
+              "consequence",
+              "result",
+              "cost"
+            ],
+            "requires": [
+              "problem"
+            ],
+            "reply": "The 6 pm trucks leave half empty. Shops get deliveries the next afternoon and some switch to other distributors."
+          },
+          {
+            "id": "tried",
+            "triggers": [
+              "tried",
+              "attempt",
+              "already",
+              "before"
+            ],
+            "reply": "We tried an ordering app. Shopkeepers ignored it. They only use WhatsApp."
+          },
+          {
+            "id": "people",
+            "triggers": [
+              "who is",
+              "who does",
+              "who works",
+              "who handles",
+              "who are"
+            ],
+            "reply": "Divya leads the three data entry staff. She knows every shop."
+          },
+          {
+            "id": "success",
+            "triggers": [
+              "success",
+              "good look like",
+              "what would you like",
+              "ideal",
+              "better"
+            ],
+            "requires": [
+              "impact"
+            ],
+            "reply": "If every order is entered by 5 pm, the trucks leave full at 6 pm. That is the target."
+          }
+        ],
+        "deflections": [
+          "I'm not sure what you mean. Can you ask that another way?",
+          "I'd rather you ask me how things work today."
+        ],
+        "max_turns": 12
+      }
+  - path: notes.md
+    content: |
+      # Notes: Mangaluru pharma distributor
+
+      ## Problem
+      <!-- In his words, with a number. -->
+
+      ## Success
+      <!-- The number he would accept. -->
+
+      ## Next steps
+      <!-- Names and dates. -->
+checks:
+  - kind: sim_state
+    path: facts_uncovered
+    contains_all:
+      - problem
+      - impact
+      - tried
+      - people
+      - success
+  - kind: sim_state
+    path: turns
+    max: 9
+  - kind: sim_state
+    path: leading_questions
+    max: 0
+  - kind: sim_state
+    path: section:Problem
+    min_words: 12
+    contains_any:
+      - orders
+      - hours
+      - delay
+  - kind: sim_state
+    path: section:Success
+    min_words: 8
+    contains_any:
+      - 5 pm
+      - deliver
+  - kind: sim_state
+    path: section:Next steps
+    min_words: 12
+    contains_any:
+      - by
+      - week
+  - kind: ai_rubric
+    rubric:
+      - Next steps include a concrete data request and a date
+      - The learner did not jump to a solution before learning the problem
+    min_score: 3
+hints:
+  - Do not answer "where would you start" yet. Begin with how orders flow today.
+  - After the problem, ask what it costs them and what they have already tried.
+  - End with a clear success number and a person you will work with.
+solution: solution/
+unlocks:
+  - p6-w24-mock-002
+tags:
+  - mock
+  - roleplay
+mobile_compatible: true

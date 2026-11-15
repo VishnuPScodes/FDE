@@ -1,0 +1,86 @@
+id: p3-w14-guard-003
+title: "Cap tokens per user per day"
+phase: 3
+week: 14
+module: guardrails
+order: 13
+difficulty: 2
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/03-guardrails.md
+task: |
+  A user stuck in a loop can burn a month of budget in one afternoon. Write a `Budget` class.
+
+  - `Budget(limit)` sets the daily token limit per user.
+  - `charge(user, tokens, day)` returns `True` and records the usage if `used + tokens <= limit` for that user on that day. Otherwise it returns `False` and records nothing. `day` is any value such as `"2025-03-14"`.
+  - `remaining(user, day)` returns how many tokens are left.
+  - Each user and each day has its own count.
+  - A negative `tokens` raises `ValueError`. Zero is fine.
+
+  A refused call costs nothing, so a smaller call afterwards can still fit.
+starter_files:
+  - path: main.py
+    content: |
+      class Budget:
+          def __init__(self, limit):
+              pass
+
+          def charge(self, user, tokens, day):
+              pass
+
+          def remaining(self, user, day):
+              pass
+  - path: test_main.py
+    content: |
+      import pytest
+
+      from main import Budget
+
+
+      def test_charge_and_remaining():
+          budget = Budget(1000)
+          assert budget.charge("asha", 400, "d1") is True
+          assert budget.remaining("asha", "d1") == 600
+
+
+      def test_exact_limit_is_allowed():
+          budget = Budget(1000)
+          assert budget.charge("asha", 1000, "d1") is True
+          assert budget.remaining("asha", "d1") == 0
+          assert budget.charge("asha", 1, "d1") is False
+
+
+      def test_refused_call_costs_nothing():
+          budget = Budget(1000)
+          budget.charge("asha", 900, "d1")
+          assert budget.charge("asha", 200, "d1") is False
+          assert budget.remaining("asha", "d1") == 100
+          assert budget.charge("asha", 100, "d1") is True
+
+
+      def test_users_and_days_are_separate():
+          budget = Budget(500)
+          budget.charge("asha", 500, "d1")
+          assert budget.charge("ravi", 500, "d1") is True
+          assert budget.charge("asha", 500, "d2") is True
+
+
+      def test_negative_tokens():
+          with pytest.raises(ValueError):
+              Budget(10).charge("asha", -5, "d1")
+
+
+      def test_remaining_for_new_user():
+          assert Budget(250).remaining("new", "d1") == 250
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Use a dict keyed by `(user, day)` and `dict.get(key, 0)` for the current use."
+  - "Check first, then record. Do not add to the count when the call is refused."
+  - "`remaining` is `limit - used`, never below zero."
+solution: solution/
+unlocks: [p3-w14-guard-004]
+tags: [guardrails, budget, cost]

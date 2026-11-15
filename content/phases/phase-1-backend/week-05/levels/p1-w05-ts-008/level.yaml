@@ -1,0 +1,43 @@
+id: p1-w05-ts-008
+title: Count invoices by status with Record
+phase: 1
+week: 5
+module: typescript-essentials
+order: 7
+difficulty: 2
+estimated_minutes: 10
+type: code
+environment: ts
+lesson: ../../lessons/01-types-and-functions.md
+task: "Implement `countByStatus` returning a `Record<Status, number>` with a count for every status (including zero counts)."
+starter_files:
+  - path: main.ts
+    content: |-
+      type Status = 'draft' | 'sent' | 'paid';
+      type Invoice = { id: string; status: Status };
+
+      function countByStatus(invoices: Invoice[]): Record<Status, number> {
+        return { draft: 0, sent: 0, paid: 0 };
+      }
+
+      const sample: Invoice[] = [
+        { id: 'A', status: 'sent' },
+        { id: 'B', status: 'paid' },
+        { id: 'C', status: 'sent' },
+      ];
+
+      test('counts each status', () => {
+        expect(countByStatus(sample)).toEqual({ draft: 0, sent: 2, paid: 1 });
+      });
+      test('keeps zero counts for an empty list', () => {
+        expect(countByStatus([])).toEqual({ draft: 0, sent: 0, paid: 0 });
+      });
+checks:
+  - kind: vitest_passes
+    label: All behaviour checks pass
+hints:
+  - "Start from an object with every status set to 0."
+  - "Increment `counts[invoice.status]` for each invoice."
+solution: solution/
+unlocks: [p1-w05-ts-009]
+tags: [typescript, record, literal-types]

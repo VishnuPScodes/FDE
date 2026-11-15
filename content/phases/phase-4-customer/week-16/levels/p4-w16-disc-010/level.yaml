@@ -1,0 +1,46 @@
+id: p4-w16-disc-010
+title: Put a price on the pain
+phase: 4
+week: 16
+module: discovery-interviews
+order: 8
+difficulty: 2
+estimated_minutes: 8
+type: quiz
+environment: quiz
+lesson: ../../lessons/04-quantifying-pain.md
+task: |
+  Turn interview notes into numbers a CFO will trust.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: >-
+      Two accounts staff each spend 25 hours a month on manual matching. Their fully loaded cost is
+      ₹400 an hour. What is the yearly cost?
+    options:
+      - ₹2,40,000
+      - ₹20,000
+      - ₹1,20,000
+      - ₹24,00,000
+    expected: ₹2,40,000
+    label: Calculate yearly cost
+  - kind: sim_state
+    action: multiple_choice
+    question: Which statement of pain is strongest?
+    options:
+      - Matching takes 50 hours a month and one error delayed ₹14 lakh of refund last quarter
+      - The team is very frustrated with matching
+      - Matching is slow and painful
+      - Everyone agrees AI would help
+    expected: Matching takes 50 hours a month and one error delayed ₹14 lakh of refund last quarter
+    label: Pick a measurable statement
+hints:
+  - 2 people × 25 hours × ₹400 per hour, then × 12 months.
+  - Hours, rupees and error rates beat adjectives.
+solution: solution/
+unlocks:
+  - p4-w16-disc-011
+tags:
+  - quantify
+  - roi
+mobile_compatible: true

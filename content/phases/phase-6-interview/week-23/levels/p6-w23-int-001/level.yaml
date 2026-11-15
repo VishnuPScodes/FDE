@@ -1,0 +1,66 @@
+id: p6-w23-int-001
+title: 'Drill: error rate per endpoint'
+phase: 6
+week: 23
+module: coding-drills
+order: 1
+difficulty: 2
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-practical-coding.md
+task: |-
+  Timed drill, aim for 25 minutes. A Bengaluru fintech's API is flaky and the customer wants error rates per endpoint.
+
+  Implement `error_rates` in `logs.py`. Strip query strings so `/api/invoices?page=2` counts as `/api/invoices`. Skip malformed lines, including ones where the status is not a number. Talk through edge cases as you go. Run `test_logs.py`.
+timed: true
+starter_files:
+- path: logs.py
+  content: |
+    def error_rates(lines: list[str]) -> dict[str, float]:
+        """Each line: "<date> <time> <METHOD> <path> <status> <latency>ms".
+        Return {path: percent of requests with a 5xx status}, rounded to 1 decimal.
+        Ignore query strings (?page=2) and malformed lines.
+        """
+        pass
+- path: test_logs.py
+  content: |
+    from logs import error_rates
+
+    LINES = [
+        "2026-11-20 10:01:02 GET /api/invoices 200 120ms",
+        "2026-11-20 10:01:03 GET /api/invoices?page=2 500 980ms",
+        "2026-11-20 10:01:04 POST /api/invoices 201 210ms",
+        "2026-11-20 10:01:05 GET /api/gst/verify 503 3000ms",
+        "2026-11-20 10:01:06 GET /api/gst/verify 200 340ms",
+        "2026-11-20 10:01:07 GET /api/health 200 3ms",
+        "connection reset by peer",
+        "",
+        "2026-11-20 10:01:08 GET /api/health abc 3ms",
+    ]
+
+
+    def test_rates():
+        assert error_rates(LINES) == {
+            "/api/invoices": 33.3,
+            "/api/gst/verify": 50.0,
+            "/api/health": 0.0,
+        }
+
+
+    def test_empty():
+        assert error_rates([]) == {}
+checks:
+- kind: pytest_passes
+  run: pytest -q test_logs.py
+hints:
+- A valid line splits into exactly six parts, and the fifth part is all digits.
+- Use path.split('?')[0] to drop the query string.
+- Count totals and 5xx errors in two dicts, then divide per path.
+solution: solution/
+unlocks:
+- p6-w23-int-002
+tags:
+- interview
+- python
+- parsing

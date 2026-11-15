@@ -1,0 +1,115 @@
+id: p4-w18-write-006
+title: Write a recommendation memo for the CEO
+phase: 4
+week: 18
+module: exec-memos
+order: 6
+difficulty: 3
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/02-exec-memos.md
+task: >-
+  The CEO of Sunrise Clinics, Dr. Rao, has two minutes. No-shows are 18% and cost about ₹4.5 lakh a
+  month. You want approval for a 4 week WhatsApp reminder pilot in two clinics, costing ₹60,000.
+
+
+  Write a memo with five headings: Recommendation, Why, Cost and timeline, Risks, Decision needed.
+  Keep it short.
+starter_files:
+  - path: answer.md
+    content: |
+      # Write a recommendation memo for the CEO
+
+      ## Recommendation
+      <!-- The ask in one sentence. -->
+
+      ## Why
+      <!-- Two or three reasons, with numbers. -->
+
+      ## Cost and timeline
+      <!-- Money and dates. -->
+
+      ## Risks
+      <!-- Biggest risks honestly. -->
+
+      ## Decision needed
+      <!-- Exact ask and date. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Recommendation'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Why'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Cost and timeline'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Risks'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Decision needed'
+  - kind: sim_state
+    path: word_count
+    min: 82
+    max: 299
+  - kind: sim_state
+    path: section:Recommendation
+    min_words: 12
+    contains_any:
+      - approve
+      - pilot
+  - kind: sim_state
+    path: section:Why
+    min_words: 20
+    contains_any:
+      - ₹
+      - lakh
+      - '%'
+  - kind: sim_state
+    path: section:Cost and timeline
+    min_words: 10
+    contains_any:
+      - ₹60,000
+      - 60,000
+  - kind: sim_state
+    path: section:Risks
+    min_words: 15
+    contains_any:
+      - consent
+      - privacy
+      - wrong
+  - kind: sim_state
+    path: section:Decision needed
+    min_words: 8
+    contains_any:
+      - by
+      - friday
+      - monday
+  - kind: sim_state
+    path: word_count
+    max: 260
+  - kind: checklist
+    label: Self-review
+    items:
+      - A busy reader can find the main point in the first two lines
+      - Every number has a source or is marked as an assumption
+      - I removed jargon the customer would not use
+  - kind: ai_rubric
+    rubric:
+      - Clear and concise for the intended reader
+      - Specific numbers and decisions, not vague claims
+      - Honest about risks and trade-offs
+    min_score: 3
+hints:
+  - Put the ask first. A CEO may stop reading after two lines.
+  - Decision needed must include a date, or it will sit in the inbox.
+solution: solution/
+unlocks:
+- p4-w18-write-007
+tags:
+  - memo
+  - recommendation
+mobile_compatible: true

@@ -1,0 +1,117 @@
+id: p5-w22-cap-007
+title: Write the case study
+phase: 5
+week: 22
+module: capstone-case-study
+order: 4
+difficulty: 4
+estimated_minutes: 90
+type: writing
+environment: writing
+lesson: ../../lessons/03-case-study-and-sign-off.md
+task: |-
+  Write your two-page case study in `answer.md` (roughly 450-1,100 words).
+
+  Follow the headings in order. **Impact** must have before and after numbers. **What Broke** must describe at least one real failure and what you changed. Include your customer's quote if you have permission. Optional: record a 3-minute video walk-through and link it at the top.
+starter_files:
+- path: answer.md
+  content: |
+    # Case study
+
+    ## Context
+
+
+    ## Discovery
+
+
+    ## Decomposition
+
+
+    ## Architecture
+
+
+    ## What Broke
+
+
+    ## Impact
+
+
+    ## What I'd Do Next
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Context'
+- kind: file_contains
+  path: answer.md
+  expected: '## Discovery'
+- kind: file_contains
+  path: answer.md
+  expected: '## Decomposition'
+- kind: file_contains
+  path: answer.md
+  expected: '## Architecture'
+- kind: file_contains
+  path: answer.md
+  expected: '## What Broke'
+- kind: file_contains
+  path: answer.md
+  expected: '## Impact'
+- kind: file_contains
+  path: answer.md
+  expected: '## What I''d Do Next'
+- kind: sim_state
+  path: word_count
+  min: 380
+  max: 1200
+- kind: sim_state
+  path: section:Context
+  min_words: 30
+- kind: sim_state
+  path: section:Discovery
+  min_words: 40
+- kind: sim_state
+  path: section:Decomposition
+  min_words: 30
+- kind: sim_state
+  path: section:Architecture
+  min_words: 30
+- kind: sim_state
+  path: section:What Broke
+  min_words: 40
+  contains_any:
+  - fixed
+  - changed
+  - learned
+  - now
+- kind: sim_state
+  path: section:Impact
+  min_words: 30
+  contains_all:
+  - before
+  - after
+- kind: sim_state
+  path: section:What I'd Do Next
+  min_words: 20
+- kind: checklist
+  label: Self-review
+  items:
+  - No personal data of the customer's users appears in text or screenshots
+  - My customer agreed to how they are named
+  - A friend outside tech read it and understood it
+- kind: ai_rubric
+  rubric:
+  - Story starts from the customer's problem
+  - Impact numbers are honest and sourced
+  - What Broke shows judgment and learning
+  min_score: 3
+hints:
+- Start with the customer and their pain. The tech comes in the fourth section.
+- 'Impact needs the words before and after with numbers: ''18% before, 9% after over four weeks''.'
+- If something did not improve, say so and explain why. That still makes a strong case study.
+solution: solution/
+unlocks:
+- p5-w22-cap-008
+tags:
+- capstone
+- case-study
+- writing

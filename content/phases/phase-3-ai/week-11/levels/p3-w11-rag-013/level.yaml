@@ -1,0 +1,86 @@
+id: p3-w11-rag-013
+title: Chunk a markdown handbook by its headings
+phase: 3
+week: 11
+module: document-parsing
+order: 13
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-parsing-and-chunking.md
+task: |
+  Fixed-size chunks cut sentences in half. A leave-policy handbook already has structure, so let the headings decide where chunks begin.
+
+  Write `chunk_by_headings(markdown, max_chars=300)` returning a list of `{"heading": str, "text": str}`:
+
+  - A heading is a line starting with one or more `#` followed by a space. Its `heading` value is the title without the hashes, stripped.
+  - Text before the first heading gets `heading` set to `""`.
+  - Body text is split into paragraphs on blank lines. Pack paragraphs greedily into chunks joined by `"\n\n"` while the chunk stays at most `max_chars` characters.
+    A single paragraph longer than `max_chars` becomes its own chunk, uncut.
+  - A section that needs several chunks repeats its `heading` on each one. Sections with an empty body produce no chunk.
+starter_files:
+- path: main.py
+  content: |
+    def chunk_by_headings(markdown, max_chars=300):
+        pass
+- path: test_main.py
+  content: |
+    from main import chunk_by_headings
+
+    DOC = """Welcome to Infra Labs.
+
+    # Leave policy
+
+    Casual leave is 12 days a year.
+
+    Earned leave is 18 days.
+
+    ## Sick leave
+
+    Needs a medical certificate after 2 days.
+
+    # Empty section
+
+    # Travel
+
+    Economy fares only.
+    """
+
+
+    def test_headings_and_preamble():
+        chunks = chunk_by_headings(DOC)
+        assert [c["heading"] for c in chunks] == ["", "Leave policy", "Sick leave", "Travel"]
+        assert chunks[0]["text"] == "Welcome to Infra Labs."
+        assert chunks[1]["text"] == "Casual leave is 12 days a year.\n\nEarned leave is 18 days."
+
+
+    def test_long_section_splits_and_repeats_heading():
+        chunks = chunk_by_headings(DOC, max_chars=35)
+        leave = [c for c in chunks if c["heading"] == "Leave policy"]
+        assert [c["text"] for c in leave] == ["Casual leave is 12 days a year.", "Earned leave is 18 days."]
+
+
+    def test_oversized_paragraph_kept_whole():
+        chunks = chunk_by_headings("# A\n\n" + "x" * 50, max_chars=10)
+        assert chunks == [{"heading": "A", "text": "x" * 50}]
+
+
+    def test_hash_without_space_is_not_a_heading():
+        chunks = chunk_by_headings("#hashtag is text\n\n# Real\n\nbody")
+        assert chunks[0] == {"heading": "", "text": "#hashtag is text"}
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Walk the lines once, collecting `(heading, body_lines)` sections, then chunk each section's paragraphs.
+- 'Match headings with `re.match(r"#+\s+(.*)", line)`; `#hashtag` has no space so it will not match.'
+solution: solution/
+unlocks:
+- p3-w11-rag-014
+tags:
+- rag
+- chunking
+- markdown
+mobile_compatible: false

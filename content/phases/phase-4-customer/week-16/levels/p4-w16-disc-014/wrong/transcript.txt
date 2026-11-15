@@ -1,0 +1,4 @@
+Do you have good security?
+Isn't your IT team very strict?
+Is the database old?
+Wouldn't a cloud tool be easier?

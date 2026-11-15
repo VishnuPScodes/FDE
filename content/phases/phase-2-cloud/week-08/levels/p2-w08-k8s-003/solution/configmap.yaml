@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: invoice-config
+data:
+  DB_HOST: postgres.default.svc
+  GST_REGION: IN-KA

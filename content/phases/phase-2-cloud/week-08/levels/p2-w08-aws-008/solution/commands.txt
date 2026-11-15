@@ -1,0 +1,3 @@
+I=$(aws ec2 describe-instances --filters Name=tag:Name,Values=fde-api --query 'Reservations[0].Instances[0].InstanceId' --output text)
+V=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=fde-vpc --query 'Vpcs[0].VpcId' --output text)
+aws ec2 create-tags --resources $I $V --tags Key=Project,Value=fde-learning Key=Env,Value=dev

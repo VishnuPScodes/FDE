@@ -1,0 +1,170 @@
+id: p4-w19-adopt-010
+title: Win over a worried branch manager
+phase: 4
+week: 19
+module: change-management
+order: 10
+difficulty: 4
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/02-change-management.md
+task: 'Harish Kumar manages the Angamaly branch of a co-operative bank. Head office has chosen the scan
+  checking tool and he was not asked. He is polite but guarded.
+
+
+  In at most 8 questions with no leading questions, learn what pressure he is under, what he fears, what
+  success would look like to him, and the best time to roll out. Then write your notes and next step in
+  `notes.md`.'
+starter_files:
+- path: persona.json
+  content: |
+    {
+      "name": "Harish Kumar",
+      "role": "Branch Manager",
+      "company": "Periyar Co-operative Bank, Angamaly",
+      "opening": "Head office sent me an email about a new tool. My branch already struggles with its targets. Another thing to manage?",
+      "facts": [
+        {
+          "id": "pressure",
+          "triggers": [
+            "how are things",
+            "how is the branch",
+            "workload",
+            "busy",
+            "on your plate",
+            "pressure"
+          ],
+          "reply": "Two clerks are on leave and loan files are piling up. Anything new must not slow us down."
+        },
+        {
+          "id": "fear",
+          "triggers": [
+            "worries",
+            "worry",
+            "concern",
+            "afraid",
+            "nervous",
+            "what would go wrong",
+            "on your mind"
+          ],
+          "requires": [
+            "pressure"
+          ],
+          "reply": "If the tool shows head office how slow we are, I will be blamed before it helps anyone."
+        },
+        {
+          "id": "success",
+          "triggers": [
+            "good outcome",
+            "success",
+            "what would make this",
+            "hope",
+            "want from"
+          ],
+          "requires": [
+            "fear"
+          ],
+          "reply": "If my clerks finish a file in half the time and nobody stays late, I will tell the other managers myself."
+        },
+        {
+          "id": "timing",
+          "triggers": [
+            "when",
+            "best time",
+            "quiet",
+            "schedule",
+            "busy season"
+          ],
+          "reply": "Never in the last week of the month, that is closing. The first two weeks are calmer."
+        }
+      ],
+      "closing": "I have a customer waiting. Come back with a plan that fits my calendar.",
+      "deflections": [
+        "I'm not sure what you mean. Can you ask that another way?",
+        "I'd rather you ask me how things work today."
+      ],
+      "max_turns": 12
+    }
+- path: notes.md
+  content: |
+    # Notes: Harish Kumar
+
+    ## What worries him
+    <!-- In his own words. -->
+
+    ## What success looks like
+    <!-- What would make him an advocate. -->
+
+    ## Timing
+    <!-- When rollout fits his branch. -->
+
+    ## Next step
+    <!-- One thing you will do. -->
+checks:
+- kind: sim_state
+  path: facts_uncovered
+  contains_all:
+  - pressure
+  - fear
+  - success
+  - timing
+- kind: sim_state
+  path: turns
+  max: 8
+- kind: sim_state
+  path: leading_questions
+  max: 0
+- kind: sim_state
+  path: section:What worries him
+  min_words: 12
+  contains_any:
+  - blame
+  - head office
+  - slow
+- kind: sim_state
+  path: section:What success looks like
+  min_words: 12
+  contains_any:
+  - half
+  - stay
+  - late
+  - file
+- kind: sim_state
+  path: section:Timing
+  min_words: 6
+  contains_any:
+  - month
+  - closing
+  - week
+- kind: sim_state
+  path: section:Next step
+  min_words: 10
+  contains_any:
+  - show
+  - plan
+  - privately
+  - second week
+- kind: checklist
+  label: Self-review
+  items:
+  - I listened before explaining the tool
+  - I planned around his calendar
+  - My next step makes him a partner
+- kind: ai_rubric
+  rubric:
+  - Learner listens and does not sell
+  - Plan respects his timing and fears
+  - Next step involves him as an advocate
+  min_score: 3
+hints:
+- Start by asking how things are at the branch. Do not mention the tool yet.
+- Ask what worries him, then what a good outcome looks like.
+- Ask about timing last. It shows you will fit your plan to his month.
+solution: solution/
+unlocks:
+- p4-w19-adopt-011
+tags:
+- roleplay
+- adoption
+mobile_compatible: true

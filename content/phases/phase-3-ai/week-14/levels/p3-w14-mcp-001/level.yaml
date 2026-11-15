@@ -1,0 +1,37 @@
+id: p3-w14-mcp-001
+title: Answer the MCP handshake over JSON-RPC
+phase: 3
+week: 14
+module: mcp-servers
+order: 1
+difficulty: 3
+estimated_minutes: 30
+type: code
+environment: python
+lesson: ../../lessons/01-mcp-servers.md
+task: |
+  You'll expose a Pune insurer's claims system as an MCP server. MCP uses JSON-RPC 2.0 messages. Here the transport is skipped: `mcp_host.py` calls your `handle(request)` with a dict and checks the dict you return.
+
+  Write `handle(request)` in `server.py`:
+
+  - Success: `{"jsonrpc": "2.0", "id": <same id>, "result": {...}}`. Use the `ok()` and `err()` helpers.
+  - Not a dict, `jsonrpc` not `"2.0"`, or `method` not a string: error `-32600` `"Invalid Request"`. Use the request's `id` if there is one, else `None`.
+  - A notification has no `id` key. Never answer it: return `None`.
+  - `initialize`: return `protocolVersion`, `capabilities` (`{"tools": {}, "resources": {}, "prompts": {}}`) and `serverInfo` (`SERVER_INFO`). If the client's `params.protocolVersion` is in `SUPPORTED`, echo it back. Otherwise answer with `LATEST`.
+  - `ping`: result `{}`.
+  - Anything else: error `-32601` with message `"Method not found: <method>"`.
+starter_files:
+  - path: server.py
+  - path: mcp_host.py
+  - path: test_server.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_server.py
+    label: Handshake tests pass
+hints:
+  - "Check for the notification case with `\"id\" not in request`. An id of `0` or `None` still means a request."
+  - "`params = request.get(\"params\") or {}` keeps the code safe when params is missing."
+  - The version reply is the client's version only when you support it.
+solution: solution/
+unlocks: [p3-w14-mcp-002]
+tags: [mcp, json-rpc, insurance]

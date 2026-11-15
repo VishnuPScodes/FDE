@@ -1,0 +1,112 @@
+id: p4-w18-write-007
+title: Write the weekly status update
+phase: 4
+week: 18
+module: exec-memos
+order: 7
+difficulty: 2
+estimated_minutes: 15
+type: writing
+environment: writing
+lesson: ../../lessons/02-exec-memos.md
+task: >-
+  Week 3 of the Gupta Traders pilot. Facts: typing time is down from 3 hours to 2.2 hours a day. Ten
+  shops are live. Two shops send voice notes that cannot be read yet. You need a staff member for 30
+  minutes each morning to review drafts, and today nobody is assigned.
+
+
+  Write the update with headings: Status, Done, Next, Blockers, Ask. Status must name a colour.
+starter_files:
+  - path: answer.md
+    content: |
+      # Write the weekly status update
+
+      ## Status
+      <!-- Green, amber or red, with one line. -->
+
+      ## Done
+      <!-- What changed, with numbers. -->
+
+      ## Next
+      <!-- The next two weeks. -->
+
+      ## Blockers
+      <!-- What is slowing you. -->
+
+      ## Ask
+      <!-- What you need and by when. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Status'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Done'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Next'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Blockers'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Ask'
+  - kind: sim_state
+    path: word_count
+    min: 52
+    max: 191
+  - kind: sim_state
+    path: section:Status
+    min_words: 8
+    contains_any:
+      - amber
+      - green
+      - red
+  - kind: sim_state
+    path: section:Done
+    min_words: 15
+    contains_any:
+      - '2.2'
+      - hours
+  - kind: sim_state
+    path: section:Next
+    min_words: 10
+    contains_any:
+      - week
+  - kind: sim_state
+    path: section:Blockers
+    min_words: 10
+    contains_any:
+      - voice
+      - review
+  - kind: sim_state
+    path: section:Ask
+    min_words: 8
+    contains_any:
+      - by
+      - please
+  - kind: sim_state
+    path: word_count
+    max: 200
+  - kind: checklist
+    label: Self-review
+    items:
+      - A busy reader can find the main point in the first two lines
+      - Every number has a source or is marked as an assumption
+      - I removed jargon the customer would not use
+  - kind: ai_rubric
+    rubric:
+      - Clear and concise for the intended reader
+      - Specific numbers and decisions, not vague claims
+      - Honest about risks and trade-offs
+    min_score: 3
+hints:
+  - 'Amber is honest: the numbers are good, but one thing needs help.'
+  - The Ask should name a person, a task and a day.
+solution: solution/
+unlocks:
+- p4-w18-write-008
+tags:
+  - memo
+  - status
+mobile_compatible: true

@@ -1,0 +1,91 @@
+id: p3-w15-ops-013
+title: "Block calls once the daily budget is gone"
+phase: 3
+week: 15
+module: cost-latency
+order: 5
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/02-cost-and-latency.md
+task: |
+  A bug in a retry loop can burn a month of model budget in one night. Put a daily cap in front of every model call. Track money in whole **paise** (100 paise = ₹1) so there are no float surprises.
+
+  Write `budget_status(spent_paise, call_paise, daily_limit_paise, warn_ratio=0.8)`. It decides what to do about the next call, which will cost `call_paise`.
+
+  - Raise `ValueError` if `spent_paise` or `call_paise` is negative, or the limit is not above 0.
+  - `after = spent_paise + call_paise`.
+  - If `after` is **above** the limit, the status is `"block"`. The call will not run, so it is not charged: `spent_after_paise` stays `spent_paise`.
+  - Otherwise the status is `"warn"` when `after >= daily_limit_paise * warn_ratio`, else `"ok"`. `spent_after_paise` is `after`.
+  - `remaining_paise` is the limit minus `spent_after_paise` (never below 0).
+
+  Return `{"status", "spent_after_paise", "remaining_paise"}`. Spending exactly the limit is allowed (it is a warn).
+starter_files:
+  - path: main.py
+    content: |
+      def budget_status(spent_paise, call_paise, daily_limit_paise, warn_ratio=0.8):
+          pass
+  - path: test_main.py
+    content: |
+      import pytest
+
+      from main import budget_status
+
+      LIMIT = 50_000  # Rs 500 a day
+
+
+      def test_plenty_left_is_ok():
+          assert budget_status(10_000, 200, LIMIT) == {
+              "status": "ok", "spent_after_paise": 10_200, "remaining_paise": 39_800}
+
+
+      def test_close_to_the_cap_warns():
+          result = budget_status(39_800, 200, LIMIT)
+          assert result == {"status": "warn", "spent_after_paise": 40_000, "remaining_paise": 10_000}
+
+
+      def test_just_under_the_warn_line_is_ok():
+          assert budget_status(39_000, 999, LIMIT)["status"] == "ok"
+
+
+      def test_exactly_the_limit_is_allowed_with_a_warning():
+          assert budget_status(49_500, 500, LIMIT) == {
+              "status": "warn", "spent_after_paise": 50_000, "remaining_paise": 0}
+
+
+      def test_over_the_limit_blocks_and_does_not_charge():
+          assert budget_status(49_900, 200, LIMIT) == {
+              "status": "block", "spent_after_paise": 49_900, "remaining_paise": 100}
+
+
+      def test_already_over_budget():
+          assert budget_status(60_000, 1, LIMIT) == {
+              "status": "block", "spent_after_paise": 60_000, "remaining_paise": 0}
+
+
+      def test_custom_warn_ratio():
+          assert budget_status(0, 5_000, LIMIT, warn_ratio=0.1)["status"] == "warn"
+
+
+      def test_bad_input():
+          with pytest.raises(ValueError):
+              budget_status(-1, 10, LIMIT)
+          with pytest.raises(ValueError):
+              budget_status(0, -10, LIMIT)
+          with pytest.raises(ValueError):
+              budget_status(0, 10, 0)
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Validate first, then compute `after`. Handle the `block` case with an early `return` so the charge never reaches the other branch."
+  - "Use `>` for the block test and `>=` for the warn test. Spending exactly the limit is allowed."
+  - "For a block, `remaining_paise` is `max(0, limit - spent_paise)`, because the blocked call was never charged."
+feedback:
+  - when: { stdout_contains: "test_over_the_limit_blocks_and_does_not_charge" }
+    message: A blocked call never runs, so keep `spent_after_paise` equal to `spent_paise`.
+solution: solution/
+unlocks: [p3-w15-ops-014]
+tags: [cost, budget, guardrails, inr]

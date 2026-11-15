@@ -1,0 +1,88 @@
+id: p3-w10-llm-010
+title: Build a batch request file and match results
+phase: 3
+week: 10
+module: api-patterns
+order: 10
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/04-caching-and-batches.md
+task: |
+  Overnight, a Kerala logistics company wants 5,000 delivery complaints tagged.
+  Batch APIs are about half price but return results in **any order**.
+
+  Write:
+
+  - `build_batch(tickets, model, system, max_tokens=200)` returns a JSONL string, one line per ticket:
+    `{"custom_id": "ticket-<id>", "params": {"model": ..., "max_tokens": ..., "system": ..., "messages": [{"role": "user", "content": <text>}]}}`.
+    Skip tickets whose text is blank. Raise `ValueError` on a duplicate ticket id.
+    Use `json.dumps(line, ensure_ascii=False)` for each line and join with `"\n"`.
+  - `match_results(tickets, results_jsonl)` returns a dict `{ticket_id: text_or_None}`.
+    Each result line has `custom_id` and `result`. A succeeded result looks like
+    `{"type": "succeeded", "message": {"content": [{"type": "text", "text": "..."}]}}`.
+    Any other type maps to `None`. Every ticket id from `tickets` must appear in the output.
+starter_files:
+- path: main.py
+  content: |
+    import json
+
+
+    def build_batch(tickets, model, system, max_tokens=200):
+        pass
+
+
+    def match_results(tickets, results_jsonl):
+        pass
+- path: test_main.py
+  content: |
+    import json
+
+    import pytest
+
+    from main import build_batch, match_results
+
+    TICKETS = [
+        {"id": 101, "text": "Parcel stuck in Kochi hub for 4 days"},
+        {"id": 102, "text": "   "},
+        {"id": 103, "text": "डिलीवरी बॉय ने पैसे ज़्यादा मांगे"},
+    ]
+
+
+    def test_build_batch_lines():
+        lines = build_batch(TICKETS, "claude-haiku-5-5", "Tag the complaint.").split("\n")
+        assert len(lines) == 2
+        first = json.loads(lines[0])
+        assert first["custom_id"] == "ticket-101"
+        assert first["params"]["messages"] == [{"role": "user", "content": "Parcel stuck in Kochi hub for 4 days"}]
+        assert first["params"]["max_tokens"] == 200
+        assert "डिलीवरी" in lines[1]
+
+
+    def test_duplicate_ids():
+        with pytest.raises(ValueError):
+            build_batch([{"id": 1, "text": "a"}, {"id": 1, "text": "b"}], "m", "s")
+
+
+    def test_match_results_out_of_order():
+        results = "\n".join([
+            json.dumps({"custom_id": "ticket-103", "result": {"type": "succeeded", "message": {"content": [{"type": "text", "text": "overcharge"}]}}}),
+            json.dumps({"custom_id": "ticket-101", "result": {"type": "errored", "error": {"type": "overloaded"}}}),
+        ])
+        assert match_results(TICKETS, results) == {101: None, 102: None, 103: "overcharge"}
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Key results by `custom_id`, never by position. The batch service does not keep your order.
+- Start the output from the `tickets` list so skipped and failed tickets still show up as `None`.
+solution: solution/
+unlocks:
+- p3-w10-llm-011
+tags:
+- llm
+- api
+- batch
+mobile_compatible: false

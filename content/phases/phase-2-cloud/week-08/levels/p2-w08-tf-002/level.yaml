@@ -1,0 +1,55 @@
+id: p2-w08-tf-002
+title: "Variables and outputs"
+phase: 2
+week: 8
+module: terraform-basics
+order: 2
+difficulty: 2
+estimated_minutes: 15
+type: terminal
+environment: terraform
+lesson: ../../lessons/02-terraform-basics.md
+task: "Declare a string variable named env (default \"dev\"), build the bucket name as fde-<env>-assets, and add an output named bucket_arn. The file terraform.tfvars already sets env to \"staging\". Apply so the bucket is fde-staging-assets."
+starter_files:
+  - path: main.tf
+    content: |
+      terraform {
+        required_providers {
+          aws = {
+            source  = "hashicorp/aws"
+            version = "~> 5.0"
+          }
+        }
+      }
+
+      provider "aws" {
+        region = "ap-south-1"
+      }
+
+      # This bucket name is hard-coded. Make it follow the environment instead.
+      resource "aws_s3_bucket" "assets" {
+        bucket = "fde-dev-assets"
+      }
+  - path: terraform.tfvars
+    content: |
+      env = "staging"
+checks:
+  - kind: "sim_state"
+    path: "file:main.tf"
+    contains: "variable \"env\""
+    label: "Variable env is declared"
+  - kind: "sim_state"
+    path: "resource:aws_s3_bucket.assets"
+    contains: "\"bucket\":\"fde-staging-assets\""
+    label: "Bucket name follows the tfvars value"
+  - kind: "sim_state"
+    path: "output:bucket_arn"
+    contains: "arn:aws:s3:::fde-staging-assets"
+    label: "Output shows the bucket ARN"
+hints:
+  - "Terraform only reads terraform.tfvars for variables you declared. Add variable \"env\" { ... } first."
+  - "Join text and variables with interpolation: \"fde-${var.env}-assets\"."
+  - "An output block needs a value: value = aws_s3_bucket.assets.arn."
+solution: solution/
+unlocks: [p2-w08-tf-003]
+tags: [terraform, variables, outputs]

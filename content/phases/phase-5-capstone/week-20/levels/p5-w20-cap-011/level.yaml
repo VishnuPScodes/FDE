@@ -1,0 +1,105 @@
+id: p5-w20-cap-011
+title: Draft your interview guide
+phase: 5
+week: 20
+module: capstone-discovery
+order: 6
+difficulty: 3
+estimated_minutes: 25
+type: writing
+environment: writing
+lesson: ../../lessons/02-discovery-for-real.md
+task: |-
+  Before your real customer meeting, write the questions you will ask. Use open questions only, grouped under the five headings in `answer.md`.
+
+  **Workflow** needs a "walk me through" style question. **Numbers** must ask how many, how long and how much. Keep the whole guide under 450 words.
+starter_files:
+- path: answer.md
+  content: |
+    # Interview guide
+
+    ## Opening
+
+
+    ## Workflow
+
+
+    ## Numbers
+
+
+    ## What They Tried
+
+
+    ## Closing
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Opening'
+- kind: file_contains
+  path: answer.md
+  expected: '## Workflow'
+- kind: file_contains
+  path: answer.md
+  expected: '## Numbers'
+- kind: file_contains
+  path: answer.md
+  expected: '## What They Tried'
+- kind: file_contains
+  path: answer.md
+  expected: '## Closing'
+- kind: sim_state
+  path: word_count
+  min: 120
+  max: 450
+- kind: sim_state
+  path: section:Opening
+  min_words: 15
+- kind: sim_state
+  path: section:Workflow
+  min_words: 20
+  contains_any:
+  - walk me through
+  - how does
+  - how do
+- kind: sim_state
+  path: section:Numbers
+  min_words: 20
+  contains_all:
+  - how many
+  - how much
+  - how long
+- kind: sim_state
+  path: section:What They Tried
+  min_words: 12
+  contains_any:
+  - tried
+  - before
+  - already
+- kind: sim_state
+  path: section:Closing
+  min_words: 10
+  contains_any:
+  - anything else
+  - who else
+  - next
+- kind: checklist
+  label: Self-review
+  items:
+  - Every question is open and about today's workflow
+  - I ask for numbers I can reuse as a baseline
+  - My opening says I am not selling
+- kind: ai_rubric
+  rubric:
+  - Questions are open and non-leading
+  - Numbers questions will produce a usable baseline
+  min_score: 3
+hints:
+- Start every question with how, what or walk me through. If you can answer it with yes or no, rewrite it.
+- 'In Numbers, ask three things: how many, how long and how much it costs. These become your baseline.'
+solution: solution/
+unlocks:
+- p5-w20-cap-012
+tags:
+- capstone
+- discovery
+- interview

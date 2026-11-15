@@ -1,0 +1,44 @@
+id: p5-w21-cap-002
+title: Choose a free deploy target
+phase: 5
+week: 21
+module: capstone-build
+order: 3
+difficulty: 1
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/02-ship-it-free.md
+task: Answer two questions about deploying your capstone without spending money.
+checks:
+- kind: sim_state
+  action: multiple_choice
+  label: Pick a host
+  question: Your capstone is a small Python web service with a webhook. Which is a sensible no-card host?
+  options:
+  - Render free web service, with secrets in environment variables
+  - A paid AWS account on your parent's credit card
+  - Your own laptop with the lid open every night
+  - A free host, with the API key committed in config.py
+  expected: Render free web service, with secrets in environment variables
+- kind: sim_state
+  action: multiple_choice
+  label: Know the trade-off
+  question: Your free service sleeps after idle time. What should you do?
+  options:
+  - Tell the customer about the slow first request and add a scheduled health ping
+  - Ignore it; customers never notice
+  - Add a credit card to every platform just in case
+  - Rewrite everything in a different language
+  expected: Tell the customer about the slow first request and add a scheduled health ping
+hints:
+- Never require a credit card, and never commit secrets.
+- Free tiers have limits. Say them out loud to the customer.
+solution: solution/
+unlocks:
+- p5-w21-cap-011
+tags:
+- capstone
+- deploy
+- free-tier
+mobile_compatible: true

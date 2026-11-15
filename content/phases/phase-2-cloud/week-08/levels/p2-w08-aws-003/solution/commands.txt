@@ -1,0 +1,4 @@
+aws iam list-user-policies --user-name intern
+aws iam get-user-policy --user-name intern --policy-name block-writes
+aws iam put-user-policy --user-name intern --policy-name block-writes --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Deny","Action":"s3:PutObject","Resource":"arn:aws:s3:::fde-reports-mumbai/archive/*"}]}'
+aws iam simulate-principal-policy --policy-source-arn arn:aws:iam::123456789012:user/intern --action-names s3:PutObject --resource-arns arn:aws:s3:::fde-reports-mumbai/uploads/new.csv

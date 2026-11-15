@@ -26,5 +26,5 @@ hints:
   - Run compose once to read the missing dependency error.
   - Change database to api, build api:local, then run docker compose up -d.
 solution: solution/
-unlocks: []
+unlocks: [p2-w07-ci-001]
 tags: [docker, compose, debugging]

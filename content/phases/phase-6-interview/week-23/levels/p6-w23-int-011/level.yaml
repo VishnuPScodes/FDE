@@ -1,0 +1,68 @@
+id: p6-w23-int-011
+title: 'Drill: rank hubs by SLA breaches'
+phase: 6
+week: 23
+module: coding-drills
+order: 6
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-practical-coding.md
+task: |-
+  Timed drill, aim for 25 minutes. An e-commerce customer in Hyderabad wants to know which delivery hubs break their promised delivery time most often.
+
+  Implement `top_breaches` in `hubs.py`. A breach is an event where `hours` is strictly greater than `sla_hours`. Return the top `n` hubs as `(hub, breach_count)` tuples, highest count first, ties broken alphabetically. Hubs with zero breaches are never returned. Run `test_hubs.py`.
+timed: true
+starter_files:
+- path: hubs.py
+  content: |
+    def top_breaches(events: list[dict], n: int) -> list[tuple[str, int]]:
+        """events: [{"hub": "Kochi", "hours": 30, "sla_hours": 24}, ...].
+        Return up to n (hub, breach_count) pairs, most breaches first, ties alphabetical.
+        """
+        pass
+- path: test_hubs.py
+  content: |
+    from hubs import top_breaches
+
+    EVENTS = [
+        {"hub": "Kochi", "hours": 30, "sla_hours": 24},
+        {"hub": "Kochi", "hours": 24, "sla_hours": 24},
+        {"hub": "Pune", "hours": 50, "sla_hours": 48},
+        {"hub": "Pune", "hours": 60, "sla_hours": 48},
+        {"hub": "Agra", "hours": 40, "sla_hours": 24},
+        {"hub": "Agra", "hours": 12, "sla_hours": 24},
+        {"hub": "Surat", "hours": 10, "sla_hours": 24},
+    ]
+
+
+    def test_ranking():
+        assert top_breaches(EVENTS, 2) == [("Pune", 2), ("Agra", 1)]
+
+
+    def test_ties_alphabetical():
+        assert top_breaches(EVENTS, 3) == [("Pune", 2), ("Agra", 1), ("Kochi", 1)]
+
+
+    def test_zero_breach_hubs_excluded():
+        assert top_breaches(EVENTS, 10) == [("Pune", 2), ("Agra", 1), ("Kochi", 1)]
+
+
+    def test_empty():
+        assert top_breaches([], 3) == []
+        assert top_breaches(EVENTS, 0) == []
+checks:
+- kind: pytest_passes
+  run: pytest -q test_hubs.py
+hints:
+- A breach is strictly greater than the SLA. Exactly on time is not a breach.
+- Count breaches per hub in a dict, then sort.
+- Sort with a key of (-count, hub) to get highest first and alphabetical ties in one pass, then slice [:n].
+solution: solution/
+unlocks:
+- p6-w23-int-012
+tags:
+- interview
+- python
+- sorting

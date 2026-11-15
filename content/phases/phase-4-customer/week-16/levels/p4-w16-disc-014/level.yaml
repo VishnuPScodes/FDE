@@ -1,0 +1,152 @@
+id: p4-w16-disc-014
+title: Interview a guarded IT head
+phase: 4
+week: 16
+module: discovery-interviews
+order: 12
+difficulty: 3
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/02-open-questions.md
+task: |-
+  Suresh Menon runs IT at Coastal Insurance Brokers in Kochi. He can block any project that touches his data, and he has been burned before.
+
+  Find out where the data lives, what it takes for an outside team to get access, what rules apply to sensitive customer data, and what went wrong with a past vendor. Use at most 9 questions, and no more than one leading or yes/no question. Some answers only come after others.
+
+  In `notes.md`, record the access rules in **Constraints**, including where data must stay.
+starter_files:
+- path: persona.json
+  content: |
+    {
+      "name": "Suresh Menon",
+      "role": "Head of IT",
+      "company": "Coastal Insurance Brokers, Kochi",
+      "opening": "Hello. I was told an outside team wants to look at our policy systems. Before we start, know that I am protective of our data.",
+      "facts": [
+        {
+          "id": "systems",
+          "triggers": [
+            "walk me through",
+            "where does",
+            "where is",
+            "where do",
+            "systems",
+            "data live",
+            "stored"
+          ],
+          "reply": "Policy data lives in an on-premise Oracle database from 2014. It exports a CSV to a shared drive every night at 2 am."
+        },
+        {
+          "id": "access",
+          "triggers": [
+            "access",
+            "connect",
+            "integrate",
+            "vendor",
+            "onboard",
+            "how long",
+            "approval"
+          ],
+          "requires": [
+            "systems"
+          ],
+          "reply": "Any outside vendor signs an NDA and works through our VPN, read-only. That approval alone takes about three weeks."
+        },
+        {
+          "id": "data-rules",
+          "triggers": [
+            "sensitive",
+            "privacy",
+            "personal",
+            "aadhaar",
+            "health",
+            "rules",
+            "compliance",
+            "security"
+          ],
+          "reply": "We hold Aadhaar numbers and health details. Under our IRDAI audit that data must stay in India, so no public cloud API calls with raw records."
+        },
+        {
+          "id": "past-incident",
+          "triggers": [
+            "last time",
+            "before",
+            "previous",
+            "experience",
+            "worry",
+            "concern"
+          ],
+          "requires": [
+            "access"
+          ],
+          "reply": "A vendor once connected a script to our database without telling us. It locked the policy system for two hours. I want to be consulted first."
+        }
+      ],
+      "deflections": [
+        "I only know the systems side. Ask the broking team about the business.",
+        "I would need to check the audit documents for that.",
+        "Let us stay on how our systems work."
+      ],
+      "max_turns": 10
+    }
+- path: notes.md
+  content: |
+    # Notes: Coastal Insurance Brokers, IT
+
+    ## Systems
+    <!-- Where the data lives and how it can be reached. -->
+
+    ## Constraints
+    <!-- Access rules, data rules, approval time. -->
+
+    ## Trust
+    <!-- What went wrong before and what Suresh needs from you. -->
+
+    ## Next steps
+    <!-- What you will do before touching any system. -->
+checks:
+- kind: sim_state
+  path: facts_uncovered
+  contains_all:
+  - systems
+  - access
+  - data-rules
+  - past-incident
+  label: Uncover systems, access rules, data rules and the past incident
+- kind: sim_state
+  path: turns
+  max: 9
+- kind: sim_state
+  path: leading_questions
+  max: 1
+- kind: sim_state
+  path: section:Systems
+  contains_any:
+  - oracle
+  - csv
+- kind: sim_state
+  path: section:Constraints
+  contains_all:
+  - india
+  contains_any:
+  - vpn
+  - nda
+- kind: sim_state
+  path: section:Trust
+  min_words: 10
+- kind: sim_state
+  path: section:Next steps
+  min_words: 10
+hints:
+- 'Start with his world: "Can you walk me through where the policy data lives today?"'
+- Ask how access works before you ask about the past. Some facts need an earlier answer first.
+solution: solution/
+unlocks:
+- p4-w16-disc-015
+tags:
+- interview
+- roleplay
+- it
+- security
+mobile_compatible: true

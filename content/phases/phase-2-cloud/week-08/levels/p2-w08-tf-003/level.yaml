@@ -1,0 +1,56 @@
+id: p2-w08-tf-003
+title: "Link resources with references"
+phase: 2
+week: 8
+module: terraform-basics
+order: 3
+difficulty: 3
+estimated_minutes: 15
+type: terminal
+environment: terraform
+lesson: ../../lessons/02-terraform-basics.md
+task: "The public access block uses a hand-typed bucket name and lets public ACLs through. Point it at aws_s3_bucket.invoices.id and turn on all four block settings. Apply, then check that terraform plan finds nothing left to do."
+starter_files:
+  - path: main.tf
+    content: |
+      terraform {
+        required_providers {
+          aws = {
+            source  = "hashicorp/aws"
+            version = "~> 5.0"
+          }
+        }
+      }
+
+      provider "aws" {
+        region = "ap-south-1"
+      }
+
+      resource "aws_s3_bucket" "invoices" {
+        bucket = "fde-invoices-mumbai"
+      }
+
+      # Typed by hand and half finished. Link it to the bucket and block everything public.
+      resource "aws_s3_bucket_public_access_block" "invoices" {
+        bucket                  = "fde-invoices-mumbai"
+        block_public_acls       = false
+      }
+checks:
+  - kind: "sim_state"
+    path: "file:main.tf"
+    contains: "aws_s3_bucket.invoices.id"
+    label: "Block refers to the bucket resource"
+  - kind: "sim_state"
+    path: "resource:aws_s3_bucket_public_access_block.invoices"
+    contains: "\"block_public_acls\":true,\"block_public_policy\":true,\"ignore_public_acls\":true,\"restrict_public_buckets\":true"
+    label: "All four settings are on"
+  - kind: "sim_state"
+    path: "plan_clean"
+    label: "Plan shows no changes"
+hints:
+  - "A reference looks like TYPE.NAME.ATTRIBUTE, for example aws_s3_bucket.invoices.id."
+  - "The four settings are block_public_acls, block_public_policy, ignore_public_acls and restrict_public_buckets."
+  - "Terraform builds the bucket first because the block depends on it. Apply, then run terraform plan again to confirm."
+solution: solution/
+unlocks: [p2-w08-tf-004]
+tags: [terraform, references, dependencies]

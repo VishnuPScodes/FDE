@@ -1,0 +1,125 @@
+id: p6-w23-int-013
+title: 'Customer sim: the sceptical warehouse manager'
+phase: 6
+week: 23
+module: decomp-mocks
+order: 6
+difficulty: 4
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/03-customer-sims-and-stories.md
+task: |-
+  Customer-simulation round. Suresh Patil runs a Nashik warehouse for a consumer goods distributor. Head office has asked him to "try AI for stock counting", and he thinks it will only create work.
+
+  Do not pitch. In at most 9 questions with no leading questions, learn why he is doubtful, how stock is counted today, how big the mismatch is, who would use the tool, and what would change his mind. Then write a short plan in `notes.md` that respects his doubt and names a first step with a date.
+starter_files:
+- path: persona.json
+  content: |
+    {
+      "name": "Suresh Patil",
+      "role": "Warehouse Manager",
+      "company": "Godavari Consumer Distributors, Nashik",
+      "opening": "Head office sent you. Let me be honest, I have seen three systems come and go. I do not think AI will help my warehouse.",
+      "facts": [
+        {
+          "id": "doubt",
+          "triggers": ["why", "doubt", "tried before", "what happened", "bad experience", "sceptical"],
+          "reply": "The last scanner project took six months and my staff went back to paper within two. Nobody asked the pickers."
+        },
+        {
+          "id": "process",
+          "triggers": ["walk me through", "how do you count", "today", "current process", "how does"],
+          "reply": "We count by hand on the last Sunday of the month. Six people, about nine hours. They write on sheets and one clerk types them into Tally on Monday."
+        },
+        {
+          "id": "mismatch",
+          "triggers": ["how big", "mismatch", "difference", "how often", "how much", "how many"],
+          "requires": ["process"],
+          "reply": "Stock in Tally and on the shelf differs by around 4% of value. Last quarter that was about 18 lakh rupees."
+        },
+        {
+          "id": "users",
+          "triggers": ["who would", "who uses", "who works", "users", "team"],
+          "reply": "Pickers, mostly aged 40 and above, using cheap Android phones. Two supervisors check their work."
+        },
+        {
+          "id": "convince",
+          "triggers": ["change your mind", "convince", "what would", "success", "good look like", "help you"],
+          "requires": ["doubt"],
+          "reply": "If the Sunday count dropped from nine hours to three and the staff liked it, I would back it. A small trial on one aisle, nothing big."
+        }
+      ],
+      "deflections": [
+        "I do not follow. Ask me about the warehouse.",
+        "Hmm. Anything else?"
+      ],
+      "max_turns": 12
+    }
+- path: notes.md
+  content: |
+    # Plan for Godavari Consumer Distributors
+
+    ## Why he is doubtful
+
+    ## Plan
+
+    ## Next step
+checks:
+- kind: sim_state
+  path: facts_uncovered
+  contains_all:
+  - doubt
+  - process
+  - mismatch
+  - users
+  - convince
+- kind: sim_state
+  path: turns
+  max: 9
+- kind: sim_state
+  path: leading_questions
+  max: 0
+- kind: sim_state
+  path: section:Why he is doubtful
+  min_words: 12
+  contains_any:
+  - scanner
+  - paper
+  - pickers
+  - asked
+- kind: sim_state
+  path: section:Plan
+  min_words: 20
+  contains_any:
+  - aisle
+  - trial
+  - pilot
+- kind: sim_state
+  path: section:Next step
+  min_words: 10
+  contains_any:
+  - monday
+  - tuesday
+  - wednesday
+  - thursday
+  - friday
+  - saturday
+  - sunday
+  - next week
+- kind: ai_rubric
+  rubric:
+  - Plan answers the manager's doubt instead of overriding it
+  - Trial is small and has a date
+  min_score: 3
+hints:
+- Start with why he is doubtful. His answer tells you what to avoid.
+- Ask how the count works today, then how big the mismatch is.
+- Ask what would change his mind. Use his own words in your plan.
+solution: solution/
+unlocks:
+- p6-w23-int-014
+tags:
+- interview
+- customer-sim
+- roleplay

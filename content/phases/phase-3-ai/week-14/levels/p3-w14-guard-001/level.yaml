@@ -1,0 +1,80 @@
+id: p3-w14-guard-001
+title: "Redact Aadhaar, PAN, phone and email"
+phase: 3
+week: 14
+module: guardrails
+order: 11
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-guardrails.md
+task: |
+  Before a message goes to a model or a log, hide personal data. Write `redact(text)` that returns `(clean_text, counts)`.
+
+  Replace, in this order:
+
+  1. Emails with `[EMAIL]`: `[\w.+-]+@[\w-]+(?:\.[\w-]+)+`.
+  2. Aadhaar numbers with `[AADHAAR]`: 12 digits starting with 2 to 9, optionally in groups of four split by a space or `-`.
+  3. PAN with `[PAN]`: five letters, four digits, one letter (any case).
+  4. Indian mobile numbers with `[PHONE]`: an optional `+91` with an optional space or `-`, then ten digits starting with 6 to 9, optionally split 5 and 5 by a space or `-`.
+
+  A number must not be cut out of the middle of a longer run of digits. Use `(?<!\d)` and `(?!\d)`. `counts` is a dict of label to how many were replaced, with only the labels that appeared.
+starter_files:
+  - path: main.py
+    content: |
+      import re
+
+      RULES = [
+          ("EMAIL", r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+"),
+          ("AADHAAR", r"(?<!\d)[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?!\d)"),
+          ("PAN", r"(?<![A-Za-z0-9])[A-Za-z]{5}\d{4}[A-Za-z](?![A-Za-z0-9])"),
+          ("PHONE", r"(?<!\d)(?:\+91[ -]?)?[6-9]\d{4}[ -]?\d{5}(?!\d)"),
+      ]
+
+
+      def redact(text):
+          pass
+  - path: test_main.py
+    content: |
+      from main import redact
+
+
+      def test_all_four_kinds():
+          text = "Aadhaar 2345 6789 0123, PAN abcde1234f, call +91 98765 43210, mail asha.rao@example.in"
+          clean, counts = redact(text)
+          assert clean == "Aadhaar [AADHAAR], PAN [PAN], call [PHONE], mail [EMAIL]"
+          assert counts == {"AADHAAR": 1, "PAN": 1, "PHONE": 1, "EMAIL": 1}
+
+
+      def test_aadhaar_is_not_a_phone():
+          clean, counts = redact("id 234567890123")
+          assert clean == "id [AADHAAR]"
+          assert counts == {"AADHAAR": 1}
+
+
+      def test_two_phones():
+          clean, counts = redact("Call 98765 43210 or +91-9876543210.")
+          assert clean == "Call [PHONE] or [PHONE]."
+          assert counts == {"PHONE": 2}
+
+
+      def test_long_numbers_are_left_alone():
+          clean, counts = redact("Policy 1234567890123 and txn 98765432109876")
+          assert clean == "Policy 1234567890123 and txn 98765432109876"
+          assert counts == {}
+
+
+      def test_plain_text():
+          assert redact("Claim CLM-1042 for Rs 38,500") == ("Claim CLM-1042 for Rs 38,500", {})
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Aadhaar goes before phone. A 12-digit Aadhaar contains ten digits that look like a phone number."
+  - "Use `re.subn(pattern, label, text)`. It returns the new text and how many replacements were made."
+  - "Add `re.IGNORECASE` for PAN, but keep digit boundaries on every number rule."
+solution: solution/
+unlocks: [p3-w14-guard-002]
+tags: [guardrails, pii, regex, india]

@@ -1,0 +1,104 @@
+id: p6-w24-mock-007
+title: Write three strong resume bullets
+phase: 6
+week: 24
+module: portfolio-polish
+order: 7
+difficulty: 3
+estimated_minutes: 25
+type: writing
+environment: writing
+lesson: ../../lessons/02-portfolio-polish.md
+task: >-
+  Write three resume bullets, one for each project below. Every bullet must start with a strong verb
+  and include a number. If the result is from a practice scenario or test data, say so.
+
+
+  - Loan file checker for a co-operative bank (45 to 20 minutes per file, 400 files a month).
+
+  - WhatsApp order reader for a distributor (typing 3 hours to 2.2 hours a day).
+
+  - Clinic reminder pilot (no-shows 18% to 16%, then fixed phone numbers).
+
+
+  Use headings Bullet 1, Bullet 2 and Bullet 3, each with one or two lines.
+starter_files:
+  - path: answer.md
+    content: |
+      # Write three strong resume bullets
+
+      ## Bullet 1
+      <!-- Verb, thing, number. -->
+
+      ## Bullet 2
+      <!-- Verb, thing, number. -->
+
+      ## Bullet 3
+      <!-- Verb, thing, number, learning. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Bullet 1'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Bullet 2'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Bullet 3'
+  - kind: sim_state
+    path: word_count
+    min: 58
+    max: 211
+  - kind: sim_state
+    path: section:Bullet 1
+    min_words: 15
+    contains_any:
+      - '45'
+      - 20 minutes
+  - kind: sim_state
+    path: section:Bullet 2
+    min_words: 15
+    contains_any:
+      - 3 hours
+      - '2.2'
+  - kind: sim_state
+    path: section:Bullet 3
+    min_words: 15
+    contains_any:
+      - 18%
+      - 16%
+      - phone
+  - kind: sim_state
+    path: document
+    contains_any:
+      - built
+      - shipped
+      - led
+      - cut
+      - reduced
+      - measured
+    label: Uses strong verbs
+  - kind: sim_state
+    path: word_count
+    max: 140
+  - kind: checklist
+    label: Self-review
+    items:
+      - Each bullet starts with a verb
+      - Each bullet has a number
+      - Practice results are labelled as such
+  - kind: ai_rubric
+    rubric:
+      - Strong verbs and real numbers
+      - Honest labels for practice scenarios
+    min_score: 3
+hints:
+  - 'Start each line with one verb: built, cut, shipped, led or measured.'
+  - If a project was a practice scenario, write "fictional" or "on test data".
+solution: solution/
+unlocks:
+  - p6-w24-mock-008
+tags:
+  - portfolio
+  - resume
+mobile_compatible: true

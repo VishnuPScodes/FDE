@@ -1,0 +1,120 @@
+id: p3-w10-llm-013
+title: Define a JSON schema for invoice extraction
+phase: 3
+week: 10
+module: prompt-engineering
+order: 15
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: ai
+lesson: ../../lessons/05-prompt-engineering.md
+task: |
+  Structured output means the model must fill a schema you define. Write that schema.
+
+  In `schema.json`, write a JSON Schema for one GST invoice:
+
+  - `type` is `object` and `additionalProperties` is `false`.
+  - Properties: `invoice_number` (string), `gstin` (string with `minLength` and `maxLength` 15),
+    `invoice_date` (string), `total_inr` (number) and `line_items` (array of objects with
+    `description` (string) and `amount_inr` (number)).
+  - `required` lists `invoice_number`, `gstin` and `total_inr`.
+
+  In `prompt.json`, set `"json": true` so the playground asks for JSON output, and keep
+  `temperature` at 0.
+starter_files:
+- path: schema.json
+  content: |
+    {
+      "type": "object",
+      "properties": {
+        "invoice_number": { "type": "string" }
+      }
+    }
+- path: prompt.json
+  content: |
+    {
+      "system": "Extract the invoice fields as JSON that matches the schema. Use null when a field is missing.",
+      "temperature": 0.7,
+      "max_tokens": 400,
+      "json": false,
+      "sample_user": "Tax Invoice No. KL/2425/0091, GSTIN 32AAACK1234M1Z2, dated 03-08-2024. Freight Kochi to Kozhikode ₹8,000. IGST 18% ₹1,440. Total ₹9,440."
+    }
+checks:
+- kind: sim_state
+  label: schema.json is a well-formed JSON Schema
+  simulator: prompt
+  file: schema.json
+  path: ''
+  op: valid_json_schema
+- kind: json_equals
+  label: Top level is a closed object
+  path: schema.json
+  expected:
+    type: object
+    additionalProperties: false
+- kind: json_equals
+  label: gstin is exactly 15 characters
+  path: schema.json
+  pointer: properties.gstin
+  expected:
+    type: string
+    minLength: 15
+    maxLength: 15
+- kind: json_equals
+  label: total_inr is a number
+  path: schema.json
+  pointer: properties.total_inr
+  expected:
+    type: number
+- kind: json_equals
+  label: line_items is an array of objects
+  path: schema.json
+  pointer: properties.line_items
+  expected:
+    type: array
+    items:
+      type: object
+      properties:
+        description:
+          type: string
+        amount_inr:
+          type: number
+- kind: sim_state
+  label: invoice_number is required
+  simulator: prompt
+  file: schema.json
+  path: required
+  op: includes
+  expected: invoice_number
+- kind: sim_state
+  label: gstin is required
+  simulator: prompt
+  file: schema.json
+  path: required
+  op: includes
+  expected: gstin
+- kind: sim_state
+  label: total_inr is required
+  simulator: prompt
+  file: schema.json
+  path: required
+  op: includes
+  expected: total_inr
+- kind: json_equals
+  label: prompt.json asks for JSON at temperature 0
+  path: prompt.json
+  expected:
+    json: true
+    temperature: 0
+hints:
+- Every name in `required` must also appear under `properties`, or the schema is broken.
+- Money is a `number`, not a `string`. "₹9,440" as text is hard to add up later.
+solution: solution/
+unlocks: [p3-w11-rag-001]
+tags:
+- llm
+- structured-output
+- json-schema
+- ai-workspace
+mobile_compatible: false

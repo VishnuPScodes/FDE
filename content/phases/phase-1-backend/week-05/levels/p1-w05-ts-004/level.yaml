@@ -28,3 +28,4 @@ hints:
   - Render `<InvoiceAdmin />` into `document.getElementById('root')`.
 solution: solution/
 tags: [react, tsx, ui]
+unlocks: [p1-w06-etl-001]

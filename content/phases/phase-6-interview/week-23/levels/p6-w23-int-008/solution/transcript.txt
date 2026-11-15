@@ -1,0 +1,6 @@
+What outcome is the board hoping to achieve?
+Walk me through the current process when a customer has a question.
+How many calls is that per day?
+Where does the tracking data live?
+What constraints or worries should I know about?
+How will we know this worked in three months?

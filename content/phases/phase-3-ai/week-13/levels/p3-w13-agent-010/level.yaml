@@ -1,0 +1,47 @@
+id: p3-w13-agent-010
+title: Gate risky refunds behind human approval
+phase: 3
+week: 13
+module: human-in-the-loop
+order: 10
+difficulty: 3
+estimated_minutes: 30
+type: code
+environment: python
+lesson: ../../lessons/03-human-in-the-loop.md
+task: |
+  A support agent for a Bengaluru e-commerce company can issue refunds. Company policy: any refund above ₹10,000 needs a human to approve it. Deleting or closing accounts always does.
+
+  In `approval.py`, write two functions.
+
+  `needs_approval(tool_call)` returns `True` when:
+
+  - the tool is in `ALWAYS_APPROVE`, or
+  - the tool is `refund_payment` and `amount_inr` is above `REFUND_LIMIT_INR` (exactly ₹10,000 is fine), or
+  - the tool is `refund_payment` and `amount_inr` is missing or not an `int`. When in doubt, ask a human.
+
+  `execute_with_approval(tool_call, registry, approver, audit_log)`:
+
+  - If no approval is needed, run `dispatch()` and log `"not_required"`.
+  - Otherwise call `approver(tool_call)`. It returns `{"approved": bool, "reviewer": "Priya", "note": "..."}`. If approved, run `dispatch()` and log `"approved"`.
+  - If denied, or the approver raises, or returns `None`, do not run the tool. Return a tool message with `is_error: True` and content `"denied by reviewer Priya: <note>"` (use `"unknown"` for a missing reviewer and `""` for a missing note). Log `"denied"`.
+  - Append one entry per call to `audit_log`: `{"tool", "arguments", "approval", "reviewer"}` (`reviewer` is `None` when no approval was needed).
+starter_files:
+  - path: approval.py
+  - path: dispatcher.py
+  - path: schema_check.py
+  - path: test_approval.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_approval.py
+    label: Approval gate tests pass
+hints:
+  - "Use `type(amount) is not int` so `True` and `\"15000\"` both count as unsure."
+  - "Wrap the approver call in `try/except Exception:` and treat any failure as a denial. This is called failing closed."
+  - Build the audit entry in one place at the end so every path logs the same shape.
+feedback:
+  - when: { stdout_contains: "test_exactly_the_limit" }
+    message: The policy says above ₹10,000. Use `>`, not `>=`.
+solution: solution/
+unlocks: [p3-w13-agent-011]
+tags: [human-in-the-loop, approvals, refunds]

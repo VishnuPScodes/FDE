@@ -1,0 +1,3 @@
+Add a keep-warm ping shortly before 9:00 and tell Meena about the delay risk
+Revoke and rotate the token, then move the new one into an environment variable
+A /health route that returns 200 without calling WhatsApp or the sheet

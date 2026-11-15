@@ -1,0 +1,48 @@
+id: p1-w05-ts-007
+title: Summarise payment statuses exhaustively
+phase: 1
+week: 5
+module: typescript-essentials
+order: 6
+difficulty: 2
+estimated_minutes: 10
+type: code
+environment: ts
+lesson: ../../lessons/01-types-and-functions.md
+task: "Implement `statusLabel` with a `switch` over the `PaymentStatus` union so every status has a label: pending -> \"Awaiting payment\", paid -> \"Paid\", failed -> \"Failed: <reason>\", refunded -> \"Refunded <amountPaise> paise\"."
+starter_files:
+  - path: main.ts
+    content: |-
+      type PaymentStatus =
+        | { kind: 'pending' }
+        | { kind: 'paid' }
+        | { kind: 'failed'; reason: string }
+        | { kind: 'refunded'; amountPaise: number };
+
+      function statusLabel(status: PaymentStatus): string {
+        return '';
+      }
+
+      test('pending and paid', () => {
+        expect(statusLabel({ kind: 'pending' })).toBe('Awaiting payment');
+        expect(statusLabel({ kind: 'paid' })).toBe('Paid');
+      });
+      test('failed includes the reason', () => {
+        expect(statusLabel({ kind: 'failed', reason: 'card declined' })).toBe('Failed: card declined');
+      });
+      test('refunded includes the amount', () => {
+        expect(statusLabel({ kind: 'refunded', amountPaise: 2500 })).toBe('Refunded 2500 paise');
+      });
+checks:
+  - kind: vitest_passes
+    label: All behaviour checks pass
+  - kind: file_contains
+    path: main.ts
+    expected: "switch (status.kind)"
+    label: Uses a switch on the discriminant
+hints:
+  - "Switch on `status.kind`; inside each case TypeScript knows the extra fields."
+  - "Each case should return a string."
+solution: solution/
+unlocks: [p1-w05-ts-008]
+tags: [typescript, discriminated-unions]

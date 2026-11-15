@@ -1,0 +1,33 @@
+id: p5-w20-cap-008
+title: Handle a scope request
+phase: 5
+week: 20
+module: capstone-scoping
+order: 4
+difficulty: 2
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/03-scope-on-one-page.md
+task: 'While reading your draft scope, the clinic owner asks: "Can it also take online payments and send exercise videos?" Choose the best reply.'
+checks:
+- kind: sim_state
+  action: multiple_choice
+  label: Respond to scope creep
+  question: What is the best reply?
+  options:
+  - Write both ideas in Out of Scope as possible next steps, and keep the reminder MVP for this pilot
+  - Say yes to both so the customer stays happy
+  - Refuse and tell her the ideas are bad
+  - Quietly start building payments without changing the scope
+  expected: Write both ideas in Out of Scope as possible next steps, and keep the reminder MVP for this pilot
+hints:
+- You can respect an idea without building it now.
+- Out of Scope is where good ideas wait for the next phase.
+solution: solution/
+unlocks:
+- p5-w20-cap-013
+tags:
+- capstone
+- scope
+mobile_compatible: true

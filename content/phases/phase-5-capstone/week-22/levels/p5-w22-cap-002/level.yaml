@@ -1,0 +1,69 @@
+id: p5-w22-cap-002
+title: Calculate before and after impact
+phase: 5
+week: 22
+module: capstone-measure
+order: 2
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-measure-before-and-after.md
+task: |-
+  Implement `no_show_rate` and `compare` in `impact.py` so you can report your capstone result correctly.
+
+  Cancelled slots are not booked slots. Status text may come in any case. `compare` returns the change in percentage points and the relative change. Run `test_impact.py`.
+starter_files:
+- path: impact.py
+  content: |
+    def no_show_rate(rows: list[dict]) -> float:
+        """Percentage of booked slots marked "absent", rounded to 1 decimal.
+        Rows with status "cancelled" are not booked slots. Return 0.0 if nothing is booked."""
+        pass
+
+
+    def compare(before: float, after: float) -> dict:
+        """Return {"points": after - before, "relative_pct": percent change vs before},
+        both rounded to 1 decimal. If before is 0, relative_pct is 0.0."""
+        pass
+- path: test_impact.py
+  content: |
+    from impact import no_show_rate, compare
+
+
+    def rows(attended, absent, cancelled=0):
+        return ([{"status": "attended"}] * attended + [{"status": "absent"}] * absent
+                + [{"status": "cancelled"}] * cancelled)
+
+
+    def test_rate_ignores_cancelled():
+        assert no_show_rate(rows(853, 187, cancelled=60)) == 18.0
+
+
+    def test_rate_case_insensitive():
+        assert no_show_rate([{"status": "Absent"}, {"status": "ATTENDED"}]) == 50.0
+
+
+    def test_rate_empty():
+        assert no_show_rate([]) == 0.0
+        assert no_show_rate(rows(0, 0, cancelled=5)) == 0.0
+
+
+    def test_compare():
+        assert compare(18.0, 9.0) == {"points": -9.0, "relative_pct": -50.0}
+        assert compare(12.0, 13.5) == {"points": 1.5, "relative_pct": 12.5}
+        assert compare(0.0, 4.0) == {"points": 4.0, "relative_pct": 0.0}
+checks:
+- kind: pytest_passes
+  run: pytest -q test_impact.py
+hints:
+- Lower-case each status first, then drop the cancelled ones before you count.
+- Percentage points is after minus before. Relative change divides that by before.
+- Guard against dividing by zero in both functions.
+solution: solution/
+unlocks:
+- p5-w22-cap-009
+tags:
+- capstone
+- python
+- metrics

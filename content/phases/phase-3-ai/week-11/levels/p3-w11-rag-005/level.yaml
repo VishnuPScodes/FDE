@@ -1,0 +1,83 @@
+id: p3-w11-rag-005
+title: Toy embeddings with the hashing trick
+phase: 3
+week: 11
+module: embeddings-vector-search
+order: 5
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/02-embeddings-and-vector-search.md
+task: |
+  Real embeddings come from a model. To learn vector search without a key, you will build a
+  small, deterministic stand-in.
+
+  Write:
+
+  - `tokenize(text)`: lower-case, then return the list of words matched by `[a-z0-9\u0900-\u097f]+`
+    (English letters, digits and Devanagari).
+  - `hashed_vector(text, dim=32)`: start with `dim` zeros. For each token, add 1.0 at index
+    `zlib.crc32(token.encode("utf-8")) % dim`. Then L2-normalise (divide by the vector's length).
+    An all-zero vector stays all zeros.
+
+  Use `zlib.crc32`, not Python's `hash()`. `hash()` changes between runs.
+starter_files:
+- path: main.py
+  content: |
+    import math
+    import re
+    import zlib
+
+
+    def tokenize(text):
+        pass
+
+
+    def hashed_vector(text, dim=32):
+        pass
+- path: test_main.py
+  content: |
+    import math
+    import zlib
+
+    from main import hashed_vector, tokenize
+
+
+    def test_tokenize():
+        assert tokenize("UPI refund, ₹500 — रिफंड कब?") == ["upi", "refund", "500", "रिफंड", "कब"]
+
+
+    def test_vector_is_unit_length():
+        vector = hashed_vector("upi refund status", 32)
+        assert len(vector) == 32
+        assert math.isclose(math.sqrt(sum(v * v for v in vector)), 1.0)
+
+
+    def test_uses_crc32_buckets():
+        vector = hashed_vector("refund refund", 16)
+        index = zlib.crc32(b"refund") % 16
+        assert vector[index] == 1.0
+        assert sum(vector) == 1.0
+
+
+    def test_empty_text():
+        assert hashed_vector("!!!", 8) == [0.0] * 8
+
+
+    def test_deterministic():
+        assert hashed_vector("card blocked", 64) == hashed_vector("Card BLOCKED", 64)
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- '`re.findall(r"[a-z0-9\u0900-\u097f]+", text.lower())` keeps Hindi words and drops punctuation.'
+- Length is `math.sqrt(sum(v * v for v in vector))`. Guard against dividing by zero.
+solution: solution/
+unlocks:
+- p3-w11-rag-006
+tags:
+- rag
+- embeddings
+mobile_compatible: false

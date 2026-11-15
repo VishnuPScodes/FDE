@@ -1,0 +1,71 @@
+id: p4-w16-disc-015
+title: Write a measurable problem statement
+phase: 4
+week: 16
+module: discovery-interviews
+order: 13
+difficulty: 3
+estimated_minutes: 15
+type: writing
+environment: writing
+lesson: ../../lessons/04-quantifying-pain.md
+task: >
+  Use your Lakshmi Home Textiles notes: 180 export invoices a month, two staff spending 50 hours a
+  month in total on matching at about ₹400 an hour, and one error that delayed ₹14 lakh of GST
+  refund for two months.
+
+
+  Write a problem statement Meena would agree with. Put the numbers in **Numbers**, and list every
+  guess under **Assumptions**.
+starter_files:
+  - path: answer.md
+    content: |+
+      # Problem statement: export refund matching
+
+      ## Problem statement
+      <!-- Two or three sentences. Who, what, how much. -->
+
+      ## Numbers
+      <!-- Hours, rupees, volumes, with the maths shown. -->
+
+      ## Assumptions
+      <!-- Anything you estimated rather than heard. -->
+
+      ## Agreed by
+      <!-- Who confirmed this and when. -->
+
+checks:
+  - kind: sim_state
+    path: section:Problem statement
+    min_words: 25
+    contains_any:
+      - hours
+      - ₹
+  - kind: sim_state
+    path: section:Numbers
+    contains_all:
+      - ₹
+      - hour
+  - kind: sim_state
+    path: section:Assumptions
+    min_words: 10
+  - kind: sim_state
+    path: section:Agreed by
+    min_words: 3
+  - kind: checklist
+    label: Before you submit
+    items:
+      - A non-technical reader would understand the problem in 30 seconds
+      - Every number has a source or is listed as an assumption
+      - I did not name a solution in the problem statement
+hints:
+  - 50 hours × ₹400 = ₹20,000 a month of staff time. Add the cash flow cost of delayed refunds.
+  - Do not write "we need AI" here. A problem statement describes the pain, not the fix.
+solution: solution/
+unlocks:
+  - p4-w17-dec-001
+tags:
+  - problem-statement
+  - quantify
+  - writing
+mobile_compatible: true

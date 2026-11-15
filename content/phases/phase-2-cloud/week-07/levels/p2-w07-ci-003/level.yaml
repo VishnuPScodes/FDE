@@ -1,0 +1,34 @@
+id: p2-w07-ci-003
+title: "Test on many Python versions with a matrix"
+phase: 2
+week: 7
+module: github-actions-cicd
+order: 18
+difficulty: 2
+estimated_minutes: 15
+type: console
+environment: ci
+lesson: ../../lessons/05-github-actions-pipelines.md
+task: "Your customers run Python 3.10, 3.11 and 3.12. Turn the single test job into a matrix job that tests all three versions. Use ${{ matrix.python-version }} in setup-python and push to main. All three jobs must pass."
+starter_files:
+  - path: "app.py"
+    content: "def order_total(price, qty):\n    return price * qty\n\n\ndef apply_discount(price, percent):\n    return price - price * percent / 100\n"
+  - path: "test_app.py"
+    content: "from app import apply_discount, order_total\n\n\ndef test_order_total():\n    assert order_total(250, 3) == 750\n\n\ndef test_apply_discount():\n    assert apply_discount(200, 10) == 180\n"
+  - path: "requirements.txt"
+    content: "pytest==8.3.3\nruff==0.7.4\n"
+  - path: "README.md"
+    content: "# orders-api\n\nOrder service for Acme Pay.\n"
+  - path: ".github/workflows/ci.yml"
+    content: "name: CI\non: push\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-python@v5\n        with:\n          python-version: '3.12'\n      - run: pip install -r requirements.txt\n      - run: pytest\n"
+checks:
+  - {"kind": "sim_state", "path": "jobs", "contains": "job test (3.10) success", "label": "Python 3.10 job passed"}
+  - {"kind": "sim_state", "path": "jobs", "contains": "job test (3.11) success", "label": "Python 3.11 job passed"}
+  - {"kind": "sim_state", "path": "jobs", "contains": "job test (3.12) success", "label": "Python 3.12 job passed"}
+hints:
+  - "Add strategy: then matrix: and a list called python-version under the job."
+  - "In YAML, 3.10 is read as the number 3.1. Put quotes around each version: '3.10'."
+  - "Replace the fixed python-version in setup-python with ${{ matrix.python-version }}."
+solution: solution/
+unlocks: [p2-w07-ci-004]
+tags: ["ci", "matrix"]

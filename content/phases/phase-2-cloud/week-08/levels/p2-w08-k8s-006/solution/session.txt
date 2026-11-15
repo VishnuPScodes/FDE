@@ -1,0 +1,4 @@
+kubectl apply -f .
+kubectl get ingress -n shop
+curl -H "Host: kirana.example.in" http://203.0.113.20/
+curl -H "Host: kirana.example.in" http://203.0.113.20/orders

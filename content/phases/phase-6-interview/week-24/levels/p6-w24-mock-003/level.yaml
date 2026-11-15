@@ -1,0 +1,157 @@
+id: p6-w24-mock-003
+title: 'Mock round 3: the sponsor who moved the goalposts'
+phase: 6
+week: 24
+module: mock-loop
+order: 3
+difficulty: 5
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/01-mock-loop.md
+task: >-
+  Mock customer round. Nandini Rao is the CEO of a three-clinic dental group in Bengaluru. Last
+  month she wanted fewer no-shows. This week she says: "Actually, now I want the AI to bring in new
+  patients."
+
+
+  In at most 9 questions with no leading questions, learn what changed, what she expects, what the
+  first pilot proved, and what she can fund. Then write a short reset plan in `notes.md`.
+starter_files:
+  - path: persona.json
+    content: |
+      {
+        "name": "Nandini Rao",
+        "role": "CEO",
+        "company": "BrightSmile Dental, Bengaluru",
+        "opening": "I have been thinking. No-shows are not my biggest problem anymore. I want you to bring me new patients with AI. Can we change the project?",
+        "facts": [
+          {
+            "id": "change",
+            "triggers": [
+              "what changed",
+              "what happened",
+              "why now",
+              "what made",
+              "tell me more"
+            ],
+            "reply": "A big dental chain opened two streets from our main clinic. Our new patient count fell by a quarter."
+          },
+          {
+            "id": "pilot-result",
+            "triggers": [
+              "pilot",
+              "result",
+              "so far",
+              "how has",
+              "worked"
+            ],
+            "reply": "Honestly the reminders worked. No-shows fell from 18% to 13% at the two pilot clinics."
+          },
+          {
+            "id": "expectation",
+            "triggers": [
+              "expect",
+              "success",
+              "what would you like",
+              "good look like",
+              "hoping"
+            ],
+            "requires": [
+              "change"
+            ],
+            "reply": "I want 40 new patients a month at the main clinic. At the moment it is about 25."
+          },
+          {
+            "id": "budget",
+            "triggers": [
+              "budget",
+              "fund",
+              "spend",
+              "invest",
+              "cost"
+            ],
+            "reply": "I can spend about ₹1 lakh a month for three months. Not more."
+          },
+          {
+            "id": "decision",
+            "triggers": [
+              "who decides",
+              "who else",
+              "who approves",
+              "who needs to"
+            ],
+            "reply": "My partner, Dr. Hegde, wants to see the no-show numbers on paper before we change anything."
+          }
+        ],
+        "deflections": [
+          "I'm not sure what you mean. Can you ask that another way?",
+          "I'd rather you ask me how things work today."
+        ],
+        "max_turns": 12
+      }
+  - path: notes.md
+    content: |
+      # Reset plan: Bengaluru dental group
+
+      ## What changed
+      <!-- The new situation in her words. -->
+
+      ## Plan
+      <!-- Keep or change the goal, and why. -->
+
+      ## Next step
+      <!-- Who and when. -->
+checks:
+  - kind: sim_state
+    path: facts_uncovered
+    contains_all:
+      - change
+      - pilot-result
+      - expectation
+      - budget
+      - decision
+  - kind: sim_state
+    path: turns
+    max: 9
+  - kind: sim_state
+    path: leading_questions
+    max: 0
+  - kind: sim_state
+    path: section:What changed
+    min_words: 12
+    contains_any:
+      - rent
+      - new patients
+      - competitor
+      - clinic
+  - kind: sim_state
+    path: section:Plan
+    min_words: 20
+    contains_any:
+      - pilot
+      - no-show
+      - first
+  - kind: sim_state
+    path: section:Next step
+    min_words: 10
+    contains_any:
+      - by
+      - week
+  - kind: ai_rubric
+    rubric:
+      - Learner protects the pilot result while staying open to the new goal
+      - Reset plan is sequenced and has a date
+    min_score: 3
+hints:
+  - Ask what changed before you agree or push back. The reason matters.
+  - Ask what the pilot has shown. A good result is your leverage.
+  - Ask about budget and who else must agree, then sequence the two goals.
+solution: solution/
+unlocks:
+  - p6-w24-mock-004
+tags:
+  - mock
+  - roleplay
+  - scope
+mobile_compatible: true

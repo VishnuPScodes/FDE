@@ -1,0 +1,40 @@
+id: p1-w05-ts-006
+title: Narrow a success or failure result
+phase: 1
+week: 5
+module: typescript-essentials
+order: 5
+difficulty: 2
+estimated_minutes: 8
+type: code
+environment: ts
+lesson: ../../lessons/01-types-and-functions.md
+task: "Complete `describe` so a successful result prints its value and a failed result prints its error. Print the description of both sample results, one per line."
+starter_files:
+  - path: main.ts
+    content: |-
+      type Result = { ok: true; value: string } | { ok: false; error: string };
+
+      function describe(result: Result): string {
+        return '';
+      }
+
+      const results: Result[] = [
+        { ok: true, value: 'INV-10 saved' },
+        { ok: false, error: 'amount must be positive' },
+      ];
+      for (const result of results) console.log(describe(result));
+checks:
+  - kind: stdout_equals
+    expected: "INV-10 saved\nerror: amount must be positive"
+    label: Both result shapes are described
+  - kind: file_contains
+    path: main.ts
+    expected: "if (result.ok"
+    label: Union is narrowed with the ok flag
+hints:
+  - "Check `result.ok` before touching `value` or `error`."
+  - "Prefix failures with `error: `."
+solution: solution/
+unlocks: [p1-w05-ts-007]
+tags: [typescript, unions, narrowing]

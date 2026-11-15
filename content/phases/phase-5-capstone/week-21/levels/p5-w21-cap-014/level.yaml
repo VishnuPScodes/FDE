@@ -1,0 +1,99 @@
+id: p5-w21-cap-014
+title: Write the weekly customer update
+phase: 5
+week: 21
+module: capstone-build
+order: 13
+difficulty: 2
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/03-iterate-with-the-customer.md
+task: |-
+  Write the update you send your customer after each week of the pilot. It should take them one minute to read.
+
+  Use real numbers in **Numbers**. In **Need From You** ask for one specific thing and give a date.
+starter_files:
+- path: answer.md
+  content: |
+    # Weekly update
+
+    ## Done This Week
+
+
+    ## Numbers
+
+
+    ## Next Week
+
+
+    ## Need From You
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Done This Week'
+- kind: file_contains
+  path: answer.md
+  expected: '## Numbers'
+- kind: file_contains
+  path: answer.md
+  expected: '## Next Week'
+- kind: file_contains
+  path: answer.md
+  expected: '## Need From You'
+- kind: sim_state
+  path: word_count
+  min: 80
+  max: 300
+- kind: sim_state
+  path: section:Done This Week
+  min_words: 15
+- kind: sim_state
+  path: section:Numbers
+  min_words: 12
+  contains_any:
+  - '%'
+  - patients
+  - reminders
+  - messages
+- kind: file_contains
+  path: answer.md
+  label: Numbers section uses real figures
+  is_regex: true
+  expected: '## Numbers[^#]*\d'
+- kind: file_contains
+  path: answer.md
+  label: The ask has a day or date
+  is_regex: true
+  expected: '## Need From You[^#]*(monday|tuesday|wednesday|thursday|friday|saturday|sunday|tomorrow|\d)'
+- kind: sim_state
+  path: section:Next Week
+  min_words: 12
+- kind: sim_state
+  path: section:Need From You
+  min_words: 10
+  contains_any:
+  - please
+  - can you
+  - could you
+  - need
+- kind: checklist
+  label: Self-review
+  items:
+  - A non-technical reader understands every line
+  - Each number says what it counts
+- kind: ai_rubric
+  rubric:
+  - Update is specific and uses real numbers
+  - The ask is one clear action with a date
+  min_score: 3
+hints:
+- 'Numbers should say what was counted: reminders sent, patients who replied, messages that failed.'
+- End with one request and a date, such as please review the Marathi wording by Wednesday.
+solution: solution/
+unlocks:
+- p5-w21-cap-015
+tags:
+- capstone
+- iterate
+- update

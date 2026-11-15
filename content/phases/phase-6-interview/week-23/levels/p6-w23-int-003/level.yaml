@@ -1,0 +1,84 @@
+id: p6-w23-int-003
+title: 'Drill: build a rate limiter'
+phase: 6
+week: 23
+module: coding-drills
+order: 3
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-practical-coding.md
+task: |-
+  Timed drill, aim for 25 minutes. Your GST-verification service calls a government API that blocks you if one client sends too many requests. Build a rolling-window rate limiter per client key.
+
+  Implement `RateLimiter` in `limiter.py`. Use the injected `clock` so tests can control time. Rejected calls must not count towards the limit. Run `test_limiter.py`.
+timed: true
+starter_files:
+- path: limiter.py
+  content: |
+    import time
+
+
+    class RateLimiter:
+        """Allow at most `max_requests` per key in any rolling `window_seconds`."""
+
+        def __init__(self, max_requests: int, window_seconds: float, clock=time.monotonic):
+            pass
+
+        def allow(self, key: str) -> bool:
+            pass
+- path: test_limiter.py
+  content: |
+    from limiter import RateLimiter
+
+
+    class FakeClock:
+        def __init__(self):
+            self.now = 0.0
+
+        def __call__(self):
+            return self.now
+
+
+    def test_limit_and_recover():
+        clock = FakeClock()
+        rl = RateLimiter(3, 10, clock=clock)
+        assert [rl.allow("ca-firm") for _ in range(4)] == [True, True, True, False]
+        clock.now = 9.9
+        assert rl.allow("ca-firm") is False
+        clock.now = 10.0
+        assert rl.allow("ca-firm") is True
+
+
+    def test_keys_are_separate():
+        clock = FakeClock()
+        rl = RateLimiter(1, 60, clock=clock)
+        assert rl.allow("surat") is True
+        assert rl.allow("pune") is True
+        assert rl.allow("surat") is False
+
+
+    def test_rejected_calls_do_not_count():
+        clock = FakeClock()
+        rl = RateLimiter(2, 10, clock=clock)
+        rl.allow("k"); rl.allow("k")
+        clock.now = 5
+        assert rl.allow("k") is False
+        clock.now = 10
+        assert rl.allow("k") is True
+        assert rl.allow("k") is True
+checks:
+- kind: pytest_passes
+  run: pytest -q test_limiter.py
+hints:
+- Keep a separate list (or deque) of timestamps for each key.
+- Before deciding, drop timestamps that are window_seconds or more in the past.
+- Only record the timestamp when you return True.
+solution: solution/
+unlocks:
+- p6-w23-int-004
+tags:
+- interview
+- python
+- rate-limit

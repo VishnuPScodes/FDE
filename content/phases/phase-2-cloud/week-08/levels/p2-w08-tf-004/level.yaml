@@ -1,0 +1,87 @@
+id: p2-w08-tf-004
+title: "Update in place or replace?"
+phase: 2
+week: 8
+module: terraform-basics
+order: 4
+difficulty: 3
+estimated_minutes: 15
+type: terminal
+environment: terraform
+lesson: ../../lessons/02-terraform-basics.md
+task: "The web server already exists (see terraform.tfstate). A teammate edited main.tf. Run terraform plan and read it: one change is safe, the other destroys the server. Keep the new instance_type (t3.small), put the old AMI back, and apply. The instance must keep its id."
+starter_files:
+  - path: main.tf
+    content: |
+      terraform {
+        required_providers {
+          aws = {
+            source  = "hashicorp/aws"
+            version = "~> 5.0"
+          }
+        }
+      }
+
+      provider "aws" {
+        region = "ap-south-1"
+      }
+
+      resource "aws_instance" "web" {
+        ami           = "ami-0b5eea76982371e91" # a teammate bumped this
+        instance_type = "t3.small"
+
+        tags = {
+          Name = "fde-web"
+        }
+      }
+  - path: terraform.tfstate
+    content: |
+      {
+        "version": 4,
+        "serial": 3,
+        "resources": [
+          {
+            "address": "aws_instance.web",
+            "type": "aws_instance",
+            "name": "web",
+            "attrs": {
+              "ami": "ami-0f5ee92e2d63afc18",
+              "instance_type": "t3.micro",
+              "subnet_id": null,
+              "key_name": null,
+              "user_data": null,
+              "vpc_security_group_ids": [],
+              "tags": {
+                "Name": "fde-web"
+              },
+              "id": "i-0a1b2c3d4e5f60718",
+              "arn": "arn:aws:ec2:ap-south-1:123456789012:instance/i-0a1b2c3d4e5f60718",
+              "private_ip": "10.0.1.42"
+            },
+            "deps": []
+          }
+        ]
+      }
+checks:
+  - kind: "sim_state"
+    path: "resource:aws_instance.web"
+    contains: "\"id\":\"i-0a1b2c3d4e5f60718\""
+    label: "Server was not replaced"
+  - kind: "sim_state"
+    path: "resource:aws_instance.web"
+    contains: "\"instance_type\":\"t3.small\""
+    label: "Server uses t3.small"
+  - kind: "sim_state"
+    path: "resource:aws_instance.web"
+    contains: "\"ami\":\"ami-0f5ee92e2d63afc18\""
+    label: "Original AMI is kept"
+  - kind: "sim_state"
+    path: "plan_clean"
+    label: "Plan shows no changes"
+hints:
+  - "Run terraform init, then terraform plan. A line marked \"# forces replacement\" tells you which argument is the problem."
+  - "Changing ami forces a replacement. Changing instance_type only modifies the server."
+  - "Restore ami = \"ami-0f5ee92e2d63afc18\" and leave instance_type = \"t3.small\"."
+solution: solution/
+unlocks: [p2-w08-tf-005]
+tags: [terraform, plan, replace]

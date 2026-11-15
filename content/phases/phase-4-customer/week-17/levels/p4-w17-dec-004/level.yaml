@@ -1,0 +1,74 @@
+id: p4-w17-dec-004
+title: Risks and Rollout for the kirana pilot
+phase: 4
+week: 17
+module: gudcmarr-framework
+order: 4
+difficulty: 3
+estimated_minutes: 15
+type: decomposition
+environment: writing
+lesson: ../../lessons/01-gudcmarr-framework.md
+task: >-
+  Continue the Gupta Traders order-reading pilot. Write the **Risks** (at least three, each with a
+  way to reduce it) and the **Rollout** (who pilots it, for how long, what number decides the next
+  step).
+starter_files:
+  - path: answer.md
+    content: |
+      # Risks and Rollout for the kirana pilot
+
+      ## Risks
+      <!-- Each risk gets a "so we will..." step. -->
+
+      ## Rollout
+      <!-- Pilot group, length, success number, next step. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Risks'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Rollout'
+  - kind: sim_state
+    path: word_count
+    min: 82
+    max: 299
+  - kind: sim_state
+    path: section:Risks
+    min_words: 40
+    contains_any:
+      - mitigat
+      - so we
+      - check
+      - review
+  - kind: sim_state
+    path: section:Rollout
+    min_words: 25
+    contains_any:
+      - week
+      - '%'
+      - hours
+  - kind: checklist
+    label: Self-review
+    items:
+      - Every heading has real content, not a placeholder
+      - The Goal has a number
+      - I wrote my assumptions in plain words
+  - kind: ai_rubric
+    rubric:
+      - Risks are specific, not generic
+      - Each risk has a way to reduce it
+      - Rollout names a pilot group, a length and a deciding number
+    min_score: 3
+hints:
+  - '"Data quality" is not a risk. Say which data and what goes wrong.'
+  - The Rollout needs a number that tells you to expand or stop.
+solution: solution/
+unlocks:
+  - p4-w17-dec-005
+tags:
+  - decomposition
+  - risks
+  - rollout
+mobile_compatible: true

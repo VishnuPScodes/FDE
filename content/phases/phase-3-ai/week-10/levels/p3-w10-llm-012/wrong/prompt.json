@@ -1,0 +1,6 @@
+{
+  "system": "You are a friendly GST expert. Always give a confident answer.",
+  "temperature": 0.9,
+  "max_tokens": 300,
+  "sample_user": "Mera restaurant AC hai, GST kitna lagega?"
+}

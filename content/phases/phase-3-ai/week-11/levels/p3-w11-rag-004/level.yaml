@@ -1,0 +1,76 @@
+id: p3-w11-rag-004
+title: Chunk a document with overlap
+phase: 3
+week: 11
+module: document-parsing
+order: 4
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-parsing-and-chunking.md
+task: |
+  Retrieval works on chunks, not whole documents. Overlap stops an answer from being cut in half.
+
+  Write `chunk_words(doc_id, text, size, overlap)`:
+
+  - Split `text` on whitespace into words.
+  - Each chunk has at most `size` words. The next chunk starts `size - overlap` words later.
+  - Stop once a chunk reaches the last word (do not emit a chunk made only of overlap).
+  - Return a list of dicts: `{"id": f"{doc_id}#{n}", "text": ..., "start": first_word_index}`, with `n` from 0.
+  - Raise `ValueError` if `size <= 0`, `overlap < 0` or `overlap >= size`.
+  - Empty text returns `[]`.
+starter_files:
+- path: main.py
+  content: |
+    def chunk_words(doc_id, text, size, overlap):
+        pass
+- path: test_main.py
+  content: |
+    import pytest
+
+    from main import chunk_words
+
+    TEXT = "one two three four five six seven eight nine ten"
+
+
+    def test_overlap():
+        chunks = chunk_words("faq", TEXT, 4, 1)
+        assert [c["text"] for c in chunks] == [
+            "one two three four",
+            "four five six seven",
+            "seven eight nine ten",
+        ]
+        assert [c["id"] for c in chunks] == ["faq#0", "faq#1", "faq#2"]
+        assert [c["start"] for c in chunks] == [0, 3, 6]
+
+
+    def test_no_tail_of_only_overlap():
+        chunks = chunk_words("d", "a b c d e", 3, 1)
+        assert [c["text"] for c in chunks] == ["a b c", "c d e"]
+
+
+    def test_short_text_is_one_chunk():
+        assert chunk_words("d", "UPI limit", 50, 10) == [{"id": "d#0", "text": "UPI limit", "start": 0}]
+
+
+    def test_empty_and_bad_args():
+        assert chunk_words("d", "   ", 5, 1) == []
+        with pytest.raises(ValueError):
+            chunk_words("d", TEXT, 3, 3)
+        with pytest.raises(ValueError):
+            chunk_words("d", TEXT, 0, 0)
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Move forward by `size - overlap` words each time.
+- After adding a chunk, stop if `start + size >= len(words)`; the last word is already covered.
+solution: solution/
+unlocks:
+- p3-w11-rag-005
+tags:
+- rag
+- chunking
+mobile_compatible: false

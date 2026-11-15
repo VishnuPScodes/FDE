@@ -1,0 +1,44 @@
+id: p5-w22-cap-008
+title: Publish the case study in your repo
+phase: 5
+week: 22
+module: capstone-case-study
+order: 5
+difficulty: 2
+estimated_minutes: 20
+type: realworld
+environment: realworld
+lesson: ../../lessons/03-case-study-and-sign-off.md
+task: |-
+  Publish your case study where hiring managers can find it.
+
+  1. Add `CASE_STUDY.md` to your capstone repo with the text from the previous level.
+  2. Blur any names, phone numbers or patient details in screenshots.
+  3. Link the case study and your 3-minute video (if you made one) from the top of `README.md`.
+  4. Fill `submission.json` with your live health URL and repo.
+starter_files:
+- path: submission.json
+  content: |
+    {
+      "url": "",
+      "repo": ""
+    }
+checks:
+- kind: github_repo
+  require_file: CASE_STUDY.md
+  label: Repo has CASE_STUDY.md
+- kind: live_url
+  url_field: url
+  expect_status: 200
+  contains: ok
+  label: System is still running
+hints:
+- 'The file name is case-sensitive: CASE_STUDY.md at the root of the repo.'
+- If the repo was transferred to your customer, submit the new owner/name.
+solution: solution/
+unlocks:
+- p5-w22-capstone-001
+tags:
+- capstone
+- case-study
+- realworld

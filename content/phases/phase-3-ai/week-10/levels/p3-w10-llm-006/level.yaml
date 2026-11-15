@@ -1,0 +1,78 @@
+id: p3-w10-llm-006
+title: Build a clean messages array
+phase: 3
+week: 10
+module: api-patterns
+order: 6
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/03-messages-streaming-structured-output.md
+task: |
+  Chat APIs take a list of messages. Bad lists cause 400 errors.
+
+  Write `build_messages(system, history, user_text)` for an OpenAI-compatible API:
+
+  - Start with `{"role": "system", "content": system}` if `system` is not empty.
+  - Then the `history` turns (each has `role` and `content`), then the new user turn.
+  - Strip whitespace from every `content`. Skip turns that are empty after stripping.
+  - Merge back-to-back turns with the same role into one, joined by a blank line (`"\n\n"`).
+  - Raise `ValueError` if `user_text` is empty after stripping.
+starter_files:
+- path: main.py
+  content: |
+    def build_messages(system, history, user_text):
+        pass
+- path: test_main.py
+  content: |
+    import pytest
+
+    from main import build_messages
+
+
+    def test_basic_order():
+        result = build_messages("You are a GST helper.", [
+            {"role": "user", "content": "Hi"},
+            {"role": "assistant", "content": "Namaste! How can I help?"},
+        ], "What is the GST on hotel rooms?")
+        assert result == [
+            {"role": "system", "content": "You are a GST helper."},
+            {"role": "user", "content": "Hi"},
+            {"role": "assistant", "content": "Namaste! How can I help?"},
+            {"role": "user", "content": "What is the GST on hotel rooms?"},
+        ]
+
+
+    def test_no_system_and_merge_same_role():
+        result = build_messages("", [
+            {"role": "user", "content": " Order 4411 is late "},
+            {"role": "user", "content": ""},
+        ], "  Please check  ")
+        assert result == [{"role": "user", "content": "Order 4411 is late\n\nPlease check"}]
+
+
+    def test_empty_question():
+        with pytest.raises(ValueError):
+            build_messages("sys", [], "   ")
+
+
+    def test_input_not_mutated():
+        history = [{"role": "user", "content": " a "}]
+        build_messages("", history, "b")
+        assert history == [{"role": "user", "content": " a "}]
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Build new dicts instead of editing the ones in `history`, so the caller's data stays untouched.
+- Before appending, look at `turns[-1]["role"]`. If it matches, join the content instead of adding a new turn.
+solution: solution/
+unlocks:
+- p3-w10-llm-007
+tags:
+- llm
+- api
+- messages
+mobile_compatible: true

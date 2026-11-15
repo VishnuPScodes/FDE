@@ -1,0 +1,47 @@
+id: p2-w09-obs-006
+title: p95 latency from a histogram
+phase: 2
+week: 9
+module: metrics-tracing
+order: 2
+difficulty: 3
+estimated_minutes: 14
+type: console
+environment: observability
+lesson: ../../lessons/02-metrics-and-tracing.md
+task: |-
+  Averages hide pain. Ask for the p95: the time that 95 out of 100 requests beat.
+
+  In the Metrics tab, run for the invoices service:
+
+  `histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{service="invoices"}[5m])))`
+
+  Type the p95 in **seconds** at 10:59 (round to the nearest whole number is fine).
+starter_files:
+  - path: scenario.json
+    content: |
+      {
+        "scenario": "third-party-latency",
+        "seed": 7
+      }
+checks:
+  - kind: sim_command_used
+    pattern: histogram_quantile\(0\.95
+    label: Used histogram_quantile(0.95, ...)
+  - kind: sim_state
+    path: answer:p95_seconds
+    prompt: invoices p95 latency at 10:59, in seconds
+    min: 8
+    max: 11
+hints:
+  - Histogram metrics end in _bucket. Wrap rate() of the bucket in sum by (le).
+  - histogram_quantile(0.95, ...) gives the 95th percentile.
+  - The result is in seconds. A normal p95 here is under half a second.
+solution: solution/
+unlocks:
+  - p2-w09-obs-007
+tags:
+  - observability
+  - metrics
+  - histogram
+  - p95

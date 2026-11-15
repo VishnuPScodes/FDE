@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "invoice_number": { "type": "string" },
+    "gstin": { "type": "string" },
+    "total_inr": { "type": "string" }
+  },
+  "required": ["invoice_number", "gstin", "total_inr", "due_date"]
+}

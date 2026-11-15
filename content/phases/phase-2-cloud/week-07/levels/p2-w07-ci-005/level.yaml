@@ -1,0 +1,37 @@
+id: p2-w07-ci-005
+title: "Use a secret without leaking it"
+phase: 2
+week: 7
+module: github-actions-cicd
+order: 20
+difficulty: 2
+estimated_minutes: 15
+type: console
+environment: ci
+lesson: ../../lessons/05-github-actions-pipelines.md
+task: "check_api.py needs the API_KEY environment variable. The repository already has a secret named API_KEY. Pass it to the step with env and the secrets context. Never echo it. Push to main and make the run pass."
+starter_files:
+  - path: "app.py"
+    content: "def order_total(price, qty):\n    return price * qty\n\n\ndef apply_discount(price, percent):\n    return price - price * percent / 100\n"
+  - path: "test_app.py"
+    content: "from app import apply_discount, order_total\n\n\ndef test_order_total():\n    assert order_total(250, 3) == 750\n\n\ndef test_apply_discount():\n    assert apply_discount(200, 10) == 180\n"
+  - path: "requirements.txt"
+    content: "pytest==8.3.3\nruff==0.7.4\n"
+  - path: "README.md"
+    content: "# orders-api\n\nOrder service for Acme Pay.\n"
+  - path: "check_api.py"
+    content: "import os\n\nkey = os.environ[\"API_KEY\"]\nprint(\"API key loaded\")\n"
+  - path: ".github/workflows/ci.yml"
+    content: "name: CI\non: push\njobs:\n  check:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - name: Call the payment API\n        run: python check_api.py\n"
+checks:
+  - {"kind": "sim_state", "path": "runs", "contains": "CI push main completed/success", "label": "The run succeeded"}
+  - {"kind": "sim_state", "path": "log", "contains": "API key loaded", "label": "The script read the key"}
+  - {"kind": "sim_state", "path": "leaks", "not_contains": "API_KEY", "label": "No step prints the secret"}
+  - {"kind": "sim_state", "path": "log", "not_contains": "sk_live", "label": "The real key is not in the log"}
+hints:
+  - "Secrets are not passed to scripts automatically. Add an env: block to the step."
+  - "Write API_KEY: ${{ secrets.API_KEY }} under env:."
+  - "Do not use echo with a secret. GitHub hides it in logs, but printing it is still a risk."
+solution: solution/
+unlocks: [p2-w07-ci-006]
+tags: ["ci", "secrets"]

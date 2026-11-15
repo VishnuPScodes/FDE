@@ -1,0 +1,54 @@
+id: p2-w09-sec-003
+title: Apply least privilege
+phase: 2
+week: 9
+module: security-posture
+order: 3
+difficulty: 3
+estimated_minutes: 10
+type: quiz
+environment: quiz
+lesson: ../../lessons/03-security-posture.md
+task: The reports job at a Bengaluru logistics company only reads daily orders from one S3 bucket called orders-daily. Decide what permissions it should get.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: Which policy is closest to least privilege for the reports job?
+    options:
+      - Allow s3:GetObject on arn:aws:s3:::orders-daily/*
+      - Allow s3:* on all buckets
+      - Allow all actions on all resources (AdministratorAccess)
+      - Allow s3:GetObject and s3:DeleteObject on all buckets
+    expected: Allow s3:GetObject on arn:aws:s3:::orders-daily/*
+    label: Pick the narrow policy
+  - kind: sim_state
+    action: multiple_choice
+    question: The job needs to write one CSV a day to a different bucket later. What is the right move?
+    options:
+      - Add a separate, narrow s3:PutObject permission for that one bucket
+      - Switch to admin so it never breaks
+      - Share the founder's access keys with the job
+      - Make the bucket public
+    expected: Add a separate, narrow s3:PutObject permission for that one bucket
+    label: Grow permissions carefully
+  - kind: sim_state
+    action: multiple_choice
+    question: Why is least privilege useful if an attacker steals the job's credentials?
+    options:
+      - They can only do what the job could do, so damage is small
+      - It stops the attacker finding the credentials
+      - It makes the job run faster
+      - It encrypts the data automatically
+    expected: They can only do what the job could do, so damage is small
+    label: Explain the benefit
+hints:
+  - Look for a specific action and a specific resource. Stars everywhere are a warning sign.
+  - 'Think blast radius: how much can go wrong if this identity is stolen?'
+solution: solution/
+unlocks:
+  - p2-w09-sec-004
+tags:
+  - security
+  - iam
+  - least-privilege
+mobile_compatible: true

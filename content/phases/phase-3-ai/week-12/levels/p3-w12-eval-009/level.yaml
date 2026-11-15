@@ -1,0 +1,74 @@
+id: p3-w12-eval-009
+title: 'Find failures and weak slices'
+phase: 3
+week: 12
+module: retrieval-metrics
+order: 5
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/02-retrieval-metrics.md
+task: |
+  An average hides pain. 90 percent recall overall can still mean every Hinglish question fails.
+
+  The helpers `recall_at_k` is in `main.py`. Write two functions. Both skip rows with empty `relevant_ids`.
+
+  - `failures(retriever, rows, k)`: the sorted ids of rows where recall@k is `0.0` (nothing relevant in the top `k`).
+  - `recall_by_tag(retriever, rows, k)`: a dict `{tag: mean recall@k}` over the rows carrying that tag, rounded to 4 places,
+    with keys in sorted order. Rows without `tags` are ignored. A row with two tags counts toward both.
+starter_files:
+- path: main.py
+  content: |
+    def recall_at_k(retrieved, relevant, k):
+        return round(sum(1 for d in retrieved[:k] if d in relevant) / len(relevant), 4) if relevant else 0.0
+
+
+    def failures(retriever, rows, k):
+        pass
+
+
+    def recall_by_tag(retriever, rows, k):
+        pass
+- path: test_main.py
+  content: |
+    from main import failures, recall_by_tag
+
+    ROWS = [
+        {"id": "q3", "question": "a", "relevant_ids": ["1"], "tags": ["returns"]},
+        {"id": "q1", "question": "b", "relevant_ids": ["2"], "tags": ["hinglish", "returns"]},
+        {"id": "q2", "question": "c", "relevant_ids": ["3", "4"], "tags": ["hinglish"]},
+        {"id": "q4", "question": "d", "relevant_ids": [], "tags": ["unanswerable"]},
+        {"id": "q5", "question": "e", "relevant_ids": ["5"]},
+    ]
+    OUT = {"a": ["1"], "b": ["x"], "c": ["3"], "d": ["x"], "e": ["x"]}
+
+
+    def retriever(q):
+        return OUT[q]
+
+
+    def test_failures_sorted_and_answerable_only():
+        assert failures(retriever, ROWS, 3) == ["q1", "q5"]
+
+
+    def test_recall_by_tag():
+        out = recall_by_tag(retriever, ROWS, 3)
+        assert list(out) == ["hinglish", "returns"]
+        assert out["returns"] == 0.5
+        assert out["hinglish"] == 0.25
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Collect scores in a dict of lists: `scores.setdefault(tag, []).append(score)`. Then average each list at the end.'
+- 'Unanswerable rows have `relevant_ids == []`. Skip them in both functions, otherwise they look like failures.'
+solution: solution/
+unlocks:
+- p3-w12-eval-010
+tags:
+- evals
+- metrics
+- debugging
+mobile_compatible: false

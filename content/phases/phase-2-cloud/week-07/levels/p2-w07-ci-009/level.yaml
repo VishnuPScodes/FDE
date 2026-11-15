@@ -1,0 +1,38 @@
+id: p2-w07-ci-009
+title: "Roll back a bad release"
+phase: 2
+week: 7
+module: github-actions-cicd
+order: 24
+difficulty: 3
+estimated_minutes: 20
+type: console
+environment: ci
+lesson: ../../lessons/05-github-actions-pipelines.md
+task: "Release 1.4.1 is unhealthy in production. The rollback workflow exists but is incomplete. Fix it so it runs in the production environment, push it to main, start it with dispatch rollback.yml, and approve the deployment. Production must go back to 1.4.0."
+starter_files:
+  - path: "app.py"
+    content: "def order_total(price, qty):\n    return price * qty\n\n\ndef apply_discount(price, percent):\n    return price - price * percent / 100\n"
+  - path: "test_app.py"
+    content: "from app import apply_discount, order_total\n\n\ndef test_order_total():\n    assert order_total(250, 3) == 750\n\n\ndef test_apply_discount():\n    assert apply_discount(200, 10) == 180\n"
+  - path: "requirements.txt"
+    content: "pytest==8.3.3\nruff==0.7.4\n"
+  - path: "README.md"
+    content: "# orders-api\n\nOrder service for Acme Pay.\n"
+  - path: "scripts/deploy.sh"
+    content: "#!/usr/bin/env bash\n# Simulated deploy helper.\n# Usage: scripts/deploy.sh <staging|production> <version|--rollback>\n"
+  - path: ".ci/world.json"
+    content: "{\"registryVersions\": [\"1.3.0\", \"1.4.0\", \"1.4.1\"], \"deployments\": [{\"environment\": \"production\", \"version\": \"1.3.0\", \"runId\": null, \"status\": \"success\"}, {\"environment\": \"production\", \"version\": \"1.4.0\", \"runId\": null, \"status\": \"success\"}, {\"environment\": \"production\", \"version\": \"1.4.1\", \"runId\": null, \"status\": \"failed\"}], \"unhealthy\": {\"production\": [\"1.4.1\"]}, \"environments\": {\"production\": {\"current\": \"1.4.1\", \"health\": \"unhealthy\"}}}"
+  - path: ".github/workflows/rollback.yml"
+    content: "name: Rollback\non:\n  workflow_dispatch:\njobs:\n  rollback:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: bash scripts/deploy.sh production --rollback\n        env:\n          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}\n"
+checks:
+  - {"kind": "sim_state", "path": "runs", "contains": "Rollback workflow_dispatch main completed/success", "label": "The rollback run succeeded"}
+  - {"kind": "sim_state", "path": "deployments", "contains": "production 1.4.0 rollback", "label": "A rollback deployment was recorded"}
+  - {"kind": "sim_state", "path": "environments", "contains": "production current=1.4.0 health=healthy", "label": "Production is healthy on 1.4.0"}
+hints:
+  - "The production secret lives in the production environment. Add environment: production to the job."
+  - "Workflows must be on main before dispatch works. Type push main first."
+  - "Then type dispatch rollback.yml and approve (or use the Approve button)."
+solution: solution/
+unlocks: [p2-w07-ci-010]
+tags: ["ci", "rollback", "deploy"]

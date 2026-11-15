@@ -1,0 +1,139 @@
+id: p2-w08-k8s-006
+title: "Route traffic with an Ingress"
+phase: 2
+week: 8
+module: kubernetes-basics
+order: 6
+difficulty: 4
+estimated_minutes: 25
+type: terminal
+environment: kubernetes
+lesson: ../../lessons/03-kubernetes-basics.md
+task: "The Kirana Mart shop runs in the shop namespace. Apply all three files, then fix ingress.yaml so kirana.example.in sends / to the storefront and /orders to the orders-api. The ingress controller class is nginx. Check with curl through the ingress address 203.0.113.20."
+starter_files:
+  - path: namespace.yaml
+    content: |
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: shop
+  - path: apps.yaml
+    content: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: storefront
+        namespace: shop
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: storefront
+        template:
+          metadata:
+            labels:
+              app: storefront
+          spec:
+            containers:
+              - name: storefront
+                image: ghcr.io/fde-labs/storefront:3.1.0
+                ports:
+                  - containerPort: 3000
+      ---
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: storefront
+        namespace: shop
+      spec:
+        selector:
+          app: storefront
+        ports:
+          - port: 80
+            targetPort: 3000
+      ---
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: orders-api
+        namespace: shop
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: orders-api
+        template:
+          metadata:
+            labels:
+              app: orders-api
+          spec:
+            containers:
+              - name: orders-api
+                image: ghcr.io/fde-labs/orders-api:1.0.0
+                ports:
+                  - containerPort: 8080
+      ---
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: orders-api
+        namespace: shop
+      spec:
+        selector:
+          app: orders-api
+        ports:
+          - port: 80
+            targetPort: 8080
+  - path: ingress.yaml
+    content: |
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: kirana
+        namespace: shop
+      spec:
+        rules:
+          - host: kirana.example.in
+            http:
+              paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: storefront
+                      port:
+                        number: 80
+                - path: /orders
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: orders
+                      port:
+                        number: 80
+checks:
+  - kind: "sim_state"
+    path: "object"
+    kind_name: "Ingress"
+    name: "kirana"
+    namespace: "shop"
+    contains: "\"address\":\"203.0.113.20\""
+    label: "Ingress has an address"
+  - kind: "sim_state"
+    path: "http"
+    url: "http://203.0.113.20/"
+    host: "kirana.example.in"
+    contains: "Kirana Mart"
+    label: "/ shows the storefront"
+  - kind: "sim_state"
+    path: "http"
+    url: "http://203.0.113.20/orders"
+    host: "kirana.example.in"
+    contains: "ORD-1042"
+    label: "/orders reaches orders-api"
+hints:
+  - "kubectl get ingress -n shop shows no ADDRESS until an ingress class is set. Add ingressClassName: nginx under spec."
+  - "kubectl describe ingress kirana -n shop lists each backend. A backend must name a Service that exists."
+  - "Check with curl -H \"Host: kirana.example.in\" http://203.0.113.20/orders."
+solution: solution/
+unlocks: [p2-w09-obs-001]
+tags: [kubernetes, ingress, routing]

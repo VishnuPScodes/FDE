@@ -1,0 +1,119 @@
+id: p3-w15-ops-007
+title: "Cache repeated questions"
+phase: 3
+week: 15
+module: cost-latency
+order: 3
+difficulty: 3
+estimated_minutes: 30
+type: code
+environment: python
+lesson: ../../lessons/02-cost-and-latency.md
+task: |
+  A bank chatbot gets "What is my IFSC code?" hundreds of times a day. Paying for the same answer again and again is waste. Write a small cache around the LLM.
+
+  Write `class CachedLLM` with `__init__(self, llm, capacity=100)`. `llm(model, prompt)` returns a string and costs money, so call it as little as possible.
+
+  `ask(model, prompt)` returns `{"text": ..., "cached": bool}`.
+
+  - The cache key is the model plus the prompt with whitespace normalised: `" ".join(prompt.split())`. So `"hello   there"` and `" hello there "` share an entry. A different model is a different entry. Case still matters.
+  - On a hit, return the stored text with `cached: True` and do not call `llm`.
+  - On a miss, call `llm`, store the text, and return `cached: False`.
+  - The cache holds at most `capacity` entries. When it is full, drop the **least recently used** entry. A hit counts as a use.
+  - `hits` and `misses` are counters on the object. `hit_rate()` returns `hits / (hits + misses)` rounded to 4 places, or `0.0` if nothing was asked.
+  - If `llm` raises, nothing is stored and the error propagates (and it does not count as a miss or a hit).
+starter_files:
+  - path: main.py
+    content: |
+      import hashlib
+      from collections import OrderedDict
+
+
+      class CachedLLM:
+          def __init__(self, llm, capacity=100):
+              self.llm = llm
+              self.capacity = capacity
+              self.hits = 0
+              self.misses = 0
+
+          def ask(self, model, prompt):
+              pass
+
+          def hit_rate(self):
+              pass
+  - path: test_main.py
+    content: |
+      import pytest
+
+      from main import CachedLLM
+
+
+      class FakeLLM:
+          def __init__(self):
+              self.calls = []
+
+          def __call__(self, model, prompt):
+              self.calls.append((model, prompt))
+              return f"{model}:{len(self.calls)}"
+
+
+      def test_second_identical_question_is_free():
+          llm = FakeLLM()
+          cache = CachedLLM(llm)
+          assert cache.ask("small", "What is my IFSC?") == {"text": "small:1", "cached": False}
+          assert cache.ask("small", "What is my IFSC?") == {"text": "small:1", "cached": True}
+          assert len(llm.calls) == 1
+          assert (cache.hits, cache.misses) == (1, 1)
+          assert cache.hit_rate() == 0.5
+
+
+      def test_whitespace_is_normalised_but_case_and_model_are_not():
+          llm = FakeLLM()
+          cache = CachedLLM(llm)
+          cache.ask("small", "hello   there")
+          assert cache.ask("small", " hello there\n")["cached"] is True
+          assert cache.ask("small", "Hello there")["cached"] is False
+          assert cache.ask("large", "hello there")["cached"] is False
+          assert len(llm.calls) == 3
+
+
+      def test_least_recently_used_is_evicted():
+          llm = FakeLLM()
+          cache = CachedLLM(llm, capacity=2)
+          cache.ask("m", "a")
+          cache.ask("m", "b")
+          cache.ask("m", "a")          # a is now the most recent
+          cache.ask("m", "c")          # evicts b
+          assert cache.ask("m", "a")["cached"] is True
+          assert cache.ask("m", "b")["cached"] is False
+
+
+      def test_hit_rate_with_no_calls():
+          assert CachedLLM(FakeLLM()).hit_rate() == 0.0
+
+
+      def test_failures_are_not_cached():
+          state = {"fail": True}
+
+          def flaky(model, prompt):
+              if state["fail"]:
+                  raise TimeoutError("slow")
+              return "fine"
+
+          cache = CachedLLM(flaky)
+          with pytest.raises(TimeoutError):
+              cache.ask("m", "q")
+          state["fail"] = False
+          assert cache.ask("m", "q") == {"text": "fine", "cached": False}
+          assert (cache.hits, cache.misses) == (0, 1)
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "`collections.OrderedDict` remembers order. `move_to_end(key)` marks a key as most recent; `popitem(last=False)` removes the oldest."
+  - "Build the key from both the model and `\" \".join(prompt.split())`. Joining with a separator like `\"\\0\"` avoids two different pairs making the same key."
+  - "Call `self.llm(...)` first and only update the store and counters after it returns, so a failed call leaves no trace."
+solution: solution/
+unlocks: [p3-w15-ops-008]
+tags: [cache, lru, cost]

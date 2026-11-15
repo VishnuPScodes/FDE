@@ -1,0 +1,67 @@
+id: p2-w09-obs-009
+title: Write an alert that fires early
+phase: 2
+week: 9
+module: metrics-tracing
+order: 5
+difficulty: 4
+estimated_minutes: 18
+type: console
+environment: observability
+lesson: ../../lessons/02-metrics-and-tracing.md
+task: |-
+  Today nobody was paged until customers called. Fix that in the editor on the **Alerts & SLOs** tab.
+
+  Write a rule for the payments error ratio that:
+
+  - is valid and fires during the incident (10:31 to 10:59)
+  - has **no false alarms** before the incident
+  - waits at most `5m` (the `for:` line)
+  - first fires within **8 minutes** of the problem starting
+
+  The starter rule is too relaxed. Tune the threshold and the `for:` time.
+starter_files:
+  - path: scenario.json
+    content: |
+      {
+        "scenario": "db-pool-exhaustion",
+        "seed": 7
+      }
+  - path: alert-rule.yaml
+    content: |
+      alert: PaymentsHighErrorRate
+      expr: sum(rate(http_requests_total{service="payments",status=~"5.."}[5m])) / sum(rate(http_requests_total{service="payments"}[5m])) > 0.9
+      for: 20m
+      severity: page
+checks:
+  - kind: sim_state
+    path: alert:valid
+    expected: 'true'
+  - kind: sim_state
+    path: alert:fires_during_incident
+    expected: 'true'
+    label: Alert fires during the incident
+  - kind: sim_state
+    path: alert:false_positives
+    max: 0
+    label: No false alarms
+  - kind: sim_state
+    path: alert:for_minutes
+    max: 5
+    label: 'for: is 5 minutes or less'
+  - kind: sim_state
+    path: alert:detection_delay
+    min: 0
+    max: 8
+    label: Fires within 8 minutes
+hints:
+  - Healthy payments error ratio is close to 0.0, and sometimes a single blip. During the incident it jumps above 0.1.
+  - 'Try a threshold of 0.05 with for: 2m. A higher for: delays the page.'
+  - 'Rule format is two lines: expr: <promql> > <number> and for: <minutes>m.'
+solution: solution/
+unlocks:
+  - p2-w09-obs-010
+tags:
+  - observability
+  - alerts
+  - thresholds

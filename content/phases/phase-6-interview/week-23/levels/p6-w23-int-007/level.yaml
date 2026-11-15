@@ -1,0 +1,149 @@
+id: p6-w23-int-007
+title: 'Customer sim: the angry CFO'
+phase: 6
+week: 23
+module: decomp-mocks
+order: 3
+difficulty: 4
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/03-customer-sims-and-stories.md
+task: |-
+  Customer-simulation round. Rajesh, the CFO of a Bengaluru e-commerce company, is angry about your invoice extraction pilot.
+
+  Do not defend yourself first. In at most 9 questions, learn what happened, the business impact, any pattern in the bad invoices, what he needs, what accuracy bar he will accept and who to work with. Avoid leading questions entirely.
+
+  Then write your proposed next steps in `notes.md`. Mention the vendor you discovered and the deadline date.
+starter_files:
+- path: persona.json
+  content: |
+    {
+      "name": "Rajesh Iyer",
+      "role": "CFO",
+      "company": "Kirana Cart, Bengaluru",
+      "opening": "I'll be direct. Your invoice extraction pilot put wrong GST numbers in our books. My team is furious. What are you going to do about it?",
+      "facts": [
+        {
+          "id": "what-happened",
+          "triggers": [
+            "what happened",
+            "walk me through",
+            "tell me more",
+            "what did you see",
+            "what went wrong"
+          ],
+          "reply": "Forty invoices last week had the GST amount wrong. Some had CGST and SGST swapped, some were just off."
+        },
+        {
+          "id": "impact",
+          "triggers": [
+            "impact",
+            "cost",
+            "affect",
+            "what does this mean",
+            "consequence"
+          ],
+          "requires": [
+            "what-happened"
+          ],
+          "reply": "GSTR-3B is due on the 20th. If the input credit is wrong, we pay interest and my team redoes everything by hand."
+        },
+        {
+          "id": "pattern",
+          "triggers": [
+            "pattern",
+            "which invoices",
+            "common",
+            "vendor",
+            "any particular"
+          ],
+          "requires": [
+            "what-happened"
+          ],
+          "reply": "Now that you ask, most of them were from one vendor, Sri Balaji Traders. Their invoices are scanned on a phone."
+        },
+        {
+          "id": "need",
+          "triggers": [
+            "what do you need",
+            "what would",
+            "fix this for you",
+            "make this right",
+            "need from us"
+          ],
+          "reply": "I need every wrong invoice fixed before the 20th, and I need to trust the numbers again."
+        },
+        {
+          "id": "trust-bar",
+          "triggers": [
+            "trust",
+            "confidence",
+            "accuracy",
+            "acceptable",
+            "good enough"
+          ],
+          "requires": [
+            "need"
+          ],
+          "reply": "If a human checks anything the system isn't sure about, I can live with it. I just can't have silent errors."
+        },
+        {
+          "id": "contact",
+          "triggers": [
+            "who",
+            "point of contact",
+            "work with",
+            "your team"
+          ],
+          "reply": "Work with Ananya in accounts. She found the errors."
+        }
+      ],
+      "deflections": [
+        "Don't give me excuses. Ask me something useful.",
+        "I don't have time for yes-or-no questions."
+      ],
+      "max_turns": 15
+    }
+- path: notes.md
+  content: |+
+    # Next steps
+
+checks:
+- kind: sim_state
+  path: facts_uncovered
+  contains_all:
+  - what-happened
+  - impact
+  - pattern
+  - need
+  - trust-bar
+  - contact
+- kind: sim_state
+  path: turns
+  max: 9
+- kind: sim_state
+  path: leading_questions
+  max: 0
+- kind: file_contains
+  path: notes.md
+  expected: Balaji
+- kind: file_contains
+  path: notes.md
+  expected: 20th
+- kind: ai_rubric
+  rubric:
+  - Learner stays calm and asks before explaining
+  - Next steps include human review for low-confidence fields
+  min_score: 3
+hints:
+- Begin by asking what happened. He will calm down when he feels heard.
+- Ask whether the bad invoices have anything in common. Patterns point to the root cause.
+- Ask what he needs and what level of accuracy he can trust, then who you should work with.
+solution: solution/
+unlocks:
+- p6-w23-int-008
+tags:
+- interview
+- customer-sim
+- roleplay

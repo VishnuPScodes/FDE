@@ -1,0 +1,66 @@
+id: p5-w22-cap-010
+title: Keep phone numbers out of your logs
+phase: 5
+week: 22
+module: capstone-measure
+order: 6
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/02-harden-and-hand-over.md
+task: Hardening includes privacy. Your usage logs will be shared in the case study, so phone numbers and tokens must never appear in them. Implement `mask_phone` and `safe_log` in `privacy.py`. Run `test_privacy.py`.
+starter_files:
+- path: privacy.py
+  content: |
+    import re
+
+
+    def mask_phone(text: str) -> str:
+        """Replace every Indian mobile number in text with "XXXXXX" plus its last 4 digits.
+        A number is 10 digits starting 6-9, optionally written as "98765 43210" or "98765-43210",
+        optionally preceded by +91 or 91. Do not touch longer digit strings or numbers
+        starting with 0-5."""
+        pass
+
+
+    def safe_log(event: dict) -> str:
+        """Build a log line of key=value pairs sorted by key, separated by single spaces.
+        Drop the key "token" entirely and apply mask_phone to every value."""
+        pass
+- path: test_privacy.py
+  content: |
+    from privacy import mask_phone, safe_log
+
+
+    def test_masks_spaced_and_prefixed():
+        assert mask_phone("Reminder sent to +91 98765 43210") == "Reminder sent to XXXXXX3210"
+        assert mask_phone("Call 98765-43210 now") == "Call XXXXXX3210 now"
+        assert mask_phone("9876543210 and 8123456789") == "XXXXXX3210 and XXXXXX6789"
+        assert mask_phone("from 919876543210") == "from XXXXXX3210"
+
+
+    def test_leaves_other_numbers():
+        assert mask_phone("order 1234567890") == "order 1234567890"
+        assert mask_phone("ref 98765432101234") == "ref 98765432101234"
+        assert mask_phone("18% of 40 slots") == "18% of 40 slots"
+
+
+    def test_safe_log():
+        event = {"user": "meena", "phone": "+91 98765 43210", "token": "abc", "action": "sent"}
+        assert safe_log(event) == "action=sent phone=XXXXXX3210 user=meena"
+checks:
+- kind: pytest_passes
+  run: pytest -q test_privacy.py
+hints:
+- A regex with a group for the final five digits makes it easy to keep the last four.
+- Use (?<!\d) before and (?!\d) after the number so longer digit strings are left alone.
+- 'safe_log: sort the items, skip the token key and run mask_phone on str(value).'
+solution: solution/
+unlocks:
+- p5-w22-cap-011
+tags:
+- capstone
+- python
+- privacy
+- logging

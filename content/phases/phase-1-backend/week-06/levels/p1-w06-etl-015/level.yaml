@@ -76,5 +76,5 @@ hints:
   - Validate required fields before deduplication. Count each rejected input row.
   - Choose one record per normalized GSTIN by `(updated_at, source)` and sort the final keys.
 solution: solution/
-unlocks: []
+unlocks: [p2-w07-dkr-001]
 tags: [project, etl, csv, xml, data-quality, integration]

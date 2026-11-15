@@ -1,0 +1,46 @@
+id: p1-w05-ts-012
+title: Turn a rejected request into a Result
+phase: 1
+week: 5
+module: typescript-essentials
+order: 11
+difficulty: 3
+estimated_minutes: 12
+type: code
+environment: ts
+lesson: ../../lessons/02-async-and-ui.md
+task: "Implement `safeLoad` so it awaits the request and returns `{ ok: true, value }` on success or `{ ok: false, error: <message> }` when the request rejects. It must never throw."
+starter_files:
+  - path: main.ts
+    content: |-
+      type Result<T> = { ok: true; value: T } | { ok: false; error: string };
+
+      async function safeLoad<T>(request: () => Promise<T>): Promise<Result<T>> {
+        return { ok: false, error: 'not implemented' };
+      }
+
+      test('returns the value on success', async () => {
+        const result = await safeLoad(async () => 42);
+        expect(result).toEqual({ ok: true, value: 42 });
+      });
+      test('captures the error message on failure', async () => {
+        const result = await safeLoad(async () => { throw new Error('network down'); });
+        expect(result).toEqual({ ok: false, error: 'network down' });
+      });
+      test('handles non-Error rejections', async () => {
+        const result = await safeLoad(() => Promise.reject('plain text'));
+        expect(result).toEqual({ ok: false, error: 'plain text' });
+      });
+checks:
+  - kind: vitest_passes
+    label: All behaviour checks pass
+  - kind: file_contains
+    path: main.ts
+    expected: "catch"
+    label: Failures are caught
+hints:
+  - "Wrap `await request()` in try/catch."
+  - "A caught value is `unknown`: use `error instanceof Error ? error.message : String(error)`."
+solution: solution/
+unlocks: [p1-w05-ts-013]
+tags: [typescript, async, error-handling]

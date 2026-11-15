@@ -1,0 +1,48 @@
+id: p1-w05-ts-009
+title: Write a generic first-match helper
+phase: 1
+week: 5
+module: typescript-essentials
+order: 8
+difficulty: 3
+estimated_minutes: 10
+type: code
+environment: ts
+lesson: ../../lessons/01-types-and-functions.md
+task: "Implement the generic `findFirst<T>` so it returns the first item matching a predicate, or `undefined`. It must work for any item type without `any`."
+starter_files:
+  - path: main.ts
+    content: |-
+      function findFirst<T>(items: T[], predicate: (item: T) => boolean): T | undefined {
+        return undefined;
+      }
+
+      type Invoice = { id: string; amountPaise: number };
+      const invoices: Invoice[] = [
+        { id: 'A', amountPaise: 500 },
+        { id: 'B', amountPaise: 1500 },
+        { id: 'C', amountPaise: 2500 },
+      ];
+
+      test('finds the first large invoice', () => {
+        expect(findFirst(invoices, (invoice) => invoice.amountPaise > 1000)?.id).toBe('B');
+      });
+      test('works with numbers', () => {
+        expect(findFirst([3, 8, 12], (n) => n % 2 === 0)).toBe(8);
+      });
+      test('returns undefined when nothing matches', () => {
+        expect(findFirst(['a', 'b'], (s) => s === 'z')).toBe(undefined);
+      });
+checks:
+  - kind: vitest_passes
+    label: All behaviour checks pass
+  - kind: file_contains
+    path: main.ts
+    expected: "findFirst<T>"
+    label: Function is generic
+hints:
+  - "Loop over `items` and return the first item where `predicate(item)` is true."
+  - "Return `undefined` after the loop."
+solution: solution/
+unlocks: [p1-w05-ts-010]
+tags: [typescript, generics]

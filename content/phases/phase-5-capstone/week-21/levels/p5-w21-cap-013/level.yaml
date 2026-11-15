@@ -1,0 +1,102 @@
+id: p5-w21-cap-013
+title: Write the deploy runbook
+phase: 5
+week: 21
+module: capstone-build
+order: 6
+difficulty: 2
+estimated_minutes: 25
+type: writing
+environment: writing
+lesson: ../../lessons/02-ship-it-free.md
+task: |-
+  Write the short deploy runbook that goes in your README. Someone who has never seen your service should be able to deploy it, change a secret and roll back.
+
+  Name the variables but never paste a secret value.
+starter_files:
+- path: answer.md
+  content: |
+    # Deploy runbook
+
+    ## Deploy
+
+
+    ## Environment Variables
+
+
+    ## Rollback
+
+
+    ## Cost
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Deploy'
+- kind: file_contains
+  path: answer.md
+  expected: '## Environment Variables'
+- kind: file_contains
+  path: answer.md
+  expected: '## Rollback'
+- kind: file_contains
+  path: answer.md
+  expected: '## Cost'
+- kind: sim_state
+  path: word_count
+  min: 100
+  max: 350
+- kind: sim_state
+  path: section:Deploy
+  min_words: 20
+  contains_any:
+  - render
+  - railway
+  - fly
+  - git
+  - push
+- kind: sim_state
+  path: section:Environment Variables
+  min_words: 15
+  contains_any:
+  - WHATSAPP_TOKEN
+  - SHEET_ID
+  - token
+- kind: sim_state
+  path: section:Rollback
+  min_words: 15
+  contains_any:
+  - previous
+  - revert
+  - redeploy
+  - rollback
+- kind: sim_state
+  path: section:Cost
+  min_words: 8
+  contains_any:
+  - free
+  - rs.
+  - rs 
+  - ₹
+  - rupee
+  - per month
+  - a month
+- kind: checklist
+  label: Self-review
+  items:
+  - No secret value appears in the runbook
+  - The rollback steps work even if I am not reachable
+- kind: ai_rubric
+  rubric:
+  - Steps are concrete enough for a stranger to follow
+  - Secrets are named but never shown
+  min_score: 3
+hints:
+- 'Deploy: say which host, what triggers a deploy and how you know it worked (the health route).'
+- Rollback is the step people skip. Name the exact place in the dashboard where the previous deploy lives.
+solution: solution/
+unlocks:
+- p5-w21-cap-003
+tags:
+- capstone
+- deploy
+- runbook

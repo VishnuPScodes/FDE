@@ -1,0 +1,141 @@
+id: p4-w16-disc-012
+title: Interview a dental clinic owner
+phase: 4
+week: 16
+module: discovery-interviews
+order: 10
+difficulty: 2
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/02-open-questions.md
+task: |-
+  Dr. Nandini Rao owns three dental clinics in Mysuru. She thinks a WhatsApp chatbot is the answer to something, but she has not said what.
+
+  Find out how many calls the front desk handles, what happens to calls nobody answers, and what that costs. Then find out what she really wants. Use at most 9 questions, and no more than one leading or yes/no question.
+
+  Write your notes in `notes.md`. In **Numbers**, record the call volume and the rupee figure you heard.
+starter_files:
+- path: persona.json
+  content: |
+    {
+      "name": "Dr. Nandini Rao",
+      "role": "Owner and Dentist",
+      "company": "Rao Dental Care, Mysuru (3 clinics)",
+      "opening": "Namaste. My nephew says we need a WhatsApp chatbot for appointments. I have twenty minutes between patients. What do you want to know?",
+      "facts": [
+        {
+          "id": "volume",
+          "triggers": [
+            "how many",
+            "per day",
+            "a day",
+            "how often",
+            "volume"
+          ],
+          "reply": "Our front desk takes about 60 phone calls a day across the three clinics, mostly booking and rescheduling."
+        },
+        {
+          "id": "missed-calls",
+          "triggers": [
+            "walk me through",
+            "what happens",
+            "miss",
+            "busy",
+            "unanswered",
+            "process",
+            "how does"
+          ],
+          "reply": "When the receptionist is with a patient, the phone just rings. I would say one call in four goes unanswered, and most of those patients never call back."
+        },
+        {
+          "id": "lost-revenue",
+          "triggers": [
+            "cost",
+            "lose",
+            "losing",
+            "revenue",
+            "money",
+            "rupees",
+            "impact",
+            "worth"
+          ],
+          "requires": [
+            "missed-calls"
+          ],
+          "reply": "About 15 bookings a week are lost that way. A new patient is worth around ₹1,500 on the first visit, so roughly ₹90,000 a month."
+        },
+        {
+          "id": "real-goal",
+          "triggers": [
+            "success",
+            "ideal",
+            "magic wand",
+            "chatbot",
+            "why",
+            "what would you like"
+          ],
+          "reply": "The chatbot was my nephew's idea. What I want is that no patient who calls ever gets lost."
+        }
+      ],
+      "deflections": [
+        "I am a dentist, not an IT person. Ask me about the clinic.",
+        "The receptionists would know that better than I do.",
+        "Let us not talk about tools yet. What else do you want to understand?"
+      ],
+      "max_turns": 10
+    }
+- path: notes.md
+  content: |
+    # Notes: Rao Dental Care
+
+    ## Problem
+    <!-- In her words, one or two sentences. -->
+
+    ## Current workflow
+    <!-- What happens when a patient calls. -->
+
+    ## Numbers
+    <!-- Calls, missed share, bookings, rupees. -->
+
+    ## Next step
+    <!-- What you will check or ask next. -->
+checks:
+- kind: sim_state
+  path: facts_uncovered
+  contains_all:
+  - volume
+  - missed-calls
+  - lost-revenue
+  - real-goal
+  label: Uncover call volume, missed calls, lost revenue and the real goal
+- kind: sim_state
+  path: turns
+  max: 9
+- kind: sim_state
+  path: leading_questions
+  max: 1
+- kind: sim_state
+  path: section:Problem
+  min_words: 12
+- kind: sim_state
+  path: section:Numbers
+  contains_any:
+  - 90,000
+  - ₹90
+  contains_all:
+  - '60'
+- kind: sim_state
+  path: section:Next step
+  min_words: 8
+hints:
+- 'Start broad: "Can you walk me through what happens when a patient calls to book?"'
+- Money questions land better after you know how the problem works. Ask about volume first, then cost.
+solution: solution/
+unlocks:
+- p4-w16-disc-013
+tags:
+- interview
+- roleplay
+- clinic
+mobile_compatible: true

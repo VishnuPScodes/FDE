@@ -1,0 +1,80 @@
+id: p5-w21-cap-010
+title: Retry WhatsApp sends with backoff
+phase: 5
+week: 21
+module: capstone-build
+order: 2
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/01-architecture-and-milestones.md
+task: 'WhatsApp and Google Sheets calls fail now and then, and a free host makes it worse. Implement `send_with_retry` in `retry.py`: wait 1, 2, 4... seconds between attempts (doubling each time), give up after the last attempt and re-raise the error. Run `test_retry.py`.'
+starter_files:
+- path: retry.py
+  content: |
+    import time
+
+
+    def send_with_retry(send, max_attempts: int = 3, sleep=time.sleep):
+        """Call send(). If it raises, wait 1, 2, 4... seconds with sleep(delay) and try again.
+        Make at most max_attempts calls in total. Return what send() returned.
+        After the last failed call raise that exception, and do not sleep after it.
+        max_attempts below 1 raises ValueError."""
+        pass
+- path: test_retry.py
+  content: |
+    import pytest
+    from retry import send_with_retry
+
+
+    def flaky(fail_times):
+        state = {"calls": 0}
+
+        def send():
+            state["calls"] += 1
+            if state["calls"] <= fail_times:
+                raise ConnectionError(f"fail {state['calls']}")
+            return "sent"
+        return send, state
+
+
+    def test_first_try_no_sleep():
+        send, state = flaky(0)
+        sleeps = []
+        assert send_with_retry(send, sleep=sleeps.append) == "sent"
+        assert state["calls"] == 1 and sleeps == []
+
+
+    def test_backoff_doubles():
+        send, state = flaky(3)
+        sleeps = []
+        assert send_with_retry(send, max_attempts=4, sleep=sleeps.append) == "sent"
+        assert state["calls"] == 4 and sleeps == [1, 2, 4]
+
+
+    def test_gives_up_with_last_error():
+        send, state = flaky(10)
+        sleeps = []
+        with pytest.raises(ConnectionError, match="fail 3"):
+            send_with_retry(send, max_attempts=3, sleep=sleeps.append)
+        assert state["calls"] == 3 and sleeps == [1, 2]
+
+
+    def test_bad_attempts():
+        with pytest.raises(ValueError):
+            send_with_retry(lambda: 1, max_attempts=0)
+checks:
+- kind: pytest_passes
+  run: pytest -q test_retry.py
+hints:
+- Loop over the attempts. Return as soon as send() works, and catch the exception otherwise.
+- 'Double the delay after every failure: 1, 2, 4. Only sleep when another attempt is still coming.'
+- On the last attempt use a bare raise so the original error reaches the caller.
+solution: solution/
+unlocks:
+- p5-w21-cap-002
+tags:
+- capstone
+- python
+- reliability

@@ -1,0 +1,121 @@
+id: p3-w15-ops-010
+title: "Roll back a bad prompt in one call"
+phase: 3
+week: 15
+module: prompt-versioning
+order: 2
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-prompt-versioning.md
+task: |
+  At 11 pm a new prompt makes the bot rude to customers. You need to go back to the last good prompt now, without deleting anything and without a new deploy.
+
+  The registry now tracks an **active** version for each name: the one the app really uses. It may be older than the latest.
+
+  Update `PromptRegistry`:
+
+  - `register(name, template)`: as before, but the new (or matching latest) version also becomes **active**.
+  - `get(name, version=None)`: with no version, return the **active** version's text. A given version works as before.
+  - `active_version(name)`: returns the active number. Unknown name raises `KeyError`.
+  - `activate(name, version)`: make a version active. Unknown name or version raises `KeyError`.
+  - `rollback(name)`: make the version just **before the active one** active, and return its number. If the active version is 1, raise `ValueError("nothing to roll back to")`.
+
+  History is never lost. After a rollback, `register` of new text creates version `latest + 1` (not active + 1) and makes it active.
+starter_files:
+  - path: main.py
+    content: |
+      class PromptRegistry:
+          def __init__(self):
+              self._versions = {}
+              self._active = {}
+
+          def register(self, name, template):
+              versions = self._versions.setdefault(name, [])
+              if versions and versions[-1] == template:
+                  return len(versions)
+              versions.append(template)
+              return len(versions)
+
+          def get(self, name, version=None):
+              versions = self._versions[name]
+              if version is None:
+                  return versions[-1]
+              if not 1 <= version <= len(versions):
+                  raise KeyError(f"{name} has no version {version}")
+              return versions[version - 1]
+
+          def latest_version(self, name):
+              return len(self._versions[name])
+  - path: test_main.py
+    content: |
+      import pytest
+
+      from main import PromptRegistry
+
+
+      def make():
+          reg = PromptRegistry()
+          reg.register("emi", "v1 polite")
+          reg.register("emi", "v2 shorter")
+          reg.register("emi", "v3 rude")
+          return reg
+
+
+      def test_register_activates_new_version():
+          reg = make()
+          assert reg.active_version("emi") == 3
+          assert reg.get("emi") == "v3 rude"
+
+
+      def test_rollback_goes_back_one_and_keeps_history():
+          reg = make()
+          assert reg.rollback("emi") == 2
+          assert reg.get("emi") == "v2 shorter"
+          assert reg.latest_version("emi") == 3
+          assert reg.get("emi", 3) == "v3 rude"
+          assert reg.rollback("emi") == 1
+          assert reg.get("emi") == "v1 polite"
+
+
+      def test_cannot_roll_back_past_version_one():
+          reg = make()
+          reg.activate("emi", 1)
+          with pytest.raises(ValueError):
+              reg.rollback("emi")
+
+
+      def test_new_version_after_rollback_uses_latest_plus_one():
+          reg = make()
+          reg.rollback("emi")
+          assert reg.register("emi", "v4 fixed") == 4
+          assert reg.active_version("emi") == 4
+          assert reg.get("emi") == "v4 fixed"
+
+
+      def test_registering_latest_text_again_reactivates_it():
+          reg = make()
+          reg.rollback("emi")
+          assert reg.register("emi", "v3 rude") == 3
+          assert reg.active_version("emi") == 3
+
+
+      def test_activate_and_errors():
+          reg = make()
+          reg.activate("emi", 2)
+          assert reg.get("emi") == "v2 shorter"
+          for call in (lambda: reg.activate("emi", 9), lambda: reg.activate("nope", 1), lambda: reg.active_version("nope")):
+              with pytest.raises(KeyError):
+                  call()
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Keep two things per name: the list of versions (never shrinks) and one number saying which is active."
+  - "`get` with no version must read the active number, not `len(versions)`. Otherwise rollback changes nothing for the app."
+  - "Rollback only changes the active number. Never `pop()` from the version list; you want to keep the bad version for the post-mortem."
+solution: solution/
+unlocks: [p3-w15-ops-011]
+tags: [prompts, rollback, release]

@@ -1,0 +1,60 @@
+id: p6-w24-mock-008
+title: 'Mock coding round: dedupe a customer list'
+phase: 6
+week: 24
+module: mock-loop
+order: 8
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-mock-loop.md
+task: |-
+  Mock coding round, aim for 25 minutes and talk aloud. A Jaipur jewellery retailer merged two customer lists and wants duplicates removed.
+
+  Implement `dedupe_customers` in `customers.py`. Two rows are the same customer when their phone numbers match after normalising: keep only the digits, then if 12 digits start with `91`, drop that country code once. Keep the first row seen, and keep the order. Skip rows with no usable phone. Run `test_customers.py`.
+timed: true
+starter_files:
+- path: customers.py
+  content: |
+    def dedupe_customers(rows: list[dict]) -> list[dict]:
+        """rows: [{"name": "Asha", "phone": "+91 98765-43210"}, ...].
+        Normalise phones to 10 digits. Return rows with unique phones, first one wins,
+        original order kept. Rows whose phone does not normalise to 10 digits are dropped.
+        """
+        pass
+- path: test_customers.py
+  content: |
+    from customers import dedupe_customers
+
+    ROWS = [
+        {"name": "Asha", "phone": "+91 98765-43210"},
+        {"name": "Asha K", "phone": "9876543210"},
+        {"name": "Ravi", "phone": "91 91234 56789"},
+        {"name": "Nobody", "phone": ""},
+        {"name": "Short", "phone": "12345"},
+        {"name": "Meena", "phone": "98765 43211"},
+    ]
+
+
+    def test_dedupe():
+        names = [r["name"] for r in dedupe_customers(ROWS)]
+        assert names == ["Asha", "Ravi", "Meena"]
+
+
+    def test_empty():
+        assert dedupe_customers([]) == []
+checks:
+- kind: pytest_passes
+  run: pytest -q test_customers.py
+hints:
+- Keep only digits with a generator over the string, then drop a leading 91 if 12 digits remain.
+- Track seen phones in a set and append a row only the first time.
+- Say aloud what you assume about a missing "phone" key, and use row.get("phone", "").
+solution: solution/
+unlocks:
+- p6-w24-mock-009
+tags:
+- mock
+- python
+- dedupe

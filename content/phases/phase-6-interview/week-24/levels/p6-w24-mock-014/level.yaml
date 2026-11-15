@@ -1,0 +1,100 @@
+id: p6-w24-mock-014
+title: Script your one-minute demo video
+phase: 6
+week: 24
+module: portfolio-polish
+order: 14
+difficulty: 3
+estimated_minutes: 25
+type: writing
+environment: writing
+lesson: ../../lessons/02-portfolio-polish.md
+task: >-
+  One minute of video beats five paragraphs. Write a spoken script for a one-minute demo of your
+  project with the headings Problem, Demo, Result and Next. Keep it under 180 words. State the
+  customer's problem in their words, say what the viewer will see on screen, give one honest number
+  and name the source of that number (test data, pilot or a practice scenario).
+starter_files:
+  - path: answer.md
+    content: |
+      # One-minute demo script
+
+      ## Problem
+      <!-- The customer's pain in one or two sentences. -->
+
+      ## Demo
+      <!-- What is on screen, step by step. -->
+
+      ## Result
+      <!-- One number and where it came from. -->
+
+      ## Next
+      <!-- What you would build next. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Problem'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Demo'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Result'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Next'
+  - kind: sim_state
+    path: word_count
+    min: 80
+    max: 180
+  - kind: sim_state
+    path: section:Problem
+    min_words: 15
+  - kind: sim_state
+    path: section:Demo
+    min_words: 30
+    contains_any:
+      - screen
+      - click
+      - upload
+      - you will see
+  - kind: sim_state
+    path: section:Result
+    min_words: 12
+  - kind: file_contains
+    path: answer.md
+    label: Result gives a number
+    is_regex: true
+    expected: '## Result[^#]*\d'
+  - kind: sim_state
+    path: section:Result
+    contains_any:
+      - test data
+      - pilot
+      - practice
+  - kind: sim_state
+    path: section:Next
+    min_words: 10
+  - kind: checklist
+    label: Self-review
+    items:
+      - The script fits in about 60 seconds when read aloud
+      - No real customer data, keys or personal names appear
+      - The number says where it came from
+  - kind: ai_rubric
+    rubric:
+      - The problem is told from the customer's point of view
+      - The demo steps are concrete and the result is honest
+    min_score: 3
+hints:
+  - Open with the customer's problem in their own words, not with your tech stack.
+  - Describe what the viewer sees, in order, in plain words.
+  - Label the number honestly, for example "on test data" or "in a practice scenario".
+solution: solution/
+unlocks:
+  - p6-w24-mock-015
+tags:
+  - mock
+  - portfolio
+  - demo
+mobile_compatible: true

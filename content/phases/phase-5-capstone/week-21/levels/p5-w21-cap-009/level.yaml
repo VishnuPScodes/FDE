@@ -1,0 +1,44 @@
+id: p5-w21-cap-009
+title: Prove real users are using it
+phase: 5
+week: 21
+module: capstone-build
+order: 15
+difficulty: 3
+estimated_minutes: 30
+type: realworld
+environment: realworld
+lesson: ../../lessons/03-iterate-with-the-customer.md
+task: |-
+  Checkpoint for week 21: real users have used your system on real work.
+
+  1. Add a usage ping to your app. Each real use sends a small event to the platform with your checker token. Send only counts and event names, never personal data like names or phone numbers.
+  2. Let your customer use it for at least three working days.
+  3. Enter your live health URL below and run the checks.
+
+  We check that the service is live and that usage pings arrived with your token. Get a checker token from the button in the workspace.
+starter_files:
+- path: submission.json
+  content: |
+    {
+      "url": "",
+      "repo": ""
+    }
+checks:
+- kind: live_url
+  url_field: url
+  expect_status: 200
+  contains: ok
+  label: Service is still live
+- kind: checker_token
+  label: Usage pings received from your app
+hints:
+- Send the ping after the real action succeeds, not on page load, or your numbers will be too high.
+- Never put patient names, phone numbers or message text in a ping. An event name and a count are enough.
+- If no pings arrive, check that the token is set as an environment variable on your host.
+solution: solution/
+unlocks: [p5-w22-cap-001]
+tags:
+- capstone
+- usage
+- realworld

@@ -1,0 +1,114 @@
+id: p5-w20-cap-004
+title: Write up your real discovery notes
+phase: 5
+week: 20
+module: capstone-discovery
+order: 4
+difficulty: 3
+estimated_minutes: 45
+type: writing
+environment: writing
+lesson: ../../lessons/02-discovery-for-real.md
+task: |-
+  Meet your real customer for 30-45 minutes. Afterwards, write your notes in `answer.md` the same day, while you still remember their words.
+
+  Fill every section. Put at least two numbers in **Pain and Numbers** (time, count, rupees). Put their exact words in **Quotes**. These notes become the baseline for week 22 and the first page of your case study.
+starter_files:
+- path: answer.md
+  content: |
+    # Discovery notes
+
+    ## Who I Met
+
+
+    ## Current Workflow
+
+
+    ## Pain and Numbers
+
+
+    ## Quotes
+
+
+    ## Data and Access
+
+
+    ## Open Questions
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Who I Met'
+- kind: file_contains
+  path: answer.md
+  expected: '## Current Workflow'
+- kind: file_contains
+  path: answer.md
+  expected: '## Pain and Numbers'
+- kind: file_contains
+  path: answer.md
+  expected: '## Quotes'
+- kind: file_contains
+  path: answer.md
+  expected: '## Data and Access'
+- kind: file_contains
+  path: answer.md
+  expected: '## Open Questions'
+- kind: sim_state
+  path: word_count
+  min: 150
+  max: 900
+- kind: sim_state
+  path: section:Current Workflow
+  min_words: 30
+- kind: sim_state
+  path: section:Pain and Numbers
+  min_words: 25
+  contains_any:
+  - '%'
+  - rs
+  - ₹
+  - hours
+  - minutes
+  - per day
+  - per week
+  - a day
+  - a week
+- kind: sim_state
+  path: section:Quotes
+  min_words: 10
+  contains_any:
+  - '"'
+  - “
+- kind: sim_state
+  path: section:Data and Access
+  min_words: 20
+  contains_any:
+  - consent
+  - permission
+  - access
+  - owner
+- kind: sim_state
+  path: section:Open Questions
+  min_words: 10
+- kind: checklist
+  label: Self-review
+  items:
+  - I met a real person, not an imagined one
+  - I wrote these notes within 24 hours of the meeting
+  - I did not pitch my solution in the first half of the meeting
+- kind: ai_rubric
+  rubric:
+  - Workflow is described step by step
+  - Pain is quantified
+  - Data access is legitimate and explicit
+  min_score: 3
+hints:
+- If you only have adjectives ("slow", "messy"), go back and ask how many and how long.
+- Quotes need quotation marks. Copy the words they used, not your summary.
+- Data and Access should say who owns the data and what permission you have.
+solution: solution/
+unlocks:
+- p5-w20-cap-010
+tags:
+- capstone
+- discovery

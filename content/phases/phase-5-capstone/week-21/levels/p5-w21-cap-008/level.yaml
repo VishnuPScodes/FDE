@@ -1,0 +1,98 @@
+id: p5-w21-cap-008
+title: Log a real requirement change
+phase: 5
+week: 21
+module: capstone-build
+order: 12
+difficulty: 2
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/03-iterate-with-the-customer.md
+task: |-
+  Your real customer will ask for at least one change. Log it in `answer.md` the day it comes up.
+
+  **Impact** says what it costs in days or effort. **Decision** says what the customer chose, including anything that moved out. **Updated Timeline** has the new dates. Share this with your customer so the record is shared.
+starter_files:
+- path: answer.md
+  content: |
+    # Change request
+
+    ## Request
+
+
+    ## Reason
+
+
+    ## Impact
+
+
+    ## Decision
+
+
+    ## Updated Timeline
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Request'
+- kind: file_contains
+  path: answer.md
+  expected: '## Reason'
+- kind: file_contains
+  path: answer.md
+  expected: '## Impact'
+- kind: file_contains
+  path: answer.md
+  expected: '## Decision'
+- kind: file_contains
+  path: answer.md
+  expected: '## Updated Timeline'
+- kind: sim_state
+  path: word_count
+  min: 80
+  max: 450
+- kind: sim_state
+  path: section:Request
+  min_words: 8
+- kind: sim_state
+  path: section:Reason
+  min_words: 10
+- kind: sim_state
+  path: section:Impact
+  min_words: 10
+  contains_any:
+  - day
+  - hour
+  - week
+  - effort
+- kind: sim_state
+  path: section:Decision
+  min_words: 10
+  contains_any:
+  - accepted
+  - rejected
+  - deferred
+  - moved
+  - agreed
+- kind: sim_state
+  path: section:Updated Timeline
+  min_words: 6
+- kind: checklist
+  label: Self-review
+  items:
+  - My customer saw this log
+  - I did not start building the change before the decision
+- kind: ai_rubric
+  rubric:
+  - Impact is honest and specific
+  - Decision names a trade-off
+  min_score: 3
+hints:
+- A change with no cost is rare. Even small changes need testing time.
+- Decision should name who decided and what moved to make room.
+solution: solution/
+unlocks:
+- p5-w21-cap-014
+tags:
+- capstone
+- change-request

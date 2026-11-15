@@ -1,0 +1,80 @@
+id: p4-w17-dec-003
+title: MVP and Architecture for a kirana distributor
+phase: 4
+week: 17
+module: gudcmarr-framework
+order: 3
+difficulty: 2
+estimated_minutes: 15
+type: decomposition
+environment: writing
+lesson: ../../lessons/01-gudcmarr-framework.md
+task: >-
+  Gupta Traders is a kirana distributor in Indore. About 120 shops send orders by WhatsApp voice
+  notes and photos of handwritten lists. Two staff type them into Tally every evening, about 3 hours
+  a day. Wrong items cause returns.
+
+
+  Write the **MVP** (the smallest thing you can test in two weeks) and the **Architecture** (boxes
+  and arrows, in words or with arrows like ->).
+starter_files:
+  - path: answer.md
+    content: |
+      # MVP and Architecture for a kirana distributor
+
+      ## MVP
+      <!-- Smallest test. One group of customers, one change. -->
+
+      ## Architecture
+      <!-- Boxes and arrows. Keep it short. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## MVP'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Architecture'
+  - kind: sim_state
+    path: word_count
+    min: 56
+    max: 205
+  - kind: sim_state
+    path: section:MVP
+    min_words: 20
+    contains_any:
+      - two weeks
+      - pilot
+      - 10 shops
+      - ten shops
+      - only
+  - kind: sim_state
+    path: section:Architecture
+    min_words: 20
+    contains_any:
+      - '->'
+      - →
+      - sheet
+      - webhook
+  - kind: checklist
+    label: Self-review
+    items:
+      - The MVP is small enough for two weeks
+      - A human checks the output before it reaches Tally
+      - The architecture reads left to right with arrows
+  - kind: ai_rubric
+    rubric:
+      - MVP is small and testable in two weeks
+      - Architecture is simple and matches the MVP
+      - A human check is included
+    min_score: 3
+hints:
+  - A good MVP leaves things out on purpose. Voice notes and photos can wait.
+  - Draw the flow as one line of arrows from the first message to the final Tally entry.
+solution: solution/
+unlocks:
+  - p4-w17-dec-004
+tags:
+  - decomposition
+  - mvp
+  - architecture
+mobile_compatible: true

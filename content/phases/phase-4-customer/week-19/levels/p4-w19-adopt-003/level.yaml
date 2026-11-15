@@ -1,0 +1,151 @@
+id: p4-w19-adopt-003
+title: Find out what the audience wants to see
+phase: 4
+week: 19
+module: demo-storytelling
+order: 3
+difficulty: 3
+estimated_minutes: 15
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/01-demo-storytelling.md
+task: >-
+  Suresh Kumar is the branch manager of a co-operative bank in Kozhikode. You will demo to his team
+  next week. Before building your script, find out who will attend, what the board has asked him,
+  what worries the staff, and how long you will have.
+
+
+  Ask at most 7 questions with no leading questions. Then write a demo plan in `notes.md`.
+starter_files:
+  - path: persona.json
+    content: |
+      {
+        "name": "Suresh Kumar",
+        "role": "Branch Manager",
+        "company": "Malabar Co-operative Bank, Kozhikode",
+        "opening": "Good morning. My team is curious about your tool, and a bit nervous. Our demo is next Thursday. What do you need from me?",
+        "facts": [
+          {
+            "id": "attendees",
+            "triggers": [
+              "who will",
+              "who is",
+              "who else",
+              "attend",
+              "in the room"
+            ],
+            "reply": "Me, three loan officers, and Kavya from internal audit. She is strict."
+          },
+          {
+            "id": "board-ask",
+            "triggers": [
+              "board",
+              "head office",
+              "asked you",
+              "expects",
+              "expect"
+            ],
+            "reply": "Head office wants faster loan approvals. They have asked me to show a number."
+          },
+          {
+            "id": "worry",
+            "triggers": [
+              "worry",
+              "worries",
+              "concern",
+              "nervous",
+              "afraid",
+              "scared"
+            ],
+            "reply": "The officers worry it will take their jobs. Kavya worries about anything that decides without a human."
+          },
+          {
+            "id": "time",
+            "triggers": [
+              "how long",
+              "how much time",
+              "slot",
+              "minutes"
+            ],
+            "reply": "You get twenty minutes, before lunch. Not a minute more."
+          },
+          {
+            "id": "data",
+            "triggers": [
+              "data",
+              "sample",
+              "files",
+              "example"
+            ],
+            "reply": "I can give you one anonymised housing loan file from last month."
+          }
+        ],
+        "closing": "I have a customer waiting. Please send me your plan by email.",
+        "deflections": [
+          "I'm not sure what you mean. Can you ask that another way?",
+          "I'd rather you ask me how things work today."
+        ],
+        "max_turns": 12
+      }
+  - path: notes.md
+    content: |
+      # Demo plan: Kozhikode branch
+
+      ## Audience
+      <!-- Who is in the room. -->
+
+      ## What they care about
+      <!-- Each group and their worry. -->
+
+      ## Demo plan
+      <!-- What you will show and how long. -->
+checks:
+  - kind: sim_state
+    path: facts_uncovered
+    contains_all:
+      - attendees
+      - board-ask
+      - worry
+      - time
+  - kind: sim_state
+    path: turns
+    max: 7
+  - kind: sim_state
+    path: leading_questions
+    max: 0
+  - kind: sim_state
+    path: section:Audience
+    min_words: 8
+    contains_any:
+      - suresh
+      - officer
+      - manager
+      - auditor
+  - kind: sim_state
+    path: section:What they care about
+    min_words: 20
+    contains_any:
+      - audit
+      - time
+      - job
+  - kind: sim_state
+    path: section:Demo plan
+    min_words: 20
+    contains_any:
+      - 20 minutes
+      - minutes
+  - kind: ai_rubric
+    rubric:
+      - Demo plan speaks to each audience group
+      - Plan fits the time slot
+    min_score: 3
+hints:
+  - Ask who will be in the room first, since each person cares about something different.
+  - Ask what worries the team, then plan a moment in the demo that answers it.
+solution: solution/
+unlocks:
+- p4-w19-adopt-004
+tags:
+  - roleplay
+  - demo
+mobile_compatible: true

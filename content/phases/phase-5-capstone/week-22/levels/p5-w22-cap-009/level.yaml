@@ -1,0 +1,74 @@
+id: p5-w22-cap-009
+title: Turn daily no-shows into a weekly trend
+phase: 5
+week: 22
+module: capstone-measure
+order: 3
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-measure-before-and-after.md
+task: A four-week pilot gives you daily rates, but customers read weekly trends. Implement `weekly_averages` and `first_week_below` in `trend.py` using ISO weeks, and skip days with no data. Run `test_trend.py`.
+starter_files:
+- path: trend.py
+  content: |
+    from datetime import date
+
+
+    def weekly_averages(daily: list) -> dict:
+        """daily is a list of (iso_date, rate) pairs such as ("2026-11-02", 18.0).
+        Group them by ISO week, labelled like "2026-W45" or "2027-W01" (two-digit week, from date.isocalendar()),
+        and return {label: average rate rounded to 1 decimal}, oldest week first.
+        Skip pairs whose rate is None."""
+        pass
+
+
+    def first_week_below(weekly: dict, target: float):
+        """Return the first week label (in dict order) whose average is below target,
+        or None if no week is."""
+        pass
+- path: test_trend.py
+  content: |
+    from trend import weekly_averages, first_week_below
+
+    DAILY = [
+        ("2026-11-02", 18.0), ("2026-11-03", 16.0), ("2026-11-08", 14.0),
+        ("2026-11-09", 12.0), ("2026-11-10", 10.0), ("2026-11-10", None),
+        ("2026-11-16", 8.0),
+    ]
+
+
+    def test_weeks():
+        assert weekly_averages(DAILY) == {"2026-W45": 16.0, "2026-W46": 11.0, "2026-W47": 8.0}
+
+
+    def test_order_is_oldest_first():
+        shuffled = list(reversed(DAILY))
+        assert list(weekly_averages(shuffled)) == ["2026-W45", "2026-W46", "2026-W47"]
+
+
+    def test_year_boundary_uses_iso_year():
+        assert weekly_averages([("2026-12-31", 10.0), ("2027-01-01", 12.0)]) == {"2026-W53": 11.0}
+
+
+    def test_first_below():
+        weekly = weekly_averages(DAILY)
+        assert first_week_below(weekly, 10.0) == "2026-W47"
+        assert first_week_below(weekly, 8.0) is None  # equal to target is not below
+        assert first_week_below(weekly, 5.0) is None
+        assert first_week_below({}, 10.0) is None
+checks:
+- kind: pytest_passes
+  run: pytest -q test_trend.py
+hints:
+- date.fromisoformat(text).isocalendar() gives (iso_year, iso_week, weekday). Use the ISO year, not the calendar year.
+- Collect rates in lists per week label, then average and round. sorted() on the labels gives oldest first.
+- Below target means strictly less than the target.
+solution: solution/
+unlocks:
+- p5-w22-cap-003
+tags:
+- capstone
+- python
+- metrics

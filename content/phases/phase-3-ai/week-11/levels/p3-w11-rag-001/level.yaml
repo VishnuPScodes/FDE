@@ -1,0 +1,78 @@
+id: p3-w11-rag-001
+title: Clean text extracted from a PDF circular
+phase: 3
+week: 11
+module: document-parsing
+order: 1
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/01-parsing-and-chunking.md
+task: |
+  Text pulled out of a bank's PDF circular is messy. Clean it before chunking.
+
+  Write `clean_text(raw)`:
+
+  - Remove whole lines that are page markers like `Page 3 of 12` (any case, spaces around are fine).
+  - Join words split across lines with a hyphen: `pay-\nment` becomes `payment`.
+  - Inside a paragraph, join remaining single line breaks with a space.
+  - Paragraphs are separated by one or more blank lines; keep exactly one blank line between them.
+  - Collapse runs of spaces and tabs to one space and strip each paragraph.
+
+  Return the cleaned string with no leading or trailing whitespace.
+starter_files:
+- path: main.py
+  content: |
+    import re
+
+
+    def clean_text(raw):
+        pass
+- path: test_main.py
+  content: |
+    from main import clean_text
+
+    RAW = """RBI/2024-25/31   Master Circular
+    Customers must report un-
+    authorised   transactions within
+    three days.
+
+    Page 1 of 4
+
+
+    Banks shall credit the
+    amount within 10 working days.
+      PAGE 2 OF 4
+    """
+
+
+    def test_cleans_circular():
+        assert clean_text(RAW) == (
+            "RBI/2024-25/31 Master Circular Customers must report unauthorised transactions within three days."
+            "\n\n"
+            "Banks shall credit the amount within 10 working days."
+        )
+
+
+    def test_keeps_real_hyphens():
+        assert clean_text("co-operative bank") == "co-operative bank"
+
+
+    def test_empty():
+        assert clean_text("  \n\n ") == ""
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Remove page lines first with a multi-line regex like `^\s*page\s+\d+\s+of\s+\d+\s*$` and `re.IGNORECASE | re.MULTILINE`.
+- 'Fix hyphenated breaks before you split into paragraphs: `re.sub(r"(\w)-\n(\w)", r"\1\2", text)`.'
+solution: solution/
+unlocks:
+- p3-w11-rag-002
+tags:
+- rag
+- parsing
+- pdf
+mobile_compatible: false

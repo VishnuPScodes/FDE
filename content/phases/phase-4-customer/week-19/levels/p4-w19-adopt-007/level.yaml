@@ -1,0 +1,153 @@
+id: p4-w19-adopt-007
+title: Talk to a worried clerk
+phase: 4
+week: 19
+module: change-management
+order: 7
+difficulty: 4
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/02-change-management.md
+task: >-
+  Lalitha Menon has been a senior clerk at a co-operative bank for 22 years. She has heard about the
+  new tool and seems cold. Your goal is to listen, not to persuade.
+
+
+  In at most 8 questions with no leading questions, learn what she worries about, what part of her
+  work she dislikes, what would help her trust it, and who she asks for help. Then write your next
+  steps in `notes.md`.
+starter_files:
+  - path: persona.json
+    content: |
+      {
+        "name": "Lalitha Menon",
+        "role": "Senior Clerk",
+        "company": "Periyar Co-operative Bank, Aluva",
+        "opening": "So you are the people with the new machine. I have been here 22 years. I do not know what you want from me.",
+        "facts": [
+          {
+            "id": "worry",
+            "triggers": [
+              "worry",
+              "worries",
+              "concern",
+              "afraid",
+              "nervous",
+              "on your mind",
+              "how do you feel"
+            ],
+            "reply": "If the machine makes a mistake, who gets blamed? Me. And they will say a young person can run it better."
+          },
+          {
+            "id": "dislike",
+            "triggers": [
+              "tiring",
+              "tired",
+              "dislike",
+              "least like",
+              "boring",
+              "tedious",
+              "hardest",
+              "frustrat",
+              "walk me through"
+            ],
+            "reply": "Honestly, the worst part is the first hour of every day, checking scans page by page. My eyes hurt."
+          },
+          {
+            "id": "trust",
+            "triggers": [
+              "trust",
+              "confident",
+              "comfortable",
+              "would help",
+              "make you"
+            ],
+            "requires": [
+              "worry"
+            ],
+            "reply": "If I can see why it flagged something and I can say no to it, I would trust it. If it just decides, never."
+          },
+          {
+            "id": "help",
+            "triggers": [
+              "who do you",
+              "who helps",
+              "ask for help",
+              "go to",
+              "turn to"
+            ],
+            "reply": "The newer clerks ask me. I explain the forms to them. If I say it is fine, they use it."
+          }
+        ],
+        "closing": "I have files to finish. Please come back with something concrete.",
+        "deflections": [
+          "I'm not sure what you mean. Can you ask that another way?",
+          "I'd rather you ask me how things work today."
+        ],
+        "max_turns": 12
+      }
+  - path: notes.md
+    content: |
+      # Notes: Lalitha Menon
+
+      ## What she worries about
+      <!-- In her own words. -->
+
+      ## What she wants
+      <!-- What would make this good for her. -->
+
+      ## Next step
+      <!-- One thing you will do. -->
+checks:
+  - kind: sim_state
+    path: facts_uncovered
+    contains_all:
+      - worry
+      - dislike
+      - trust
+      - help
+  - kind: sim_state
+    path: turns
+    max: 8
+  - kind: sim_state
+    path: leading_questions
+    max: 0
+  - kind: sim_state
+    path: section:What she worries about
+    min_words: 12
+    contains_any:
+      - job
+      - mistake
+      - blame
+  - kind: sim_state
+    path: section:What she wants
+    min_words: 12
+    contains_any:
+      - scan
+      - checking
+      - hour
+  - kind: sim_state
+    path: section:Next step
+    min_words: 12
+    contains_any:
+      - sit
+      - session
+      - show
+      - train
+  - kind: ai_rubric
+    rubric:
+      - Learner listens and does not argue or sell
+      - Next step involves her as a champion, not a target
+    min_score: 3
+hints:
+  - Begin by asking how she feels. Do not explain the tool yet.
+  - Ask what part of her work she finds most tiring. That is where the tool helps her.
+  - She is respected by others. Ask who comes to her for help.
+solution: solution/
+unlocks:
+- p4-w19-adopt-008
+tags:
+  - roleplay
+  - adoption
+mobile_compatible: true

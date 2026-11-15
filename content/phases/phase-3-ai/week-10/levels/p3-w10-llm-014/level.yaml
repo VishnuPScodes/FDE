@@ -1,0 +1,88 @@
+id: p3-w10-llm-014
+title: Sample one token with temperature and top-p
+phase: 3
+week: 10
+module: llm-fundamentals
+order: 12
+difficulty: 4
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/02-sampling-temperature-top-p.md
+task: |
+  You have built softmax with temperature and top-p separately. Now put them together the way a real model server picks the next token.
+
+  Write `sample_token(logits, temperature, top_p, u)`:
+
+  - `logits` is a dict `{token: score}`. `u` is a random number in `[0, 1)` that the caller supplies, so your function stays deterministic.
+  - If `temperature <= 0`, return the highest-scoring token (greedy). Ties go to the token that sorts first alphabetically.
+  - Otherwise compute softmax of `logit / temperature` (subtract the max logit first for stability).
+  - Sort tokens by probability, highest first (ties alphabetically). Keep the smallest prefix whose cumulative probability is `>= top_p`.
+  - Renormalise the kept probabilities, then walk them in order and return the first token where `u` is less than the running total. If rounding leaves you past the end, return the last kept token.
+starter_files:
+- path: main.py
+  content: |
+    import math
+
+
+    def sample_token(logits, temperature, top_p, u):
+        pass
+- path: test_main.py
+  content: |
+    from main import sample_token
+
+    LOGITS = {"a": 2.0, "b": 1.0, "c": 0.0}
+
+
+    def test_greedy_when_temperature_zero():
+        assert sample_token(LOGITS, 0, 1.0, 0.99) == "a"
+
+
+    def test_greedy_tie_breaks_alphabetically():
+        assert sample_token({"b": 1.0, "a": 1.0}, 0, 1.0, 0.5) == "a"
+
+
+    def test_top_p_removes_the_tail():
+        # probabilities 0.665, 0.245, 0.090 -> top_p 0.9 keeps a and b only
+        assert sample_token(LOGITS, 1.0, 0.9, 0.5) == "a"
+        assert sample_token(LOGITS, 1.0, 0.9, 0.80) == "b"
+        assert sample_token(LOGITS, 1.0, 0.9, 0.999) == "b"
+
+
+    def test_kept_probabilities_are_renormalised():
+        # kept a=0.665, b=0.245 -> renormalised a=0.731, so u=0.7 still picks a
+        assert sample_token(LOGITS, 1.0, 0.9, 0.7) == "a"
+
+
+    def test_large_logits_do_not_overflow():
+        assert sample_token({"a": 1000.0, "b": 999.0}, 1.0, 1.0, 0.5) == "a"
+        assert sample_token({"a": 1000.0, "b": 999.0}, 1.0, 1.0, 0.9) == "b"
+
+
+    def test_full_distribution_reaches_the_tail():
+        assert sample_token(LOGITS, 1.0, 1.0, 0.99) == "c"
+
+
+    def test_high_temperature_flattens():
+        assert sample_token(LOGITS, 100.0, 1.0, 0.5) == "b"
+
+
+    def test_low_temperature_sharpens():
+        assert sample_token(LOGITS, 0.1, 1.0, 0.99) == "a"
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Build a list of `(token, prob)` and sort with `key=lambda x: (-x[1], x[0])`.'
+- Top-p keeps the token that crosses the threshold, so stop *after* adding it, not before.
+- Divide the kept probabilities by their sum before you compare against `u`.
+solution: solution/
+unlocks:
+- p3-w10-llm-015
+tags:
+- llm
+- sampling
+- temperature
+- top-p
+mobile_compatible: false

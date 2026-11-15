@@ -1,0 +1,73 @@
+id: p3-w12-eval-007
+title: 'nDCG with graded relevance'
+phase: 3
+week: 12
+module: retrieval-metrics
+order: 3
+difficulty: 4
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/02-retrieval-metrics.md
+task: |
+  Not every relevant chunk is equally good. A chunk with the exact refund rule is worth more than one that only mentions refunds.
+  nDCG handles grades (0 = useless, 3 = perfect).
+
+  - `dcg(gains)`: `sum(gain / log2(i + 2))` for `i = 0, 1, 2...` (so the first position is divided by `log2(2) = 1`).
+  - `ndcg_at_k(retrieved, grades, k)`: `grades` is a dict `{id: grade}`; ids not in it have grade 0. Take the gains of the top `k`
+    retrieved ids, compute `dcg`, then divide by the DCG of the **ideal** order (all grades sorted high to low, top `k`).
+    If the ideal DCG is 0, return `0.0`. Round to 4 places.
+
+  Example: grades `{"a":3,"b":2,"d":1}`, retrieved `["b","a","c"]`, k=3 gives 0.8175.
+starter_files:
+- path: main.py
+  content: |
+    import math
+
+
+    def dcg(gains):
+        pass
+
+
+    def ndcg_at_k(retrieved, grades, k):
+        pass
+- path: test_main.py
+  content: |
+    from main import dcg, ndcg_at_k
+
+    GRADES = {"a": 3, "b": 2, "d": 1}
+
+
+    def test_dcg():
+        assert round(dcg([3, 2, 1]), 4) == 4.7619
+        assert dcg([]) == 0
+
+
+    def test_ndcg_imperfect():
+        assert ndcg_at_k(["b", "a", "c"], GRADES, 3) == 0.8175
+
+
+    def test_ndcg_perfect_and_zero():
+        assert ndcg_at_k(["a", "b", "d"], GRADES, 3) == 1.0
+        assert ndcg_at_k(["x", "y"], GRADES, 3) == 0.0
+        assert ndcg_at_k(["a"], {}, 3) == 0.0
+
+
+    def test_k_cuts_both_sides():
+        # ideal for k=1 is just grade 3 -> 'b' (grade 2) gives 2/3
+        assert ndcg_at_k(["b", "a"], GRADES, 1) == 0.6667
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Positions start at 0 in `enumerate`, so the discount is `math.log2(i + 2)`.'
+- 'The ideal list is `sorted(grades.values(), reverse=True)[:k]`. Divide the actual DCG by the ideal DCG so a perfect ranking scores 1.0.'
+solution: solution/
+unlocks:
+- p3-w12-eval-008
+tags:
+- evals
+- metrics
+- ndcg
+mobile_compatible: false

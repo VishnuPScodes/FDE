@@ -1,0 +1,38 @@
+id: p3-w13-agent-015
+title: Redact personal data from the approval audit log
+phase: 3
+week: 13
+module: human-in-the-loop
+order: 14
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-human-in-the-loop.md
+task: |
+  Auditors want a log of every tool call and who approved it. But the arguments can hold a customer's phone number, Aadhaar or PAN, and the audit log is read by many more people than the support chat. Log what happened, not the personal data.
+
+  In `audit.py`, write two functions.
+
+  `redact(value, sensitive=SENSITIVE_KEYS)` returns a cleaned copy of `value`:
+
+  - In a dict, any key whose lowercase form is in `sensitive` gets the value `"[REDACTED]"`. Other values are cleaned the same way, at any depth, including inside lists.
+  - A string longer than `MAX_TEXT` (100) characters becomes its first 100 characters plus `"...[+N chars]"`, where N is how many were cut.
+  - Anything else is returned unchanged.
+  - Never change the input.
+
+  `audit_entry(tool_call, approval, reviewer=None)` returns `{"tool", "arguments", "approval", "reviewer"}` with the arguments redacted. A missing `arguments` becomes `{}`.
+starter_files:
+  - path: audit.py
+  - path: test_audit.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_audit.py
+    label: Audit redaction tests pass
+hints:
+  - "`redact` calls itself for dict values and list items. Build new dicts and lists with comprehensions instead of editing the old ones."
+  - "Check `isinstance(value, dict)` and `isinstance(value, list)` before the string case, and compare `str(key).lower()` with the sensitive set."
+  - "A 130-character string keeps `value[:100]` and adds `f\"...[+{len(value) - 100} chars]\"`."
+solution: solution/
+unlocks: [p3-w13-agent-012]
+tags: [human-in-the-loop, audit, pii, redaction]

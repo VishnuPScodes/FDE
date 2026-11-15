@@ -1,0 +1,90 @@
+id: p5-w22-cap-001
+title: Write a measurement plan with baseline
+phase: 5
+week: 22
+module: capstone-measure
+order: 1
+difficulty: 3
+estimated_minutes: 30
+type: writing
+environment: writing
+lesson: ../../lessons/01-measure-before-and-after.md
+task: |-
+  Write how you will measure impact. Use real numbers from your customer's records for the baseline.
+
+  **Baseline** must contain a number and the dates it covers. **After Window** has the same length. **Method** says exactly how you count. **Confounders** lists things other than your system that could change the number (festivals, exams, a new staff member).
+starter_files:
+- path: answer.md
+  content: |
+    # Measurement plan
+
+    ## Metric
+
+
+    ## Baseline
+
+
+    ## After Window
+
+
+    ## Method
+
+
+    ## Confounders
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Metric'
+- kind: file_contains
+  path: answer.md
+  expected: '## Baseline'
+- kind: file_contains
+  path: answer.md
+  expected: '## After Window'
+- kind: file_contains
+  path: answer.md
+  expected: '## Method'
+- kind: file_contains
+  path: answer.md
+  expected: '## Confounders'
+- kind: sim_state
+  path: word_count
+  min: 120
+  max: 550
+- kind: sim_state
+  path: section:Baseline
+  min_words: 15
+  contains_any:
+  - '%'
+  - hours
+  - minutes
+  - rs
+  - ₹
+- kind: sim_state
+  path: section:After Window
+  min_words: 8
+- kind: sim_state
+  path: section:Method
+  min_words: 20
+- kind: sim_state
+  path: section:Confounders
+  min_words: 15
+- kind: checklist
+  label: Self-review
+  items:
+  - The baseline comes from real customer records
+  - Before and after windows are the same length
+- kind: ai_rubric
+  rubric:
+  - Baseline is concrete and sourced
+  - Method is repeatable by someone else
+  min_score: 3
+hints:
+- A baseline needs a number and dates, for example 18% for 13 Oct - 9 Nov.
+- Think of what else changed during the pilot. Holidays and staff changes are common.
+solution: solution/
+unlocks:
+- p5-w22-cap-002
+tags:
+- capstone
+- metrics

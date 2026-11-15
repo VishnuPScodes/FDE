@@ -1,0 +1,177 @@
+id: p5-w20-cap-003
+title: Practice discovery with a clinic owner
+phase: 5
+week: 20
+module: capstone-discovery
+order: 3
+difficulty: 3
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/02-discovery-for-real.md
+task: |-
+  Before you meet your real customer, practise on Dr. Anjali Sharma. She runs a physiotherapy clinic in Pune and is losing patients to no-shows.
+
+  You have 12 questions at most. Find out:
+
+  - how bookings work today and how much time the reminder calls take,
+  - the no-show rate and what it costs in rupees,
+  - what they tried before, where the data lives and what success looks like to her.
+
+  Use open questions. Leading questions ("Don't you think…", "Do you…") waste turns. Write what you learn in `notes.md`, including the no-show number and the success target.
+starter_files:
+- path: persona.json
+  content: |
+    {
+      "name": "Dr. Anjali Sharma",
+      "role": "Owner and lead physiotherapist",
+      "company": "Sharma Physiotherapy, Kothrud, Pune",
+      "opening": "Hello Priya. I have about fifteen minutes before my next patient. Meena said you wanted to understand our bookings?",
+      "facts": [
+        {
+          "id": "workflow",
+          "triggers": [
+            "walk me through",
+            "how do bookings",
+            "how does booking",
+            "what happens when",
+            "typical day",
+            "normal day"
+          ],
+          "reply": "Patients call or WhatsApp Meena. She writes the slot in a Google Sheet. Every morning she phones everyone booked for the day."
+        },
+        {
+          "id": "call-time",
+          "triggers": [
+            "how long",
+            "how much time",
+            "how many calls"
+          ],
+          "requires": [
+            "workflow"
+          ],
+          "reply": "About 40 calls a day. It takes her most of the morning, roughly three hours."
+        },
+        {
+          "id": "no-show-rate",
+          "triggers": [
+            "how many patients",
+            "no-show",
+            "no show",
+            "miss",
+            "don't turn up",
+            "do not turn up"
+          ],
+          "reply": "Even after the calls, 7 or 8 patients a day don't come. That's close to one in five."
+        },
+        {
+          "id": "cost",
+          "triggers": [
+            "cost",
+            "lose",
+            "money",
+            "rupees",
+            "revenue"
+          ],
+          "requires": [
+            "no-show-rate"
+          ],
+          "reply": "Each session is 800 rupees. An empty slot is just lost. It adds up to over a lakh a month."
+        },
+        {
+          "id": "tried-before",
+          "triggers": [
+            "tried",
+            "before",
+            "in the past",
+            "already"
+          ],
+          "reply": "We tried SMS reminders from a vendor last year. Patients ignored them, and it cost 2,000 a month, so we stopped."
+        },
+        {
+          "id": "data-location",
+          "triggers": [
+            "data",
+            "where is",
+            "stored",
+            "sheet",
+            "records"
+          ],
+          "reply": "Everything is in one Google Sheet: name, phone, slot, therapist. Meena and I have edit access."
+        },
+        {
+          "id": "success",
+          "triggers": [
+            "success",
+            "what would good",
+            "look like",
+            "in a month",
+            "ideal"
+          ],
+          "reply": "If no-shows dropped to maybe 3 or 4 a day and Meena got her mornings back, I'd be very happy."
+        }
+      ],
+      "deflections": [
+        "Hmm, I'm not sure what you mean. Could you ask it another way?",
+        "That's a yes or no question. Ask me how things actually work here.",
+        "I don't really know about technology. Ask me about the clinic."
+      ],
+      "max_turns": 15
+    }
+- path: notes.md
+  content: |
+    # Discovery notes
+
+    ## Workflow
+
+    ## Numbers
+
+    ## What they tried
+
+    ## Data
+
+    ## Success in their words
+checks:
+- kind: sim_state
+  path: facts_uncovered
+  contains_all:
+  - workflow
+  - call-time
+  - no-show-rate
+  - cost
+  - tried-before
+  - data-location
+  - success
+  label: Uncover the key facts
+- kind: sim_state
+  path: turns
+  max: 12
+  label: Finish in 12 questions
+- kind: sim_state
+  path: leading_questions
+  max: 1
+  label: At most one leading question
+- kind: file_contains
+  path: notes.md
+  expected: '800'
+  label: Notes record the cost per session
+- kind: file_contains
+  path: notes.md
+  expected: SMS
+  label: Notes record what they tried
+- kind: ai_rubric
+  rubric:
+  - Questions are open and about the current workflow
+  - Notes capture numbers usable as a baseline
+  min_score: 3
+hints:
+- Start with 'Walk me through…' to get the workflow. Time and cost questions make more sense after that.
+- Ask what they tried before and where the records are kept. People rarely volunteer either.
+- Money questions only land after she has told you how many patients miss their slot.
+solution: solution/
+unlocks:
+- p5-w20-cap-004
+tags:
+- capstone
+- discovery
+- roleplay

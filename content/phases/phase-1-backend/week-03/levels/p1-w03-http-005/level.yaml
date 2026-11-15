@@ -19,4 +19,5 @@ checks:
 hints:
   - Add the same `Idempotency-Key` header to both requests.
   - A safe retry returns the result saved for the first request, including its payment ID.
+unlocks: [p1-w03-http-007]
 tags: [http, idempotency, retries, payments]

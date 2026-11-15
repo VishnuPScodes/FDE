@@ -1,0 +1,54 @@
+id: p1-w03-fa-005
+title: Hide fields with a response model
+phase: 1
+week: 3
+module: fastapi-basics
+order: 5
+difficulty: 4
+estimated_minutes: 14
+type: code
+environment: python
+lesson: ../../lessons/03-fastapi-in-process.md
+task: "`POST /users` currently returns everything it stores, including `password`. Add a `UserOut` response model with only `id` and `email`, use it as the route's `response_model`, and return status 201."
+starter_files:
+  - path: main.py
+    content: |
+      from fastapi import FastAPI
+      from pydantic import BaseModel
+
+      app = FastAPI()
+
+      class UserIn(BaseModel):
+          email: str
+          password: str
+
+      @app.post("/users")
+      async def create_user(user: UserIn):
+          return {"id": 1, "email": user.email, "password": user.password}
+  - path: test_api.py
+    content: |
+      import pytest
+      from httpx import ASGITransport, AsyncClient
+      from main import app
+
+      @pytest.mark.asyncio
+      async def test_create_user_hides_password():
+          async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+              response = await client.post("/users", json={"email": "a@example.com", "password": "s3cret"})
+          assert response.status_code == 201
+          assert response.json() == {"id": 1, "email": "a@example.com"}
+
+      @pytest.mark.asyncio
+      async def test_missing_password_is_rejected():
+          async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+              response = await client.post("/users", json={"email": "a@example.com"})
+          assert response.status_code == 422
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_api.py
+    expected: 0
+    label: Response model tests pass
+hints:
+  - Define a second Pydantic model that lists only the fields clients may see.
+  - Use `@app.post("/users", response_model=UserOut, status_code=201)`; FastAPI filters the returned dictionary through the model.
+tags: [fastapi, response-model, security]

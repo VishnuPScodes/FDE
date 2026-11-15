@@ -1,0 +1,66 @@
+id: p3-w12-eval-002
+title: 'Validate rows: duplicates and empties'
+phase: 3
+week: 12
+module: golden-datasets
+order: 2
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/01-golden-datasets.md
+task: |
+  A bad row in a golden dataset silently ruins every score. Check the rows before you trust them.
+
+  Write `validate_golden(rows)` that returns a **sorted** list of problem strings:
+
+  - `"duplicate_id:ID"` once for each id that appears more than once.
+  - `"empty_question:ID"` for a row whose `question` is empty or only spaces.
+  - `"no_relevant:ID"` for a row whose `relevant_ids` is empty, **unless** its `tags` list contains `"unanswerable"`.
+    (An unanswerable question is a good test: the right behaviour is to say "I don't know".)
+
+  A row may have no `tags` key at all. Return `[]` when everything is fine.
+starter_files:
+- path: main.py
+  content: |
+    def validate_golden(rows):
+        pass
+- path: test_main.py
+  content: |
+    from main import validate_golden
+
+
+    def row(i, q="What is the UPI limit?", rel=("upi#1",), tags=()):
+        return {"id": i, "question": q, "relevant_ids": list(rel), "tags": list(tags)}
+
+
+    def test_clean():
+        assert validate_golden([row("a"), row("b")]) == []
+
+
+    def test_duplicates_once():
+        rows = [row("a"), row("a"), row("a"), row("b")]
+        assert validate_golden(rows) == ["duplicate_id:a"]
+
+
+    def test_empty_question_and_no_relevant():
+        rows = [row("a", q="   "), row("b", rel=()), row("c", rel=(), tags=["unanswerable"])]
+        assert validate_golden(rows) == ["empty_question:a", "no_relevant:b"]
+
+
+    def test_missing_tags_key():
+        assert validate_golden([{"id": "z", "question": "hi", "relevant_ids": []}]) == ["no_relevant:z"]
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- '`collections.Counter` counts ids for you. Report a duplicate id once, not once per extra copy.'
+- 'Use `r.get("tags", [])` so rows without tags do not crash, and `.strip()` before checking if a question is empty.'
+solution: solution/
+unlocks:
+- p3-w12-eval-003
+tags:
+- evals
+- validation
+mobile_compatible: false

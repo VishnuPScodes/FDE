@@ -1,0 +1,63 @@
+id: p2-w09-obs-002
+title: Group errors by status and type
+phase: 2
+week: 9
+module: structured-logging
+order: 2
+difficulty: 2
+estimated_minutes: 10
+type: console
+environment: observability
+lesson: ../../lessons/01-structured-logging.md
+task: |-
+  Same incident. You know the payments service is failing. Now find out *how*.
+
+  Run two queries in the Logs tab:
+
+  1. `service:payments level:error | count by status`
+  2. `service:payments level:error | count by error_type`
+
+  Report the most common HTTP status and the most common error_type.
+starter_files:
+  - path: scenario.json
+    content: |
+      {
+        "scenario": "db-pool-exhaustion",
+        "seed": 7
+      }
+checks:
+  - kind: sim_command_used
+    pattern: ^logs> .*service:payments.*\|\s*count by status
+    label: Grouped by status
+  - kind: sim_command_used
+    pattern: ^logs> .*service:payments.*\|\s*count by error_type
+    label: Grouped by error_type
+  - kind: sim_state
+    path: answer:status
+    prompt: Most common HTTP status among payments errors
+    options:
+      - '500'
+      - '502'
+      - '503'
+      - '504'
+    expected_fact: payments_top_error_status
+  - kind: sim_state
+    path: answer:error_type
+    prompt: Most common error_type
+    options:
+      - DbError
+      - PoolTimeout
+      - UpstreamError
+      - TlsError
+    expected: PoolTimeout
+hints:
+  - Group with "| count by status" and then again with "| count by error_type".
+  - The top row of each table is the most common value.
+  - A 503 with PoolTimeout points at a shared resource running out, not a bug in one request.
+solution: solution/
+unlocks:
+  - p2-w09-obs-003
+tags:
+  - observability
+  - logs
+  - aggregation

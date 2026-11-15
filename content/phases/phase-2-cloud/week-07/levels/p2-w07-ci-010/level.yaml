@@ -1,0 +1,34 @@
+id: p2-w07-ci-010
+title: "Debug a failing pipeline"
+phase: 2
+week: 7
+module: github-actions-cicd
+order: 25
+difficulty: 4
+estimated_minutes: 25
+type: console
+environment: ci
+lesson: ../../lessons/05-github-actions-pipelines.md
+task: "The pipeline is red and nobody knows why. Push to main, read the log, and fix every problem you find. There is more than one. Keep going until the run is green. Tip: the log tells you the first problem. Fix it and push again."
+starter_files:
+  - path: "app.py"
+    content: "def order_total(price, qty):\n    return price + qty\n\n\ndef apply_discount(price, percent):\n    return price - price * percent / 100\n"
+  - path: "test_app.py"
+    content: "from app import apply_discount, order_total\n\n\ndef test_order_total():\n    assert order_total(250, 3) == 750\n\n\ndef test_apply_discount():\n    assert apply_discount(200, 10) == 180\n"
+  - path: "requirements.txt"
+    content: "pytest==8.3.3\nruff==0.7.4\n"
+  - path: "README.md"
+    content: "# orders-api\n\nOrder service for Acme Pay.\n"
+  - path: ".github/workflows/ci.yml"
+    content: "name: CI\non: push\njobs:\n  test:\n    runs-on: ubuntu-lastest\n    steps:\n      - uses: actions/checkout@v9\n      - uses: actions/setup-python@v9\n        with:\n          python-version: '3.12'\n      - run: pip install -r requirements.txt\n      - run: pytest\n"
+checks:
+  - {"kind": "sim_state", "path": "runs", "contains": "CI push main completed/success", "label": "The latest run is green"}
+  - {"kind": "sim_state", "path": "log", "contains": "2 passed", "label": "Both tests pass"}
+  - {"kind": "sim_state", "path": "file:app.py", "contains": "price * qty", "label": "The order_total bug is fixed in app.py"}
+hints:
+  - "Read the first red step. The runner label is not valid. GitHub-hosted labels look like ubuntu-latest."
+  - "Next, an action version does not exist. Real versions are actions/checkout@v4 and actions/setup-python@v5."
+  - "When the tests run, read the assertion. order_total(250, 3) should be 750, so check the operator in app.py."
+solution: solution/
+unlocks: [p2-w08-aws-001]
+tags: ["ci", "debugging"]

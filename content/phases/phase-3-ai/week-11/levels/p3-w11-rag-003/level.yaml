@@ -1,0 +1,76 @@
+id: p3-w11-rag-003
+title: Parse a GST rate table into records
+phase: 3
+week: 11
+module: document-parsing
+order: 3
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/01-parsing-and-chunking.md
+task: |
+  Tables in documents often reach you as pipe-separated text. Turn them into dicts so each
+  row can become its own searchable chunk.
+
+  Write `parse_table(text)`:
+
+  - The first non-empty line is the header. Cells are separated by `|`; ignore leading and trailing pipes.
+  - Skip separator lines made only of `|`, `-`, `:` and spaces.
+  - Strip each cell. Header names become lower case with spaces replaced by `_`.
+  - A row with a different number of cells than the header raises `ValueError` with the line number (1-based).
+
+  Then write `row_to_text(row)` that returns `"key: value; key: value"` in header order.
+starter_files:
+- path: main.py
+  content: |
+    def parse_table(text):
+        pass
+
+
+    def row_to_text(row):
+        pass
+- path: test_main.py
+  content: |
+    import pytest
+
+    from main import parse_table, row_to_text
+
+    TABLE = """
+    | HSN Code | Description        | GST Rate |
+    |----------|:-------------------|---------:|
+    | 0401     | Fresh milk         | 0%       |
+    | 2106     | Namkeen, bhujia    | 12%      |
+    """
+
+
+    def test_parse():
+        assert parse_table(TABLE) == [
+            {"hsn_code": "0401", "description": "Fresh milk", "gst_rate": "0%"},
+            {"hsn_code": "2106", "description": "Namkeen, bhujia", "gst_rate": "12%"},
+        ]
+
+
+    def test_row_to_text():
+        row = {"hsn_code": "0401", "description": "Fresh milk", "gst_rate": "0%"}
+        assert row_to_text(row) == "hsn_code: 0401; description: Fresh milk; gst_rate: 0%"
+
+
+    def test_bad_row():
+        with pytest.raises(ValueError, match="3"):
+            parse_table("a | b\n--|--\n1 | 2 | 3")
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Trim the outer pipes before splitting, or you get empty first and last cells.
+- A separator line matches `^[\s|:\-]+$`. Skip it before treating any line as data.
+solution: solution/
+unlocks:
+- p3-w11-rag-004
+tags:
+- rag
+- parsing
+- tables
+mobile_compatible: false

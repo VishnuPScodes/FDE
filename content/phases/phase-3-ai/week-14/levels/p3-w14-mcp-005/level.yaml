@@ -1,0 +1,39 @@
+id: p3-w14-mcp-005
+title: Scope MCP tools by token
+phase: 3
+week: 14
+module: mcp-servers
+order: 5
+difficulty: 4
+estimated_minutes: 35
+type: code
+environment: python
+lesson: ../../lessons/01-mcp-servers.md
+task: |
+  Two clients use your claims MCP server. A WhatsApp bot may only read. A claims officer's assistant may also approve claims. Each tool in `TOOLS` now has a `scope`.
+
+  In `auth.py`, write `handle_with_auth(request, token)`:
+
+  - Unknown or missing token: error `-32001` `"Unauthorized"` for requests. Notifications still get `None`.
+  - `tools/list`: return only tools whose `scope` the token has.
+  - `tools/call` for a tool whose scope the token lacks: error `-32003` with message `"Forbidden: approve_claim needs claims:write"`. The tool must not run.
+  - Everything else: pass to `handle()` from `server.py`.
+
+  Hiding a tool from the list is not enough. A client can still send a call for a tool it never saw. Do not change `server.py`, and do not change the `TOOLS` dict while filtering.
+starter_files:
+  - path: auth.py
+  - path: server.py
+  - path: mcp_host.py
+  - path: schema_check.py
+  - path: test_auth.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_auth.py
+    label: MCP auth tests pass
+hints:
+  - Check the scope for `tools/call` before you call `handle()`. Filtering after the call is too late, because the tool already ran.
+  - "For `tools/list`, call `handle()` first, then build a new list with only the allowed tools."
+  - Unknown tool names can go straight to `handle()`. It already returns the right error.
+solution: solution/
+unlocks: [p3-w14-mcp-006]
+tags: [mcp, auth, permissions, least-privilege]

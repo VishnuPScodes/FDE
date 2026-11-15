@@ -1,0 +1,77 @@
+id: p5-w21-cap-011
+title: Load secrets from the environment
+phase: 5
+week: 21
+module: capstone-build
+order: 4
+difficulty: 2
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/02-ship-it-free.md
+task: On a free host the token lives in environment variables, never in your repo. Implement `load_config` and `mask` in `config.py`. Missing or blank names must fail loudly at start-up, and logs must never show a full secret. Run `test_config.py`.
+starter_files:
+- path: config.py
+  content: |
+    REQUIRED = ["WHATSAPP_TOKEN", "SHEET_ID"]
+
+
+    def load_config(env: dict) -> dict:
+        """Read settings from env (a dict of strings, like os.environ).
+        Missing or blank names in REQUIRED raise ValueError("Missing: A, B") with names sorted.
+        Return {"whatsapp_token", "sheet_id", "port": int (default 8000), "debug": bool}.
+        debug is True when DEBUG is 1, true or yes in any case."""
+        pass
+
+
+    def mask(value: str) -> str:
+        """Hide a secret for logs: stars for every character except the last 4.
+        Values of 4 characters or fewer become all stars."""
+        pass
+- path: test_config.py
+  content: |
+    import pytest
+    from config import load_config, mask
+
+    GOOD = {"WHATSAPP_TOKEN": "abc123", "SHEET_ID": "sheet-9"}
+
+
+    def test_defaults():
+        cfg = load_config(GOOD)
+        assert cfg == {"whatsapp_token": "abc123", "sheet_id": "sheet-9", "port": 8000, "debug": False}
+
+
+    def test_port_and_debug():
+        cfg = load_config({**GOOD, "PORT": "10000", "DEBUG": "True"})
+        assert cfg["port"] == 10000 and cfg["debug"] is True
+        assert load_config({**GOOD, "DEBUG": "yes"})["debug"] is True
+        assert load_config({**GOOD, "DEBUG": "false"})["debug"] is False
+        assert load_config({**GOOD, "DEBUG": "0"})["debug"] is False
+
+
+    def test_missing_lists_sorted_names():
+        with pytest.raises(ValueError) as err:
+            load_config({"SHEET_ID": "  "})
+        assert str(err.value) == "Missing: SHEET_ID, WHATSAPP_TOKEN"
+
+
+    def test_mask():
+        assert mask("EAAGabcdef1234") == "**********1234"
+        assert mask("abcd") == "****"
+        assert mask("abcde") == "*bcde"
+        assert mask("") == ""
+checks:
+- kind: pytest_passes
+  run: pytest -q test_config.py
+hints:
+- 'A blank value counts as missing: use env.get(name, '''').strip().'
+- Sort the missing names before you join them, so the error message is stable.
+- mask keeps only the last 4 characters. Build the stars from len(value) - 4.
+solution: solution/
+unlocks:
+- p5-w21-cap-012
+tags:
+- capstone
+- python
+- config
+- secrets

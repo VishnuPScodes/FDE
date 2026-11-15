@@ -1,0 +1,82 @@
+id: p4-w19-adopt-004
+title: Open the demo with the pain
+phase: 4
+week: 19
+module: demo-storytelling
+order: 4
+difficulty: 2
+estimated_minutes: 15
+type: writing
+environment: writing
+lesson: ../../lessons/01-demo-storytelling.md
+task: 'You are about to demo a WhatsApp reminder tool to Sunrise Clinics. Their six front desk staff spend
+  about 2 hours a day each on reminder calls, and about 18% of patients, nearly one in five, miss their appointment.
+
+
+  Write the spoken opening for the demo, then say which screen you show first and why. Start with their
+  problem, not with your tool.'
+starter_files:
+- path: answer.md
+  content: |
+    # Open the demo with the pain
+
+    ## Opening
+    <!-- Spoken, 50 to 90 words. Start with their problem. -->
+
+    ## First screen
+    <!-- Which screen you show first, and why. -->
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Opening'
+- kind: file_contains
+  path: answer.md
+  expected: '## First screen'
+- kind: sim_state
+  path: word_count
+  min: 57
+  max: 182
+- kind: sim_state
+  path: section:Opening
+  min_words: 40
+  contains_any:
+  - your
+  - you
+- kind: sim_state
+  path: section:First screen
+  min_words: 15
+  contains_any:
+  - because
+  - screen
+- kind: file_contains
+  path: answer.md
+  expected: 2 hours
+  label: Uses the customer's own number
+- kind: file_contains
+  path: answer.md
+  expected: one (patient )?in five|18\s?%|1 in 5
+  is_regex: true
+  label: Mentions the no-show rate
+- kind: checklist
+  label: Self-review
+  items:
+  - A busy reader can find the main point in the first two lines
+  - Every number has a source or is marked as an assumption
+  - I removed jargon the customer would not use
+- kind: ai_rubric
+  rubric:
+  - Opens with the audience problem, not the product
+  - Specific numbers from the customer
+  - Plain spoken language
+  min_score: 3
+hints:
+- Say their number back to them in the first sentence.
+- Pick the screen they use every day, not the one that looks best.
+solution: solution/
+unlocks:
+- p4-w19-adopt-005
+tags:
+- demo
+- story
+- writing
+mobile_compatible: true

@@ -1,0 +1,144 @@
+id: p5-w21-cap-015
+title: Interview a pilot user
+phase: 5
+week: 21
+module: capstone-build
+order: 14
+difficulty: 3
+estimated_minutes: 15
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/03-iterate-with-the-customer.md
+task: |-
+  Meena put you in touch with Rahul, a patient who has received your reminders. Learn how the service feels from the user's side, not the clinic's.
+
+  In at most 8 questions find out what happened, what he did next, what was unclear, what timing suits him and what would make it more useful. Avoid leading questions.
+
+  Write what you learned in `notes.md`. It must mention `Marathi` and the word `confirm`.
+starter_files:
+- path: persona.json
+  content: |-
+    {
+      "name": "Rahul Deshmukh",
+      "role": "Patient",
+      "company": "Sharma Physiotherapy, Kothrud, Pune",
+      "opening": "Hi, Meena said you wanted a quick chat about the reminder messages? I have ten minutes.",
+      "facts": [
+        {
+          "id": "received",
+          "triggers": [
+            "walk me through",
+            "what happened when",
+            "first reminder",
+            "when you got",
+            "received"
+          ],
+          "reply": "I got a WhatsApp from the clinic the evening before my 6pm slot saying 'Reply YES to confirm'."
+        },
+        {
+          "id": "reaction",
+          "triggers": [
+            "what did you do",
+            "then what",
+            "how did you react"
+          ],
+          "requires": [
+            "received"
+          ],
+          "reply": "I replied 'yes ok' but nothing happened. I wasn't sure I was confirmed, so I phoned Meena anyway."
+        },
+        {
+          "id": "language",
+          "triggers": [
+            "unclear",
+            "confus",
+            "hard to",
+            "understand"
+          ],
+          "requires": [
+            "received"
+          ],
+          "reply": "The message was only in English. My mother books for herself and could not read it. She needed me to translate."
+        },
+        {
+          "id": "timing",
+          "triggers": [
+            "what time",
+            "how early",
+            "timing",
+            "too early",
+            "too late"
+          ],
+          "reply": "The evening before is okay, but a second nudge two hours before would help. I forget by afternoon."
+        },
+        {
+          "id": "value",
+          "triggers": [
+            "useful",
+            "helpful",
+            "value",
+            "improve",
+            "better"
+          ],
+          "requires": [
+            "received"
+          ],
+          "reply": "It is useful. If replying 'yes' worked and it came in Marathi for my mother, I would tell others."
+        }
+      ],
+      "deflections": [
+        "Sorry, I didn't follow. Could you ask that differently?",
+        "Yes, I suppose. What else do you want to know?"
+      ],
+      "max_turns": 12
+    }
+- path: notes.md
+  content: |
+    # User feedback notes
+
+    ## What happened
+
+    ## Problems
+
+    ## Ideas
+checks:
+- kind: sim_state
+  path: facts_uncovered
+  contains_all:
+  - received
+  - reaction
+  - language
+  - timing
+  - value
+  label: Uncover the key facts
+- kind: sim_state
+  path: turns
+  max: 8
+  label: Finish in 8 questions
+- kind: sim_state
+  path: leading_questions
+  max: 1
+  label: At most one leading question
+- kind: file_contains
+  path: notes.md
+  expected: Marathi
+- kind: file_contains
+  path: notes.md
+  expected: confirm
+- kind: ai_rubric
+  rubric:
+  - Learner asked about behaviour before asking for opinions
+  - Notes separate problems from ideas
+  min_score: 3
+hints:
+- Start with 'walk me through' the moment he received the message. The reaction question needs that first.
+- Ask what was unclear. Real users rarely volunteer language problems.
+- Finish by asking what would make it more useful, then turn each answer into a note.
+solution: solution/
+unlocks:
+- p5-w21-cap-009
+tags:
+- capstone
+- iterate
+- roleplay
+- user-research

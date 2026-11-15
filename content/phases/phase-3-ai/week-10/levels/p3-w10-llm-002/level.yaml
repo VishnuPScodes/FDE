@@ -1,0 +1,73 @@
+id: p3-w10-llm-002
+title: Project monthly cost and pick the cheapest model
+phase: 3
+week: 10
+module: llm-fundamentals
+order: 2
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/01-tokens-context-and-cost.md
+task: |
+  The bot handles a steady stream of chats. Finance wants a monthly number.
+
+  Write `monthly_cost_usd(calls_per_day, avg_input_tokens, avg_output_tokens, pricing, days=30)`.
+  `pricing` is a dict like `{"input": 0.10, "output": 0.50}` in dollars per million tokens.
+  Round the result to 2 decimal places.
+
+  Then write `cheapest_model(models, calls_per_day, avg_input_tokens, avg_output_tokens)`.
+  `models` maps a model name to its pricing dict. Return the name with the lowest monthly
+  cost. If two cost the same, return the name that sorts first alphabetically.
+starter_files:
+- path: main.py
+  content: |
+    def monthly_cost_usd(calls_per_day, avg_input_tokens, avg_output_tokens, pricing, days=30):
+        pass
+
+
+    def cheapest_model(models, calls_per_day, avg_input_tokens, avg_output_tokens):
+        pass
+- path: test_main.py
+  content: |
+    from main import cheapest_model, monthly_cost_usd
+
+    MODELS = {
+        "small-fast": {"input": 0.10, "output": 0.50},
+        "frontier": {"input": 4.00, "output": 20.00},
+        "mid": {"input": 2.00, "output": 10.00},
+    }
+
+
+    def test_monthly_cost():
+        # 2,000 chats/day * 30 days, 900 in + 250 out tokens each
+        assert monthly_cost_usd(2000, 900, 250, MODELS["frontier"]) == 516.0
+        assert monthly_cost_usd(2000, 900, 250, MODELS["small-fast"]) == 12.9
+
+
+    def test_custom_days():
+        assert monthly_cost_usd(100, 1000, 0, {"input": 1.0, "output": 1.0}, days=1) == 0.1
+
+
+    def test_cheapest_model():
+        assert cheapest_model(MODELS, 2000, 900, 250) == "small-fast"
+
+
+    def test_tie_breaks_alphabetically():
+        tied = {"zeta": {"input": 1, "output": 1}, "alpha": {"input": 1, "output": 1}}
+        assert cheapest_model(tied, 10, 10, 10) == "alpha"
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Total calls in the month is `calls_per_day * days`. Multiply that by the cost of one call.
+- '`min(sorted(models), key=...)` returns the first minimum, so sorting the names first handles ties.'
+solution: solution/
+unlocks:
+- p3-w10-llm-003
+tags:
+- llm
+- cost
+- pricing
+mobile_compatible: true

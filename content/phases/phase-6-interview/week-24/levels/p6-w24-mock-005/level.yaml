@@ -1,0 +1,105 @@
+id: p6-w24-mock-005
+title: 'Mock: a STAR answer about customer disagreement'
+phase: 6
+week: 24
+module: mock-loop
+order: 5
+difficulty: 3
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/01-mock-loop.md
+task: >-
+  Interviewer prompt: "Tell me about a time you disagreed with a customer and how you handled it."
+
+
+  Write a STAR answer with headings Situation, Task, Action and Result. Use a real project from your
+  own work, or a clearly practice scenario. Keep Action the longest part, and give the Result as a
+  number.
+starter_files:
+  - path: answer.md
+    content: |
+      # Mock: a STAR answer about customer disagreement
+
+      ## Situation
+      <!-- Who, where, what was going on. -->
+
+      ## Task
+      <!-- What you had to do. -->
+
+      ## Action
+      <!-- What you did, step by step. The longest part. -->
+
+      ## Result
+      <!-- A number and what you learned. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Situation'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Task'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Action'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Result'
+  - kind: sim_state
+    path: word_count
+    min: 107
+    max: 392
+  - kind: sim_state
+    path: section:Situation
+    min_words: 20
+    contains_any:
+      - customer
+      - client
+      - owner
+      - manager
+  - kind: sim_state
+    path: section:Task
+    min_words: 12
+    contains_any:
+      - i
+      - needed
+      - had to
+  - kind: sim_state
+    path: section:Action
+    min_words: 50
+    contains_any:
+      - asked
+      - showed
+      - proposed
+  - kind: sim_state
+    path: section:Result
+    min_words: 20
+    contains_any:
+      - '%'
+      - hours
+      - ₹
+      - lakh
+  - kind: checklist
+    label: Self-review
+    items:
+      - I said it aloud and it took under two minutes
+      - My Action uses "I", not "we"
+      - The Result has a number
+  - kind: ai_rubric
+    rubric:
+      - Disagreement is handled respectfully
+      - Action is specific and the longest part
+      - Result is a number
+    min_score: 3
+hints:
+  - A good answer shows you disagreed with data, not with attitude.
+  - Use "I" in Action. Interviewers want to know what you did.
+  - End with a number and one line on what you learned.
+solution: solution/
+unlocks:
+  - p6-w24-mock-006
+tags:
+  - mock
+  - behavioural
+  - star
+mobile_compatible: true

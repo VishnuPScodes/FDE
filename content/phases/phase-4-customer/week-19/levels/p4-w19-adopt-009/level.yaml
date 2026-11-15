@@ -1,0 +1,106 @@
+id: p4-w19-adopt-009
+title: Announce the change to staff
+phase: 4
+week: 19
+module: change-management
+order: 9
+difficulty: 2
+estimated_minutes: 15
+type: writing
+environment: writing
+lesson: ../../lessons/02-change-management.md
+task: 'Periyar Co-operative Bank is rolling out the scan checking tool to 14 clerks at its Aluva branch
+  on Monday 2 March. Training is on Thursday 26 February at 3 pm. The senior clerk Lalitha Menon has tried
+  it and agreed to help. Clerks fear for their jobs; the general manager has confirmed that no jobs will be cut.
+
+
+  Write the message to the clerks with four headings: What is changing, What is not changing, When, Who
+  to ask. Be plain and calm.'
+starter_files:
+- path: answer.md
+  content: |
+    # Announce the change to staff
+
+    ## What is changing
+    <!-- One or two plain sentences. -->
+
+    ## What is not changing
+    <!-- Include the thing people fear most. -->
+
+    ## When
+    <!-- A date, not "soon". -->
+
+    ## Who to ask
+    <!-- A named person. -->
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## What is changing'
+- kind: file_contains
+  path: answer.md
+  expected: '## What is not changing'
+- kind: file_contains
+  path: answer.md
+  expected: '## When'
+- kind: file_contains
+  path: answer.md
+  expected: '## Who to ask'
+- kind: sim_state
+  path: word_count
+  min: 68
+  max: 216
+- kind: sim_state
+  path: section:What is changing
+  min_words: 15
+  contains_any:
+  - tool
+  - flag
+- kind: sim_state
+  path: section:What is not changing
+  min_words: 15
+  contains_any:
+  - job
+  - decide
+- kind: sim_state
+  path: section:When
+  min_words: 10
+  contains_any:
+  - march
+  - february
+- kind: sim_state
+  path: section:Who to ask
+  min_words: 6
+  contains_any:
+  - ask
+  - lalitha
+- kind: file_contains
+  path: answer.md
+  expected: 2 March
+  label: Gives the go-live date
+- kind: file_contains
+  path: answer.md
+  expected: Lalitha
+  label: Names the champion
+- kind: checklist
+  label: Self-review
+  items:
+  - A clerk could read this in one minute
+  - It says what does not change
+  - I removed jargon the customer would not use
+- kind: ai_rubric
+  rubric:
+  - Plain, calm language
+  - Addresses the fear of job loss directly
+  - Clear date and a named person to ask
+  min_score: 3
+hints:
+- Say what stays the same. People read announcements for threats first.
+- Name a real person, ideally a respected colleague.
+solution: solution/
+unlocks:
+- p4-w19-adopt-010
+tags:
+- adoption
+- announcement
+- writing
+mobile_compatible: true

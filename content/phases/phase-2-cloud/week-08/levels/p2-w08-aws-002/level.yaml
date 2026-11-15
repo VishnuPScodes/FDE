@@ -1,0 +1,39 @@
+id: p2-w08-aws-002
+title: "Give a user read-only access to one bucket"
+phase: 2
+week: 8
+module: aws-core
+order: 2
+difficulty: 2
+estimated_minutes: 15
+type: terminal
+environment: aws
+lesson: ../../lessons/01-aws-core.md
+task: "Create the IAM user report-reader and a managed policy ReportsReadOnly that allows only s3:GetObject on objects in fde-reports-mumbai and s3:ListBucket on the bucket. Attach it to the user. Do not attach any AWS managed policy."
+starter_files:
+  - path: .aws-seed
+    content: "aws s3 mb s3://fde-reports-mumbai\n"
+checks:
+  - kind: sim_state
+    path: "iam.can|report-reader|s3:GetObject|arn:aws:s3:::fde-reports-mumbai/jan.csv"
+    contains: "allowed"
+    label: "report-reader can read reports"
+  - kind: sim_state
+    path: "iam.can|report-reader|s3:ListBucket|arn:aws:s3:::fde-reports-mumbai"
+    contains: "allowed"
+    label: "report-reader can list the bucket"
+  - kind: sim_state
+    path: "iam.can|report-reader|s3:PutObject|arn:aws:s3:::fde-reports-mumbai/jan.csv"
+    contains: "implicitDeny"
+    label: "report-reader cannot write"
+  - kind: sim_state
+    path: "iam.user:report-reader"
+    not_contains: "arn:aws:iam::aws:policy"
+    label: "No broad AWS managed policy attached"
+hints:
+  - "ListBucket applies to the bucket ARN (arn:aws:s3:::fde-reports-mumbai). GetObject applies to the objects: arn:aws:s3:::fde-reports-mumbai/*."
+  - "Create the policy with aws iam create-policy, then attach it using the ARN: arn:aws:iam::123456789012:policy/ReportsReadOnly."
+  - "Check your work with aws iam simulate-principal-policy --policy-source-arn <user arn> --action-names s3:PutObject --resource-arns <object arn>."
+solution: solution/
+unlocks: [p2-w08-aws-003]
+tags: [aws, iam, least-privilege]

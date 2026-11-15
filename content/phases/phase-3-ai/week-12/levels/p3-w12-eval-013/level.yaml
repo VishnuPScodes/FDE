@@ -1,0 +1,75 @@
+id: p3-w12-eval-013
+title: 'Beat position bias with a swap test'
+phase: 3
+week: 12
+module: llm-as-judge
+order: 4
+difficulty: 4
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/03-llm-as-judge.md
+task: |
+  Judges have habits. A common one is position bias: when comparing two answers, the judge favours whichever came first.
+  The fix is to ask twice with the answers swapped. If the judge changes its mind, the result is a tie.
+
+  A pairwise judge here is `judge(question, first, second)` and returns `"first"`, `"second"` or `"tie"`.
+
+  - `compare(judge, question, a, b)`: call `judge(question, a, b)` and `judge(question, b, a)`. Convert both to `"A"`, `"B"` or `"tie"`
+    (in the second call, `"first"` means B). If both agree, return that. If they disagree, return `"tie"`.
+  - `position_bias_rate(judge, cases)`: `cases` is a list of `(question, a, b)`. Return the fraction of cases where the two calls disagreed,
+    rounded to 2 places (`0.0` for no cases).
+starter_files:
+- path: main.py
+  content: |
+    def compare(judge, question, a, b):
+        pass
+
+
+    def position_bias_rate(judge, cases):
+        pass
+- path: test_main.py
+  content: |
+    from main import compare, position_bias_rate
+
+
+    def always_first(question, first, second):
+        return "first"
+
+
+    def by_length(question, first, second):
+        if len(first) == len(second):
+            return "tie"
+        return "first" if len(first) > len(second) else "second"
+
+
+    def test_biased_judge_becomes_tie():
+        assert compare(always_first, "q", "short", "a much longer answer") == "tie"
+
+
+    def test_consistent_judge_keeps_winner():
+        assert compare(by_length, "q", "short", "a much longer answer") == "B"
+        assert compare(by_length, "q", "a much longer answer", "short") == "A"
+        assert compare(by_length, "q", "same", "same") == "tie"
+
+
+    def test_bias_rate():
+        cases = [("q", "x", "yy"), ("q", "aa", "b"), ("q", "k", "l"), ("q", "m", "nn")]
+        assert position_bias_rate(always_first, cases) == 1.0
+        assert position_bias_rate(by_length, cases) == 0.0
+        assert position_bias_rate(by_length, []) == 0.0
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Write a small helper that turns a verdict into A, B or tie. In the swapped call, first means the judge picked B.'
+- '`position_bias_rate` can reuse the same two calls. Count a case as biased when the two labels differ.'
+solution: solution/
+unlocks:
+- p3-w12-eval-014
+tags:
+- evals
+- llm-judge
+- bias
+mobile_compatible: false

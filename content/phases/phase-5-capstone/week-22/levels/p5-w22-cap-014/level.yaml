@@ -1,0 +1,133 @@
+id: p5-w22-cap-014
+title: Run the sign-off meeting
+phase: 5
+week: 22
+module: capstone-case-study
+order: 2
+difficulty: 3
+estimated_minutes: 15
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/03-case-study-and-sign-off.md
+task: |-
+  It is the final meeting with Dr. Anjali. Do not present: ask. Find out what she needs to see to sign off, how far she trusts the numbers, who handles problems after handover, what you may publish and what comes next.
+
+  Use at most 7 questions and avoid leading ones. Write the agreement in `notes.md`. It must mention `Diwali` and `quote`.
+starter_files:
+- path: persona.json
+  content: |-
+    {
+      "name": "Dr. Anjali Sharma",
+      "role": "Owner and lead physiotherapist",
+      "company": "Sharma Physiotherapy, Kothrud, Pune",
+      "opening": "Priya, the four weeks are nearly done. Meena says the mornings are much calmer. What do you want to go through?",
+      "facts": [
+        {
+          "id": "signoff",
+          "triggers": [
+            "sign off",
+            "need to see",
+            "accept"
+          ],
+          "reply": "A real number: no-shows lower than before, and Meena not spending her mornings on calls."
+        },
+        {
+          "id": "trust",
+          "triggers": [
+            "trust",
+            "numbers",
+            "confident",
+            "believe"
+          ],
+          "requires": [
+            "signoff"
+          ],
+          "reply": "I trust the sheet numbers. But please call out the Diwali week so nobody says it was a fluke."
+        },
+        {
+          "id": "support",
+          "triggers": [
+            "who will",
+            "handle",
+            "go wrong",
+            "breaks"
+          ],
+          "reply": "Meena checks it every morning. If it breaks she calls patients the old way and WhatsApps you."
+        },
+        {
+          "id": "publish",
+          "triggers": [
+            "publish",
+            "comfortable",
+            "case study",
+            "share"
+          ],
+          "reply": "You can use the numbers and my quote. Please say 'a Pune physiotherapy clinic' unless I approve the name."
+        },
+        {
+          "id": "next-phase",
+          "triggers": [
+            "next",
+            "later",
+            "future"
+          ],
+          "reply": "Maybe the payments idea, later. First let's run a quiet month."
+        }
+      ],
+      "deflections": [
+        "Sorry, I didn't follow. Could you ask that differently?",
+        "I'm not sure. Ask me about the clinic."
+      ],
+      "max_turns": 12
+    }
+- path: notes.md
+  content: |
+    # Sign-off notes
+
+    ## Criteria
+
+    ## Conditions
+
+    ## Publishing
+
+    ## After handover
+checks:
+- kind: sim_state
+  path: facts_uncovered
+  contains_all:
+  - signoff
+  - trust
+  - support
+  - publish
+  - next-phase
+  label: Uncover the key facts
+- kind: sim_state
+  path: turns
+  max: 7
+  label: Finish in 7 questions
+- kind: sim_state
+  path: leading_questions
+  max: 1
+  label: At most one leading question
+- kind: file_contains
+  path: notes.md
+  expected: Diwali
+- kind: file_contains
+  path: notes.md
+  expected: quote
+- kind: ai_rubric
+  rubric:
+  - Learner asked about publishing limits before writing the case study
+  - Notes record conditions and who owns support
+  min_score: 3
+hints:
+- Open with what she needs to see to sign off. The trust question comes after that.
+- Ask what she is comfortable with you publishing. Asking permission early avoids a rewrite later.
+- Ask who will handle problems after you leave. A sign-off without an owner is not finished.
+solution: solution/
+unlocks:
+- p5-w22-cap-013
+tags:
+- capstone
+- signoff
+- roleplay

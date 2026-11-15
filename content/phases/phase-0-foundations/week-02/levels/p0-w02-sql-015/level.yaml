@@ -24,5 +24,5 @@ hints:
   - "BEGIN starts the transaction and ROLLBACK discards the update."
   - "Use UPDATE ... RETURNING to inspect a change before rolling it back."
 solution: solution/
-unlocks: []
+unlocks: [p0-w02-sql-016]
 tags: [sql, transaction, rollback]

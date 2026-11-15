@@ -1,0 +1,33 @@
+id: p5-w20-cap-001
+title: Pick a capstone customer
+phase: 5
+week: 20
+module: capstone-discovery
+order: 1
+difficulty: 1
+estimated_minutes: 5
+type: quiz
+environment: quiz
+lesson: ../../lessons/01-find-your-customer.md
+task: Three friends offer you a capstone customer. Pick the one most likely to give you a real, finished project in three weeks.
+checks:
+- kind: sim_state
+  action: multiple_choice
+  label: Choose a workable customer
+  question: Which customer is the best capstone choice?
+  options:
+  - A Pune clinic owner who loses 7-8 patients a day to no-shows and can meet weekly
+  - A large bank that might share data after a six-month security review
+  - A cousin who thinks an app for everything would be cool but has no current problem
+  - An imaginary company you invent so you control all the requirements
+  expected: A Pune clinic owner who loses 7-8 patients a day to no-shows and can meet weekly
+hints:
+- Look for weekly pain, data you can access and a person with time to talk.
+- A six-month review or an invented customer will not give you a real user in three weeks.
+solution: solution/
+unlocks:
+- p5-w20-cap-002
+tags:
+- capstone
+- customer
+mobile_compatible: true

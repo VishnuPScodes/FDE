@@ -1,0 +1,101 @@
+id: p5-w21-cap-001
+title: Write your capstone architecture
+phase: 5
+week: 21
+module: capstone-build
+order: 1
+difficulty: 3
+estimated_minutes: 40
+type: writing
+environment: writing
+lesson: ../../lessons/01-architecture-and-milestones.md
+task: |-
+  Write a one-page architecture for your capstone in `answer.md`.
+
+  **Components** lists each part and the tool it runs on. **Data Flow** shows the path as arrows or numbered steps. **Failure Modes** covers at least two things that can break and what happens then. **Cost** shows monthly cost, which should be zero or close to it on free tiers.
+starter_files:
+- path: answer.md
+  content: |
+    # Architecture
+
+    ## Context
+
+
+    ## Components
+
+
+    ## Data Flow
+
+
+    ## Failure Modes
+
+
+    ## Cost
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Context'
+- kind: file_contains
+  path: answer.md
+  expected: '## Components'
+- kind: file_contains
+  path: answer.md
+  expected: '## Data Flow'
+- kind: file_contains
+  path: answer.md
+  expected: '## Failure Modes'
+- kind: file_contains
+  path: answer.md
+  expected: '## Cost'
+- kind: sim_state
+  path: word_count
+  min: 150
+  max: 600
+- kind: sim_state
+  path: section:Components
+  min_words: 25
+- kind: sim_state
+  path: section:Data Flow
+  min_words: 20
+  contains_any:
+  - ->
+  - →
+  - '1.'
+  - then
+- kind: sim_state
+  path: section:Failure Modes
+  min_words: 30
+  contains_any:
+  - retry
+  - fallback
+  - alert
+  - manual
+  - log
+- kind: sim_state
+  path: section:Cost
+  min_words: 8
+  contains_any:
+  - free
+  - rs
+  - ₹
+  - $
+  - '0'
+- kind: checklist
+  label: Self-review
+  items:
+  - The architecture uses my customer's existing tools
+  - Every failure mode has a response
+- kind: ai_rubric
+  rubric:
+  - Components fit the customer's environment
+  - Failure modes are realistic with clear responses
+  min_score: 3
+hints:
+- Your customer's existing tools (Sheets, WhatsApp, Tally, Excel) should appear in Components.
+- 'For each failure ask: who notices, and what do they do? A retry, a manual fallback or an alert.'
+solution: solution/
+unlocks:
+- p5-w21-cap-010
+tags:
+- capstone
+- architecture

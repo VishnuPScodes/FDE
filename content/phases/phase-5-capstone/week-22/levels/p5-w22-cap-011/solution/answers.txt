@@ -1,0 +1,3 @@
+Retry after a minute; if it still fails, Meena calls today's patients by hand from the printed list
+Reminders failing for Marathi names, 31 times
+Check the health page, see yesterday's failures and fall back to calling patients

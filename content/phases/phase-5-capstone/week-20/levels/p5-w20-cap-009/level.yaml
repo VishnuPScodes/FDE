@@ -1,0 +1,120 @@
+id: p5-w20-cap-009
+title: Write and sign a one-page scope
+phase: 5
+week: 20
+module: capstone-scoping
+order: 8
+difficulty: 3
+estimated_minutes: 45
+type: writing
+environment: writing
+lesson: ../../lessons/03-scope-on-one-page.md
+task: |-
+  Write a one-page scope (a small statement of work) for your capstone. Send it to your customer and ask them to reply "agreed" or sign it.
+
+  Keep it under 500 words. **MVP** is one thing you will build. **Out of Scope** has at least two items. **Timeline** has dates for build, pilot and review. **Sign-off** records who agreed and when.
+
+  Checkpoint: you are done when the customer can say the success metric in their own words.
+starter_files:
+- path: answer.md
+  content: |
+    # Scope
+
+    ## Problem
+
+
+    ## Success Metric
+
+
+    ## MVP
+
+
+    ## Out of Scope
+
+
+    ## Timeline
+
+
+    ## Data Handling
+
+
+    ## Sign-off
+checks:
+- kind: file_contains
+  path: answer.md
+  expected: '## Problem'
+- kind: file_contains
+  path: answer.md
+  expected: '## Success Metric'
+- kind: file_contains
+  path: answer.md
+  expected: '## MVP'
+- kind: file_contains
+  path: answer.md
+  expected: '## Out of Scope'
+- kind: file_contains
+  path: answer.md
+  expected: '## Timeline'
+- kind: file_contains
+  path: answer.md
+  expected: '## Data Handling'
+- kind: file_contains
+  path: answer.md
+  expected: '## Sign-off'
+- kind: sim_state
+  path: word_count
+  min: 150
+  max: 550
+- kind: sim_state
+  path: section:Success Metric
+  min_words: 10
+  contains_any:
+  - '%'
+  - from
+  - under
+  - below
+  - hours
+  - minutes
+- kind: sim_state
+  path: section:MVP
+  min_words: 20
+- kind: sim_state
+  path: section:Out of Scope
+  min_words: 10
+- kind: sim_state
+  path: section:Timeline
+  min_words: 10
+  contains_any:
+  - pilot
+  - review
+- kind: sim_state
+  path: section:Data Handling
+  min_words: 10
+- kind: sim_state
+  path: section:Sign-off
+  min_words: 8
+  contains_any:
+  - agreed
+  - signed
+  - approved
+- kind: checklist
+  label: Self-review
+  items:
+  - My customer has read this page
+  - My customer agreed in writing (message, email or signature)
+  - My customer can state the success metric in their own words
+- kind: ai_rubric
+  rubric:
+  - MVP is small enough for two weeks
+  - Out of scope protects the timeline
+  - Metric matches the problem
+  min_score: 3
+hints:
+- If the MVP section has the word 'and' more than twice, it is probably too big.
+- Sign-off can be a WhatsApp reply. Record the date and the person's name.
+solution: solution/
+unlocks: [p5-w21-cap-001]
+tags:
+- capstone
+- sow
+- scoping

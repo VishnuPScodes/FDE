@@ -1,0 +1,135 @@
+id: p4-w17-dec-015
+title: 'Decomposition checkpoint: a vague school request'
+phase: 4
+week: 17
+module: decomp-drills
+order: 15
+difficulty: 4
+estimated_minutes: 30
+type: decomposition
+environment: writing
+lesson: ../../lessons/02-decomposition-drills.md
+task: >-
+  Week 17 checkpoint. The owner of a school group in Nagpur (six schools, 4,000 students) says: "Use
+  AI to improve our results." That is all you know.
+
+
+  Fill all eight headings, and add an **Assumptions** section listing at least three things you
+  assumed. Choose a goal that can be measured, and keep the MVP small.
+timed: true
+starter_files:
+  - path: answer.md
+    content: |
+      # Decomposition checkpoint: a vague school request
+
+      ## Goal
+      <!-- Number, from, to, date. -->
+
+      ## Users
+      <!-- Who, and what each needs. -->
+
+      ## Data
+      <!-- Where it lives. How clean. -->
+
+      ## Constraints
+      <!-- Privacy, devices, budget, people. -->
+
+      ## MVP
+      <!-- Smallest test. -->
+
+      ## Architecture
+      <!-- Boxes and arrows. -->
+
+      ## Risks
+      <!-- Risk plus fix. -->
+
+      ## Rollout
+      <!-- Pilot, length, deciding number. -->
+
+      ## Assumptions
+      <!-- At least three, each one line. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Goal'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Users'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Data'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Constraints'
+  - kind: file_contains
+    path: answer.md
+    expected: '## MVP'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Architecture'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Risks'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Rollout'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Assumptions'
+  - kind: sim_state
+    path: word_count
+    min: 157
+    max: 576
+  - kind: sim_state
+    path: section:Goal
+    min_words: 12
+  - kind: sim_state
+    path: section:Users
+    min_words: 12
+  - kind: sim_state
+    path: section:Data
+    min_words: 12
+  - kind: sim_state
+    path: section:Constraints
+    min_words: 12
+  - kind: sim_state
+    path: section:MVP
+    min_words: 12
+  - kind: sim_state
+    path: section:Architecture
+    min_words: 12
+  - kind: sim_state
+    path: section:Risks
+    min_words: 12
+  - kind: sim_state
+    path: section:Rollout
+    min_words: 12
+  - kind: sim_state
+    path: section:Assumptions
+    min_words: 20
+  - kind: sim_state
+    path: section:Assumptions
+    contains_any:
+      - assume
+  - kind: checklist
+    label: Self-review
+    items:
+      - Every heading has real content, not a placeholder
+      - The Goal has a number
+      - I wrote my assumptions in plain words
+  - kind: ai_rubric
+    rubric:
+      - Goal is measurable and tied to a business result
+      - MVP is small and testable
+      - Assumptions are stated honestly
+    min_score: 3
+hints:
+  - A vague request needs a narrow first goal. Pick one subject and one exam.
+  - List your assumptions in a separate section so the owner can correct them quickly.
+solution: solution/
+unlocks:
+  - p4-w18-write-001
+tags:
+  - decomposition
+  - checkpoint
+mobile_compatible: true

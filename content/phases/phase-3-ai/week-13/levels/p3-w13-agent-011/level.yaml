@@ -1,0 +1,41 @@
+id: p3-w13-agent-011
+title: Pause the agent and resume after approval
+phase: 3
+week: 13
+module: human-in-the-loop
+order: 11
+difficulty: 4
+estimated_minutes: 40
+type: code
+environment: python
+lesson: ../../lessons/03-human-in-the-loop.md
+task: |
+  Approvals take time. The supervisor might answer on WhatsApp an hour later, after the server has restarted. So the agent must stop, save its state, and continue later.
+
+  In `agent.py`, write `start(llm, user_message, registry, max_steps=6)` and `resume(state, decision, llm, registry)`. Both return a state dict that `json.dumps` can save:
+
+  `{"status": ..., "messages": [...], "pending": None, "answer": None, "steps": 0, "max_steps": 6}`
+
+  - Loop like before: call the model, append the assistant message, stop with `status: "done"` and the `answer` when there are no tool calls. Count model calls in `steps` and stop with `status: "max_steps"` at the limit.
+  - Before running a tool call, check `needs_approval()` from `approval.py`. If it needs approval, set `status: "awaiting_approval"`, put the call in `pending`, and return without calling the model again.
+  - `resume` takes a `decision` like `{"approved": True, "reviewer": "Priya", "note": "ok"}`. If the state is not awaiting approval, raise `ValueError`. If approved, run the pending call with `dispatch()`. If not, append a tool message with `is_error: True` and content `"denied by reviewer Priya: <note>"`. Then clear `pending` and keep looping.
+
+  Each model reply in this level has at most one tool call. Do not store the `llm` or `registry` in the state.
+starter_files:
+  - path: agent.py
+  - path: approval.py
+  - path: dispatcher.py
+  - path: schema_check.py
+  - path: fake_llm.py
+  - path: test_agent.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_agent.py
+    label: Pause and resume tests pass
+hints:
+  - Put the loop in a helper `_run(state, llm, registry)` that both `start` and `resume` call.
+  - "Use `while state[\"steps\"] < state[\"max_steps\"]:` so the step count carries over a pause."
+  - The state holds only plain dicts, lists, strings and numbers. Functions and objects stay outside it.
+solution: solution/
+unlocks: [p3-w13-agent-013]
+tags: [human-in-the-loop, approvals, state, whatsapp]

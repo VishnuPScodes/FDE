@@ -1,0 +1,47 @@
+id: p4-w16-disc-003
+title: Choose the open question
+phase: 4
+week: 16
+module: discovery-interviews
+order: 1
+difficulty: 1
+estimated_minutes: 6
+type: quiz
+environment: quiz
+lesson: ../../lessons/02-open-questions.md
+task: >
+  You are interviewing the accounts team at a Coimbatore textile exporter. Pick the question that
+  will teach you the most.
+checks:
+  - kind: sim_state
+    action: multiple_choice
+    question: Which question opens up the conversation best?
+    options:
+      - Can you walk me through the last month-end close?
+      - Do you find month-end stressful?
+      - Wouldn't automation make month-end easier?
+      - Is Tally slow?
+    expected: Can you walk me through the last month-end close?
+    label: Pick an open question
+  - kind: sim_state
+    action: multiple_choice
+    question: The manager says "We need a chatbot." What is the best follow-up?
+    options:
+      - What would a chatbot let you do that you can't do today?
+      - Great, which chatbot vendor do you prefer?
+      - Don't you think a dashboard is better?
+      - Should it be on WhatsApp?
+    expected: What would a chatbot let you do that you can't do today?
+    label: Separate the request from the problem
+hints:
+  - >-
+    Open questions start with how, what, or "walk me through". They can't be answered with yes or
+    no.
+  - A stated solution hides a problem. Ask what it would change.
+solution: solution/
+unlocks:
+  - p4-w16-disc-004
+tags:
+  - questions
+  - discovery
+mobile_compatible: true

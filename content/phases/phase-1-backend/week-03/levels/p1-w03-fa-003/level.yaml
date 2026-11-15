@@ -51,4 +51,5 @@ checks:
 hints:
   - FastAPI uses the `Product` type annotation to validate incoming JSON.
   - Add `status_code=201` to the `@app.post` decorator. Keep `price` typed as `float`; validation errors return status 422 automatically.
+unlocks: [p1-w03-fa-004]
 tags: [fastapi, pydantic, request-validation]

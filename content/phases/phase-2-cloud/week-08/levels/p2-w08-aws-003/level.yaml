@@ -1,0 +1,38 @@
+id: p2-w08-aws-003
+title: "Debug a deny that wins"
+phase: 2
+week: 8
+module: aws-core
+order: 3
+difficulty: 3
+estimated_minutes: 15
+type: terminal
+environment: aws
+lesson: ../../lessons/01-aws-core.md
+task: "The intern user cannot upload to fde-reports-mumbai even though an Allow policy gives s3:*. Find the Deny, then fix it so intern can upload under uploads/ but still cannot write under archive/."
+starter_files:
+  - path: .aws-seed
+    content: "aws s3 mb s3://fde-reports-mumbai\naws iam create-user --user-name intern\naws iam put-user-policy --user-name intern --policy-name allow-s3 --policy-document '{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":\"s3:*\",\"Resource\":\"*\"}]}'\naws iam put-user-policy --user-name intern --policy-name block-writes --policy-document '{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Deny\",\"Action\":\"s3:PutObject\",\"Resource\":\"arn:aws:s3:::fde-reports-mumbai/*\"}]}'\n"
+checks:
+  - kind: sim_state
+    path: "iam.can|intern|s3:PutObject|arn:aws:s3:::fde-reports-mumbai/uploads/new.csv"
+    contains: "allowed"
+    label: "intern can upload to uploads/"
+  - kind: sim_state
+    path: "iam.can|intern|s3:PutObject|arn:aws:s3:::fde-reports-mumbai/archive/old.csv"
+    contains: "explicitDeny"
+    label: "archive/ is still protected by a Deny"
+  - kind: sim_state
+    path: "iam.can|intern|s3:GetObject|arn:aws:s3:::fde-reports-mumbai/uploads/new.csv"
+    contains: "allowed"
+    label: "intern can still read"
+  - kind: sim_command_used
+    command: "aws iam simulate-principal-policy"
+    label: "You tested with the policy simulator"
+hints:
+  - "An explicit Deny always beats an Allow. Run aws iam list-user-policies --user-name intern, then get-user-policy on each one."
+  - "The Deny uses Resource arn:aws:s3:::fde-reports-mumbai/* which covers every folder. Narrow it to arn:aws:s3:::fde-reports-mumbai/archive/*."
+  - "Overwrite the inline policy with put-user-policy using the same --policy-name, then confirm with simulate-principal-policy."
+solution: solution/
+unlocks: [p2-w08-aws-004]
+tags: [aws, iam, debugging, deny]

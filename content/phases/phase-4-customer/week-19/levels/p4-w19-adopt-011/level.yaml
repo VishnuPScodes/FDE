@@ -1,0 +1,110 @@
+id: p4-w19-adopt-011
+title: Calculate the ROI for a clinic
+phase: 4
+week: 19
+module: roi-measurement
+order: 11
+difficulty: 3
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/03-roi-measurement.md
+task: >-
+  Sunrise Clinics: 6 front desk staff each spend 2 hours a day on reminder calls, 26 days a month.
+  The loaded cost is ₹300 an hour. A reminder tool is expected to remove 60% of that work and costs
+  ₹30,000 a month.
+
+
+  Work it out step by step. Headings: Inputs, Calculation, Result, Assumptions. The Calculation must
+  show total hours, money saved and the net benefit. Write the rupee figures with commas, as in
+  1,00,000 or 93,600.
+starter_files:
+  - path: answer.md
+    content: |
+      # Calculate the ROI for a clinic
+
+      ## Inputs
+      <!-- List every number you use. -->
+
+      ## Calculation
+      <!-- Show each step. -->
+
+      ## Result
+      <!-- One clear sentence. -->
+
+      ## Assumptions
+      <!-- Every guess, marked. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Inputs'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Calculation'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Result'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Assumptions'
+  - kind: sim_state
+    path: word_count
+    min: 80
+    max: 295
+  - kind: sim_state
+    path: section:Inputs
+    min_words: 20
+    contains_any:
+      - '300'
+  - kind: sim_state
+    path: section:Calculation
+    min_words: 25
+    contains_all:
+      - '312'
+  - kind: sim_state
+    path: section:Result
+    min_words: 12
+    contains_any:
+      - 26,160
+  - kind: sim_state
+    path: section:Assumptions
+    min_words: 20
+    contains_any:
+      - assume
+  - kind: file_contains
+    path: answer.md
+    expected: 93,?600
+    is_regex: true
+    label: Cost today is ₹93,600
+  - kind: file_contains
+    path: answer.md
+    expected: 56,?160
+    is_regex: true
+    label: Money saved is ₹56,160
+  - kind: file_contains
+    path: answer.md
+    expected: 26,?160
+    is_regex: true
+    label: Net benefit is ₹26,160
+  - kind: checklist
+    label: Self-review
+    items:
+      - A non-technical person can follow it
+      - Every number has a source or is marked as an assumption
+      - It ends with a clear next step
+  - kind: ai_rubric
+    rubric:
+      - Clear and plain language for the audience
+      - Specific, believable detail
+      - Honest about limits
+    min_score: 3
+hints:
+  - Hours today = 6 staff × 2 hours × 26 days. Multiply by ₹300 for the cost.
+  - Money saved is 60% of the cost today. Subtract the tool cost to get the net benefit.
+solution: solution/
+unlocks:
+- p4-w19-adopt-012
+tags:
+  - roi
+  - numbers
+mobile_compatible: true

@@ -1,0 +1,49 @@
+id: p2-w09-obs-001
+title: Which service is failing?
+phase: 2
+week: 9
+module: structured-logging
+order: 1
+difficulty: 1
+estimated_minutes: 8
+type: console
+environment: observability
+lesson: ../../lessons/01-structured-logging.md
+task: |-
+  It is 10:59 IST. Customers of a Pune fintech say UPI payments are failing. You are on call.
+
+  Open the **Logs** tab. Every log line is JSON, so you can filter by field. Count the error lines by service:
+
+  `level:error | count by service`
+
+  Then answer which service is producing the errors.
+starter_files:
+  - path: scenario.json
+    content: |
+      {
+        "scenario": "db-pool-exhaustion",
+        "seed": 7
+      }
+checks:
+  - kind: sim_command_used
+    pattern: ^logs> .*level:error.*\|\s*count by service
+    label: Counted errors by service
+  - kind: sim_state
+    path: answer:service
+    prompt: Which service has the errors?
+    options:
+      - api-gateway
+      - payments
+      - invoices
+      - notifications
+    expected: payments
+hints:
+  - A filter looks like field:value. Join steps with a pipe, like level:error | count by service.
+  - The count table lists the service with the most error lines first.
+solution: solution/
+unlocks:
+  - p2-w09-obs-002
+tags:
+  - observability
+  - logs
+  - filter

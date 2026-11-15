@@ -1,0 +1,2 @@
+SUBNET=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=fde-public-a --query 'Subnets[0].SubnetId' --output text)
+aws ec2 run-instances --image-id ami-0abcdef1234567890 --instance-type m5.xlarge --subnet-id $SUBNET

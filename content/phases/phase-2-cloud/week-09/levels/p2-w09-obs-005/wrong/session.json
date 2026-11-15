@@ -1,0 +1,8 @@
+{
+  "history": [
+    "metrics> sum(rate(http_requests_total{service=\"payments\"}[5m]))"
+  ],
+  "answers": {
+    "error_pct": "2"
+  }
+}

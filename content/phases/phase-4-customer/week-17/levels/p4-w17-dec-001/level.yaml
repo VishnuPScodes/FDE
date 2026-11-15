@@ -1,0 +1,74 @@
+id: p4-w17-dec-001
+title: Goal and Users for a co-op bank
+phase: 4
+week: 17
+module: gudcmarr-framework
+order: 1
+difficulty: 1
+estimated_minutes: 12
+type: decomposition
+environment: writing
+lesson: ../../lessons/01-gudcmarr-framework.md
+task: >-
+  Kerala Gramin Co-operative Bank in Thrissur says: "Our loan officers waste time checking loan
+  files." Each file takes about 45 minutes. They handle 400 files a month across three officers.
+
+
+  Write the **Goal** (with a number and a date) and the **Users** (who they are and what each one
+  needs).
+starter_files:
+  - path: answer.md
+    content: |
+      # Goal and Users for a co-op bank
+
+      ## Goal
+      <!-- One sentence. Metric, from, to, by when. -->
+
+      ## Users
+      <!-- Who touches the system? What does each person need? -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Goal'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Users'
+  - kind: sim_state
+    path: word_count
+    min: 45
+    max: 165
+  - kind: sim_state
+    path: section:Goal
+    min_words: 12
+    contains_any:
+      - from
+      - '%'
+      - minutes
+  - kind: sim_state
+    path: section:Users
+    min_words: 20
+    contains_all:
+      - officer
+  - kind: checklist
+    label: Self-review
+    items:
+      - Every heading has real content, not a placeholder
+      - The Goal has a number
+      - I wrote my assumptions in plain words
+  - kind: ai_rubric
+    rubric:
+      - Goal is measurable and tied to a business result
+      - MVP is small and testable
+      - Assumptions are stated honestly
+    min_score: 3
+hints:
+  - A good goal has a number, a starting point and a date.
+  - List each user separately and say what that person needs, not just their job title.
+solution: solution/
+unlocks:
+  - p4-w17-dec-002
+tags:
+  - decomposition
+  - goal
+  - users
+mobile_compatible: true

@@ -1,0 +1,155 @@
+id: p4-w16-disc-004
+title: Interview the operations manager
+phase: 4
+week: 16
+module: discovery-interviews
+order: 2
+difficulty: 2
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/02-open-questions.md
+task: >
+  Meena Iyer runs operations at Lakshmi Home Textiles, a Coimbatore exporter. Her MD wants "an AI
+  chatbot for accounts". Find out what is really going on.
+
+
+  Uncover how many invoices they handle, the manual steps, how much time it takes, and what goes
+  wrong. Use at most 10 questions, and no more than one leading or yes/no question.
+
+
+  Then write your notes in `notes.md` with a **Numbers** section that records the hours and rupee
+  figures you heard.
+starter_files:
+  - path: persona.json
+    content: |
+      {
+        "name": "Meena Iyer",
+        "role": "Operations Manager",
+        "company": "Lakshmi Home Textiles, Coimbatore",
+        "opening": "Vanakkam! Our MD says we need an AI chatbot for accounts. I have thirty minutes. What would you like to know?",
+        "facts": [
+          {
+            "id": "volume",
+            "triggers": [
+              "how many",
+              "volume",
+              "per month",
+              "per week",
+              "per day",
+              "how often"
+            ],
+            "reply": "We raise around 180 export invoices a month. Each one has a shipping bill and a bank realisation certificate to match."
+          },
+          {
+            "id": "manual-step",
+            "triggers": [
+              "walk me through",
+              "manual",
+              "by hand",
+              "steps",
+              "process",
+              "what happens",
+              "how does"
+            ],
+            "reply": "Two people in accounts copy each shipping bill number from the customs portal into an Excel sheet. Then they match it to the invoice in Tally. It is all by hand."
+          },
+          {
+            "id": "time-cost",
+            "triggers": [
+              "how long",
+              "how much time",
+              "hours",
+              "take"
+            ],
+            "reply": "Every month-end it eats about three full days for both of them. Call it 50 hours a month."
+          },
+          {
+            "id": "error-impact",
+            "triggers": [
+              "mistake",
+              "error",
+              "wrong",
+              "goes wrong",
+              "problem"
+            ],
+            "requires": [
+              "manual-step"
+            ],
+            "reply": "Last quarter one wrong shipping bill number held up ₹14 lakh of our GST refund for two months. That really hurt our cash flow."
+          },
+          {
+            "id": "real-goal",
+            "triggers": [
+              "perfect",
+              "ideal",
+              "different",
+              "success",
+              "magic wand",
+              "chatbot",
+              "why"
+            ],
+            "reply": "Honestly, the chatbot was our MD's idea after a conference. What I want is the refund on time, every time."
+          }
+        ],
+        "deflections": [
+          "Hmm, I am not sure what you mean. Can you ask it another way?",
+          "That is more of an IT question. Karthik in IT would know that.",
+          "I would rather tell you how things actually work today."
+        ],
+        "max_turns": 12
+      }
+  - path: notes.md
+    content: |+
+      # Notes: Lakshmi Home Textiles
+
+      ## Problem
+      <!-- The real problem in one or two sentences, in their words. -->
+
+      ## Current workflow
+      <!-- Steps as they happen today. -->
+
+      ## Numbers
+      <!-- Volumes, hours, rupees. -->
+
+      ## Open questions
+      <!-- What you still need to find out. -->
+
+checks:
+  - kind: sim_state
+    path: facts_uncovered
+    contains_all:
+      - volume
+      - manual-step
+      - time-cost
+      - error-impact
+    label: Uncover volume, manual steps, time and impact
+  - kind: sim_state
+    path: turns
+    max: 10
+  - kind: sim_state
+    path: leading_questions
+    max: 1
+  - kind: sim_state
+    path: section:Problem
+    min_words: 12
+  - kind: sim_state
+    path: section:Numbers
+    contains_all:
+      - 50 hours
+    contains_any:
+      - 14 lakh
+      - ₹14
+hints:
+  - "Start broad: \"Can you walk me through what happens after a shipment leaves?\""
+  - >-
+    Problems hide behind mistakes. Ask what happens when something goes wrong, and how long the work
+    takes.
+solution: solution/
+unlocks:
+  - p4-w16-disc-005
+tags:
+  - interview
+  - roleplay
+  - operations
+mobile_compatible: true

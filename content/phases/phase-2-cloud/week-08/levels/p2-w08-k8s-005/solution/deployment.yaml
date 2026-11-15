@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: report-worker
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: report
+  template:
+    metadata:
+      labels:
+        app: report
+    spec:
+      containers:
+        - name: worker
+          image: ghcr.io/fde-labs/report-worker:2.3.0
+          resources:
+            requests:
+              cpu: "250m"
+              memory: 64Mi
+            limits:
+              memory: 512Mi

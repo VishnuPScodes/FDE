@@ -1,0 +1,61 @@
+id: p2-w08-k8s-005
+title: "Pending pods and OOM kills"
+phase: 2
+week: 8
+module: kubernetes-basics
+order: 5
+difficulty: 4
+estimated_minutes: 20
+type: terminal
+environment: kubernetes
+lesson: ../../lessons/03-kubernetes-basics.md
+task: "The report-worker pod will not start. Apply deployment.yaml, use kubectl describe pod to read the reason, and fix the resources. Nodes have 2 CPUs and the app needs about 380Mi of memory. Then scale to 3 replicas."
+starter_files:
+  - path: deployment.yaml
+    content: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: report-worker
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: report
+        template:
+          metadata:
+            labels:
+              app: report
+          spec:
+            containers:
+              - name: worker
+                image: ghcr.io/fde-labs/report-worker:2.3.0
+                resources:
+                  requests:
+                    cpu: "3"
+                    memory: 64Mi
+                  limits:
+                    memory: 128Mi
+checks:
+  - kind: "sim_command_used"
+    command: "kubectl describe"
+    label: "Used kubectl describe"
+  - kind: "sim_state"
+    path: "object"
+    kind_name: "Deployment"
+    name: "report-worker"
+    contains: "\"replicas\":3"
+    label: "Deployment has 3 replicas"
+  - kind: "sim_state"
+    path: "pods"
+    selector: "app=report"
+    status: "Running"
+    count: 3
+    label: "Three report pods are Running"
+hints:
+  - "A pod that stays Pending usually cannot fit on any node. kubectl describe pod shows \"Insufficient cpu\" under Events."
+  - "Ask for what you need, for example cpu: \"250m\". 1000m equals one CPU."
+  - "OOMKilled means the memory limit is lower than what the app uses. Raise it to 512Mi."
+solution: solution/
+unlocks: [p2-w08-k8s-006]
+tags: [kubernetes, resources, oom]

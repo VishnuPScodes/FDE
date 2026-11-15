@@ -1,0 +1,101 @@
+id: p4-w19-adopt-002
+title: Plan for the demo going wrong
+phase: 4
+week: 19
+module: demo-storytelling
+order: 2
+difficulty: 3
+estimated_minutes: 15
+type: writing
+environment: writing
+lesson: ../../lessons/01-demo-storytelling.md
+task: >-
+  You demo at a Pune distributor's office tomorrow. Their Wi-Fi is weak, and your tool sometimes
+  takes 40 seconds to answer. The owner and two staff will watch.
+
+
+  Write four headings: Likely failure, Say this, Fallback, Recover. Make each one specific and calm.
+starter_files:
+  - path: answer.md
+    content: |
+      # Plan for the demo going wrong
+
+      ## Likely failure
+      <!-- The most likely thing, and a second one. -->
+
+      ## Say this
+      <!-- A calm line, in plain words. -->
+
+      ## Fallback
+      <!-- What you have prepared. -->
+
+      ## Recover
+      <!-- How you return to the story. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## Likely failure'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Say this'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Fallback'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Recover'
+  - kind: sim_state
+    path: word_count
+    min: 79
+    max: 290
+  - kind: sim_state
+    path: section:Likely failure
+    min_words: 15
+    contains_any:
+      - wi-fi
+      - wifi
+      - slow
+      - 40 seconds
+  - kind: sim_state
+    path: section:Say this
+    min_words: 12
+    contains_any:
+      - moment
+      - let me
+  - kind: sim_state
+    path: section:Fallback
+    min_words: 15
+    contains_any:
+      - recording
+      - video
+      - hotspot
+      - screenshots
+  - kind: sim_state
+    path: section:Recover
+    min_words: 15
+    contains_any:
+      - return
+      - back
+      - continue
+  - kind: checklist
+    label: Self-review
+    items:
+      - A non-technical person can follow it
+      - Every number has a source or is marked as an assumption
+      - It ends with a clear next step
+  - kind: ai_rubric
+    rubric:
+      - Clear and plain language for the audience
+      - Specific, believable detail
+      - Honest about limits
+    min_score: 3
+hints:
+  - 'Prepare at least two fallbacks: one for the network, one for the tool.'
+  - Write the exact words you would say. A calm sentence helps you stay calm.
+solution: solution/
+unlocks:
+- p4-w19-adopt-003
+tags:
+  - demo
+  - failure
+mobile_compatible: true

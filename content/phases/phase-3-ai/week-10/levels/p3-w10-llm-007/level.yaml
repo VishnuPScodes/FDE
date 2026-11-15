@@ -1,0 +1,75 @@
+id: p3-w10-llm-007
+title: Assemble a streamed reply from SSE lines
+phase: 3
+week: 10
+module: api-patterns
+order: 7
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/03-messages-streaming-structured-output.md
+task: |
+  With `stream: true`, the API sends Server-Sent Events. Each useful line looks like
+  `data: {"choices":[{"delta":{"content":"Na"}}]}`.
+
+  Write `assemble_stream(lines)` that returns the full reply text:
+
+  - Ignore blank lines and comment lines that start with `:`.
+  - Ignore lines that do not start with `data:` (for example `event: ping`).
+  - Stop at `data: [DONE]`.
+  - Add `choices[0].delta.content` when it is present and a string. Some chunks have no content.
+  - If a chunk has an `error` key, raise `RuntimeError` with its `message`.
+starter_files:
+- path: main.py
+  content: |
+    import json
+
+
+    def assemble_stream(lines):
+        pass
+- path: test_main.py
+  content: |
+    import pytest
+
+    from main import assemble_stream
+
+    STREAM = [
+        ": keep-alive",
+        'data: {"choices":[{"delta":{"role":"assistant"}}]}',
+        "",
+        'data: {"choices":[{"delta":{"content":"Your refund of "}}]}',
+        "event: ping",
+        'data: {"choices":[{"delta":{"content":"₹1,499 is on the way."}}]}',
+        "data: [DONE]",
+        'data: {"choices":[{"delta":{"content":" IGNORED"}}]}',
+    ]
+
+
+    def test_assembles_text():
+        assert assemble_stream(STREAM) == "Your refund of ₹1,499 is on the way."
+
+
+    def test_data_without_space():
+        assert assemble_stream(['data:{"choices":[{"delta":{"content":"ok"}}]}']) == "ok"
+
+
+    def test_error_chunk():
+        with pytest.raises(RuntimeError, match="overloaded"):
+            assemble_stream(['data: {"error":{"message":"overloaded"}}'])
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Check `[DONE]` before calling `json.loads`; it is not JSON.
+- 'Strip `data:` and then `.strip()` the rest, so both `data: {...}` and `data:{...}` work.'
+solution: solution/
+unlocks:
+- p3-w10-llm-008
+tags:
+- llm
+- api
+- streaming
+- sse
+mobile_compatible: false

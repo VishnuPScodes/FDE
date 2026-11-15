@@ -1,0 +1,63 @@
+id: p6-w23-int-010
+title: 'Drill: total paid rupee amounts'
+phase: 6
+week: 23
+module: coding-drills
+order: 5
+difficulty: 2
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-practical-coding.md
+task: |-
+  Timed drill, aim for 25 minutes. A Pune distributor exports payments from Tally as text lines and wants the total of what was actually paid.
+
+  Implement `total_paid` in `payments.py`. Amounts look like `Rs 1,250.00`, `Rs. 500`, `₹1250` or `1,250`, with stray spaces around fields. Count only lines whose status is `paid` (any casing). Skip malformed lines and amounts that are not numbers. Say your assumptions aloud. Run `test_payments.py`.
+timed: true
+starter_files:
+- path: payments.py
+  content: |
+    def total_paid(lines: list[str]) -> float:
+        """Each line: "<invoice>|<amount>|<status>", for example "INV-1|Rs 1,250.00|Paid".
+        Return the sum of amounts whose status is "paid" (case-insensitive), rounded to 2 decimals.
+        Skip lines that do not have exactly three parts or whose amount cannot be parsed.
+        """
+        pass
+- path: test_payments.py
+  content: |
+    from payments import total_paid
+
+    LINES = [
+        "INV-1|Rs 1,250.00|Paid",
+        "INV-2|₹1250|PAID",
+        "INV-3|1,000|pending",
+        "INV-4|Rs 99.50|paid",
+        "INV-5|abc|paid",
+        "garbage line",
+        "",
+        "INV-6|Rs 10|paid|extra",
+        "INV-7|Rs. 500| Paid ",
+    ]
+
+
+    def test_total():
+        assert total_paid(LINES) == 3099.5
+
+
+    def test_empty():
+        assert total_paid([]) == 0.0
+        assert total_paid(["INV-9|500|pending"]) == 0.0
+checks:
+- kind: pytest_passes
+  run: pytest -q test_payments.py
+hints:
+- Split on "|" and require exactly three parts before reading anything.
+- Strip "Rs", the rupee sign and commas before calling float(), and wrap it in try/except ValueError.
+- Compare status.strip().lower() to "paid", then round the sum once at the end.
+solution: solution/
+unlocks:
+- p6-w23-int-011
+tags:
+- interview
+- python
+- parsing

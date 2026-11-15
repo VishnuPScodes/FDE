@@ -1,0 +1,7 @@
+Walk me through what happens when a patient books a session.
+How long do the morning reminder calls take Meena?
+How many patients still miss their slot?
+What does an empty slot cost the clinic in rupees?
+What have you tried before to reduce this?
+Where is the booking data stored today?
+What would success look like for you in a month?

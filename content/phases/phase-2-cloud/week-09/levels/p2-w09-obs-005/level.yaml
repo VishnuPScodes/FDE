@@ -1,0 +1,47 @@
+id: p2-w09-obs-005
+title: Error ratio with PromQL
+phase: 2
+week: 9
+module: metrics-tracing
+order: 1
+difficulty: 2
+estimated_minutes: 12
+type: console
+environment: observability
+lesson: ../../lessons/02-metrics-and-tracing.md
+task: |-
+  Logs told you what is failing. Metrics tell you how bad it is, as a number you can alert on.
+
+  In the **Metrics** tab, work out the share of payments requests that returned a 5xx status over a 5 minute window:
+
+  `sum(rate(http_requests_total{service="payments",status=~"5.."}[5m])) / sum(rate(http_requests_total{service="payments"}[5m]))`
+
+  The query returns a ratio (0.25 means 25%). Type the value at 10:59 as a **percent**.
+starter_files:
+  - path: scenario.json
+    content: |
+      {
+        "scenario": "db-pool-exhaustion",
+        "seed": 7
+      }
+checks:
+  - kind: sim_command_used
+    pattern: ^metrics> .*rate\(http_requests_total
+    label: Used rate() on http_requests_total
+  - kind: sim_state
+    path: answer:error_pct
+    prompt: Payments error rate at 10:59, in percent (for example 12.5)
+    expected_fact: payments_error_pct_5m
+    tolerance: 0.1
+hints:
+  - rate() turns a counter that only goes up into a per-second speed.
+  - Divide the rate of 5xx requests by the rate of all requests. Match 5xx with status=~"5..".
+  - Multiply the ratio by 100 to get a percent.
+solution: solution/
+unlocks:
+  - p2-w09-obs-006
+tags:
+  - observability
+  - metrics
+  - promql
+  - rate

@@ -1,0 +1,46 @@
+id: p1-w05-ts-010
+title: Group items with a generic helper
+phase: 1
+week: 5
+module: typescript-essentials
+order: 9
+difficulty: 3
+estimated_minutes: 12
+type: code
+environment: ts
+lesson: ../../lessons/01-types-and-functions.md
+task: "Implement the generic `groupBy<T>` that returns an object mapping each key (produced by `keyOf`) to the array of items with that key, in original order."
+starter_files:
+  - path: main.ts
+    content: |-
+      function groupBy<T>(items: T[], keyOf: (item: T) => string): Record<string, T[]> {
+        return {};
+      }
+
+      type Invoice = { id: string; customer: string };
+      const invoices: Invoice[] = [
+        { id: 'A', customer: 'asha' },
+        { id: 'B', customer: 'ravi' },
+        { id: 'C', customer: 'asha' },
+      ];
+
+      test('groups invoices by customer', () => {
+        const grouped = groupBy(invoices, (invoice) => invoice.customer);
+        expect(grouped.asha.map((invoice) => invoice.id)).toEqual(['A', 'C']);
+        expect(grouped.ravi.map((invoice) => invoice.id)).toEqual(['B']);
+      });
+      test('groups numbers by parity', () => {
+        expect(groupBy([1, 2, 3, 4], (n) => (n % 2 === 0 ? 'even' : 'odd'))).toEqual({ odd: [1, 3], even: [2, 4] });
+      });
+      test('empty input gives an empty object', () => {
+        expect(groupBy([], () => 'x')).toEqual({});
+      });
+checks:
+  - kind: vitest_passes
+    label: All behaviour checks pass
+hints:
+  - "Create the group array the first time you see a key."
+  - "Push each item into `result[key]`."
+solution: solution/
+unlocks: [p1-w05-ts-011]
+tags: [typescript, generics, records]

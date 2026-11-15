@@ -1,0 +1,12 @@
+{
+  "history": [
+    "logs> service:payments level:error | count by error_type",
+    "traces> errors 5",
+    "metrics> tls_client_cert_expiry_seconds"
+  ],
+  "report": {
+    "rootCause": "cert-expiry",
+    "service": "payments",
+    "evidence": "TlsError dominates payments errors: x509 certificate has expired. tls_client_cert_expiry_seconds for npci-upi is negative since 10:40."
+  }
+}

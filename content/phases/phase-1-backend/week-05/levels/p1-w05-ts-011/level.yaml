@@ -1,0 +1,47 @@
+id: p1-w05-ts-011
+title: Check unknown data with a type guard
+phase: 1
+week: 5
+module: typescript-essentials
+order: 10
+difficulty: 3
+estimated_minutes: 12
+type: code
+environment: ts
+lesson: ../../lessons/01-types-and-functions.md
+task: "Implement the type guard `isInvoice(value: unknown): value is Invoice` so it accepts only objects with a string `id` and a finite number `amountPaise`. Then implement `safeTotal` that sums only the valid entries."
+starter_files:
+  - path: main.ts
+    content: |-
+      type Invoice = { id: string; amountPaise: number };
+
+      function isInvoice(value: unknown): value is Invoice {
+        return false;
+      }
+
+      function safeTotal(rows: unknown[]): number {
+        return 0;
+      }
+
+      test('accepts a valid invoice', () => {
+        expect(isInvoice({ id: 'A', amountPaise: 100 })).toBe(true);
+      });
+      test('rejects bad shapes', () => {
+        expect(isInvoice(null)).toBe(false);
+        expect(isInvoice('INV')).toBe(false);
+        expect(isInvoice({ id: 'A', amountPaise: '100' })).toBe(false);
+        expect(isInvoice({ id: 'A' })).toBe(false);
+        expect(isInvoice({ id: 'A', amountPaise: NaN })).toBe(false);
+      });
+      test('totals only valid rows', () => {
+        expect(safeTotal([{ id: 'A', amountPaise: 100 }, null, { id: 'B', amountPaise: 'x' }, { id: 'C', amountPaise: 250 }])).toBe(350);
+      });
+checks:
+  - kind: vitest_passes
+    label: All behaviour checks pass
+hints:
+  - "Check `typeof value === \"object\" && value !== null` first."
+  - "Cast to `Record<string, unknown>` to read fields, then check their types with `typeof` and `Number.isFinite`."
+solution: solution/
+unlocks: [p1-w05-ts-012]
+tags: [typescript, unknown, type-guards]

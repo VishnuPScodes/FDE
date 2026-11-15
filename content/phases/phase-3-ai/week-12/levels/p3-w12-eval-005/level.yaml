@@ -1,0 +1,67 @@
+id: p3-w12-eval-005
+title: 'precision@k and recall@k'
+phase: 3
+week: 12
+module: retrieval-metrics
+order: 1
+difficulty: 2
+estimated_minutes: 15
+type: code
+environment: python
+lesson: ../../lessons/02-retrieval-metrics.md
+task: |
+  Your RAG search returns a ranked list of chunk ids. Two numbers tell you how good the top `k` is.
+
+  - `precision_at_k(retrieved, relevant, k)`: of the top `k` results, what fraction is relevant? The denominator is always `k`,
+    even if fewer than `k` results came back.
+  - `recall_at_k(retrieved, relevant, k)`: of all relevant chunks, what fraction is in the top `k`? If `relevant` is empty, return `0.0`.
+
+  `retrieved` is a list of ids (best first). `relevant` is a set of ids. Round both answers to 4 decimal places.
+
+  Example: retrieved `["a","b","c","d"]`, relevant `{"a","c","z"}`, k=3 gives precision 0.6667 and recall 0.6667.
+starter_files:
+- path: main.py
+  content: |
+    def precision_at_k(retrieved, relevant, k):
+        pass
+
+
+    def recall_at_k(retrieved, relevant, k):
+        pass
+- path: test_main.py
+  content: |
+    from main import precision_at_k, recall_at_k
+
+    RET = ["a", "b", "c", "d"]
+    REL = {"a", "c", "z"}
+
+
+    def test_basic():
+        assert precision_at_k(RET, REL, 3) == 0.6667
+        assert recall_at_k(RET, REL, 3) == 0.6667
+
+
+    def test_k_larger_than_results():
+        assert precision_at_k(RET, REL, 10) == 0.2
+        assert recall_at_k(RET, REL, 10) == 0.6667
+
+
+    def test_k_one_and_empty():
+        assert precision_at_k(RET, REL, 1) == 1.0
+        assert recall_at_k(RET, REL, 1) == 0.3333
+        assert recall_at_k(RET, set(), 3) == 0.0
+        assert precision_at_k([], REL, 3) == 0.0
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- 'Slice first: `retrieved[:k]`. Count how many of those are in `relevant`.'
+- 'Precision divides by `k`, recall divides by `len(relevant)`. Do not divide by the length of the slice.'
+solution: solution/
+unlocks:
+- p3-w12-eval-006
+tags:
+- evals
+- metrics
+mobile_compatible: false

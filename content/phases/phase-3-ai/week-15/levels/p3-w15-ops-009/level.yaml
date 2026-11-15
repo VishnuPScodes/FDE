@@ -1,0 +1,102 @@
+id: p3-w15-ops-009
+title: "Keep prompts in a versioned registry"
+phase: 3
+week: 15
+module: prompt-versioning
+order: 1
+difficulty: 2
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/03-prompt-versioning.md
+task: |
+  A prompt is code. If someone edits it in a chat window and nobody knows what changed, you cannot explain why answers got worse. Keep every prompt in a **registry** with version numbers.
+
+  Write `class PromptRegistry`:
+
+  - `register(name, template)` stores a new version and returns its version number. Versions start at 1 for each prompt name and go up by 1.
+  - If `template` is exactly the same text as the latest version of that name, do not create a new version. Return the existing latest number.
+  - `get(name, version=None)` returns the template text. With no version, return the latest. Unknown name or a version that does not exist raises `KeyError`.
+  - `latest_version(name)` returns the latest number. Unknown name raises `KeyError`.
+  - `history(name)` returns a list of `{"version": n, "template": text}`, oldest first. Unknown name raises `KeyError`.
+
+  Old versions are never changed or deleted.
+starter_files:
+  - path: main.py
+    content: |
+      class PromptRegistry:
+          def __init__(self):
+              self._versions = {}
+
+          def register(self, name, template):
+              pass
+
+          def get(self, name, version=None):
+              pass
+
+          def latest_version(self, name):
+              pass
+
+          def history(self, name):
+              pass
+  - path: test_main.py
+    content: |
+      import pytest
+
+      from main import PromptRegistry
+
+
+      def test_versions_count_up_per_name():
+          reg = PromptRegistry()
+          assert reg.register("emi-reminder", "Remind {name} about EMI.") == 1
+          assert reg.register("emi-reminder", "Politely remind {name} about EMI of {amount}.") == 2
+          assert reg.register("faq", "Answer from context.") == 1
+          assert reg.latest_version("emi-reminder") == 2
+
+
+      def test_same_text_is_not_a_new_version():
+          reg = PromptRegistry()
+          reg.register("p", "v1")
+          reg.register("p", "v2")
+          assert reg.register("p", "v2") == 2
+          assert reg.latest_version("p") == 2
+          assert reg.register("p", "v1") == 3   # equal to an old version, but not to the latest
+
+
+      def test_get_latest_and_specific():
+          reg = PromptRegistry()
+          reg.register("p", "first")
+          reg.register("p", "second")
+          assert reg.get("p") == "second"
+          assert reg.get("p", 1) == "first"
+          assert reg.get("p", version=2) == "second"
+
+
+      def test_missing_things_raise_key_error():
+          reg = PromptRegistry()
+          reg.register("p", "first")
+          for call in (lambda: reg.get("nope"), lambda: reg.get("p", 2), lambda: reg.get("p", 0),
+                       lambda: reg.latest_version("nope"), lambda: reg.history("nope")):
+              with pytest.raises(KeyError):
+                  call()
+
+
+      def test_history_is_oldest_first_and_safe_to_modify():
+          reg = PromptRegistry()
+          reg.register("p", "a")
+          reg.register("p", "b")
+          hist = reg.history("p")
+          assert hist == [{"version": 1, "template": "a"}, {"version": 2, "template": "b"}]
+          hist.clear()
+          assert len(reg.history("p")) == 2
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "A dict of lists works well: `{name: [template_v1, template_v2, ...]}`. The version number is the list index plus 1."
+  - "`self._versions.setdefault(name, [])` gives you the list for a name, creating it the first time."
+  - "A bad version must raise `KeyError`. A negative index like `-1` would silently work in a list, so check `1 <= version <= len(versions)` yourself."
+solution: solution/
+unlocks: [p3-w15-ops-010]
+tags: [prompts, registry, versions]

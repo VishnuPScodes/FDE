@@ -1,0 +1,157 @@
+id: p4-w18-write-011
+title: Negotiate scope with the Tiruppur owner
+phase: 4
+week: 18
+module: scope-negotiation
+order: 11
+difficulty: 4
+estimated_minutes: 20
+type: roleplay
+environment: roleplay
+lesson: ../../lessons/03-scope-negotiation.md
+task: >-
+  Rajan Pillai owns a garment unit in Tiruppur. He wants "everything by Diwali": invoice matching,
+  stock tracking, a dashboard, WhatsApp alerts and payroll. That is far too much.
+
+
+  In at most 8 questions with no leading questions, find the real deadline, what truly must be
+  ready, what can wait, and who decides. Then write your agreed scope in `notes.md`.
+starter_files:
+  - path: persona.json
+    content: |
+      {
+        "name": "Rajan Pillai",
+        "role": "Owner",
+        "company": "Pillai Knitwear, Tiruppur",
+        "opening": "Vanakkam! I want everything ready by Diwali. Invoice matching, stock, dashboard, WhatsApp alerts, payroll. Can you do it?",
+        "facts": [
+          {
+            "id": "deadline",
+            "triggers": [
+              "deadline",
+              "why diwali",
+              "why that date",
+              "what happens if",
+              "what is driving",
+              "whats driving"
+            ],
+            "reply": "The real date is the 15th of November. Our auditor visits and needs export invoices matched with bank receipts."
+          },
+          {
+            "id": "must-have",
+            "triggers": [
+              "must",
+              "matters most",
+              "most important",
+              "priority",
+              "first"
+            ],
+            "requires": [
+              "deadline"
+            ],
+            "reply": "Only the invoice matching is a must. Without it the audit goes badly."
+          },
+          {
+            "id": "can-wait",
+            "triggers": [
+              "can wait",
+              "wait until",
+              "later",
+              "after the audit",
+              "phase two",
+              "phase 2"
+            ],
+            "requires": [
+              "must-have"
+            ],
+            "reply": "Stock, dashboard, alerts and payroll can wait until January. I just listed everything I could think of."
+          },
+          {
+            "id": "decider",
+            "triggers": [
+              "who decides",
+              "sign off",
+              "approve",
+              "who will",
+              "who else"
+            ],
+            "reply": "My accountant Selvi decides on the invoice part. I decide on the money."
+          },
+          {
+            "id": "budget",
+            "triggers": [
+              "budget",
+              "spend",
+              "cost"
+            ],
+            "reply": "I can spend about ₹3 lakh now. More will come in the new year."
+          }
+        ],
+        "closing": "I have a buyer waiting. Send me your plan in writing please.",
+        "deflections": [
+          "I'm not sure what you mean. Can you ask that another way?",
+          "I'd rather you ask me how things work today."
+        ],
+        "max_turns": 12
+      }
+  - path: notes.md
+    content: |
+      # Agreed scope: Tiruppur garment unit
+
+      ## In scope
+      <!-- What you will deliver by the deadline. -->
+
+      ## Deferred
+      <!-- What waits for phase 2. -->
+
+      ## Next step
+      <!-- Who does what, by when. -->
+checks:
+  - kind: sim_state
+    path: facts_uncovered
+    contains_all:
+      - deadline
+      - must-have
+      - can-wait
+      - decider
+  - kind: sim_state
+    path: turns
+    max: 8
+  - kind: sim_state
+    path: leading_questions
+    max: 0
+  - kind: sim_state
+    path: section:In scope
+    min_words: 8
+    contains_any:
+      - invoice
+  - kind: sim_state
+    path: section:Deferred
+    min_words: 8
+    contains_any:
+      - stock
+      - dashboard
+      - payroll
+  - kind: sim_state
+    path: section:Next step
+    min_words: 8
+    contains_any:
+      - by
+      - friday
+      - monday
+  - kind: ai_rubric
+    rubric:
+      - Learner asks about priorities before agreeing to anything
+      - Deferred items are placed in a later phase, not dropped
+    min_score: 3
+hints:
+  - 'Start with the deadline: ask what is driving it, and what happens if it is missed.'
+  - Ask what matters most, then what can wait. Do not offer to do everything.
+  - In your notes, move the deferred items to a named later phase.
+solution: solution/
+unlocks:
+- p4-w18-write-012
+tags:
+  - roleplay
+  - scope
+mobile_compatible: true

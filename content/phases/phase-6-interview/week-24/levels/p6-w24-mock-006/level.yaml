@@ -1,0 +1,89 @@
+id: p6-w24-mock-006
+title: Debrief your mock loop
+phase: 6
+week: 24
+module: mock-loop
+order: 6
+difficulty: 2
+estimated_minutes: 20
+type: writing
+environment: writing
+lesson: ../../lessons/01-mock-loop.md
+task: >-
+  After the customer simulations, decomposition mock and STAR answer, write an honest debrief. If
+  you did these quickly, use your own experience.
+
+
+  Headings: What went well, What I missed, Three drills for next week. Name the specific rounds
+  (customer round, decomposition, STAR) in your notes.
+starter_files:
+  - path: answer.md
+    content: |
+      # Debrief your mock loop
+
+      ## What went well
+      <!-- Two real strengths. -->
+
+      ## What I missed
+      <!-- Be honest and specific. -->
+
+      ## Three drills for next week
+      <!-- Three numbered drills with a time. -->
+checks:
+  - kind: file_contains
+    path: answer.md
+    expected: '## What went well'
+  - kind: file_contains
+    path: answer.md
+    expected: '## What I missed'
+  - kind: file_contains
+    path: answer.md
+    expected: '## Three drills for next week'
+  - kind: sim_state
+    path: word_count
+    min: 79
+    max: 290
+  - kind: sim_state
+    path: section:What went well
+    min_words: 25
+    contains_any:
+      - customer
+      - decomposition
+      - star
+  - kind: sim_state
+    path: section:What I missed
+    min_words: 25
+    contains_any:
+      - missed
+      - forgot
+      - too long
+      - rushed
+  - kind: sim_state
+    path: section:Three drills for next week
+    min_words: 30
+    contains_any:
+      - '1.'
+      - '2.'
+      - '3.'
+  - kind: checklist
+    label: Self-review
+    items:
+      - Every miss has a specific example
+      - Every drill is something I can do in one hour
+  - kind: ai_rubric
+    rubric:
+      - Honest and specific
+      - Drills are concrete and time bound
+    min_score: 3
+hints:
+  - >-
+    Name the round when you describe a miss. "Rushed risks in decomposition" is better than "need to
+    improve".
+  - Each drill should be something you can finish in an hour.
+solution: solution/
+unlocks:
+  - p6-w24-mock-007
+tags:
+  - mock
+  - debrief
+mobile_compatible: true

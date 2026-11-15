@@ -1,0 +1,142 @@
+id: p3-w15-ops-002
+title: "Log an LLM call without leaking phone numbers"
+phase: 3
+week: 15
+module: tracing-llm
+order: 2
+difficulty: 3
+estimated_minutes: 25
+type: code
+environment: python
+lesson: ../../lessons/01-tracing-llm.md
+task: |
+  Every LLM call should leave a span: which model, how many tokens, and a short preview of the prompt. But prompts often hold customer data, and traces are read by many people. So you must **redact** before you log.
+
+  The `Tracer` from the last level is already in `main.py`. Write two functions.
+
+  `redact(text)`:
+  - Indian mobile numbers become `[phone]`. That is 10 digits starting with 6, 7, 8 or 9, optionally preceded by `+91`, with an optional space or hyphen allowed after `+91` and in the middle. Use the pattern `(?:\+91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}`.
+  - Email addresses become `[email]` (use `[\w.+-]+@[\w-]+\.[\w.]+`).
+
+  `traced_llm_call(tracer, model, prompt, llm)`:
+  - `llm(model, prompt)` returns `{"text": ..., "input_tokens": int, "output_tokens": int}` (a fake in the tests).
+  - Open a span named `"llm.call"` with attrs `model` and `prompt_preview` (the first 40 characters of the **redacted** prompt; redact first, then cut).
+  - After the call, add `input_tokens`, `output_tokens` and `total_tokens` to the span attrs.
+  - Return the llm result unchanged. If `llm` raises, the span is marked error and the error propagates (the tracer already does this).
+starter_files:
+  - path: main.py
+    content: |
+      from contextlib import contextmanager
+
+
+      class Tracer:
+          def __init__(self, clock):
+              self.clock = clock
+              self.spans = []
+              self._stack = []
+
+          @contextmanager
+          def span(self, name, **attrs):
+              record = {
+                  "id": len(self.spans) + 1,
+                  "parent_id": self._stack[-1]["id"] if self._stack else None,
+                  "name": name,
+                  "start": self.clock(),
+                  "duration_ms": None,
+                  "attrs": dict(attrs),
+                  "status": "ok",
+              }
+              self.spans.append(record)
+              self._stack.append(record)
+              try:
+                  yield record
+              except Exception as exc:
+                  record["status"] = "error"
+                  record["attrs"]["error"] = str(exc)
+                  raise
+              finally:
+                  record["duration_ms"] = self.clock() - record["start"]
+                  self._stack.pop()
+
+
+      import re
+
+
+      def redact(text):
+          pass
+
+
+      def traced_llm_call(tracer, model, prompt, llm):
+          pass
+  - path: test_main.py
+    content: |
+      import pytest
+
+      from main import Tracer, redact, traced_llm_call
+
+
+      def fake_clock():
+          ticks = iter(range(0, 1000, 5))
+          return lambda: next(ticks)
+
+
+      def test_redact_phone_and_email():
+          text = "Call Anita on +91 98765 43210 or 9876543210, mail anita.k+bank@example.co.in"
+          assert redact(text) == "Call Anita on [phone] or [phone], mail [email]"
+
+
+      def test_redact_leaves_other_numbers():
+          assert redact("Order 123456 costs 4999 rupees, ref 5123456789") == "Order 123456 costs 4999 rupees, ref 5123456789"
+
+
+      def test_span_has_model_tokens_and_redacted_preview():
+          tracer = Tracer(fake_clock())
+          seen = []
+
+          def llm(model, prompt):
+              seen.append((model, prompt))
+              return {"text": "ok", "input_tokens": 120, "output_tokens": 30}
+
+          result = traced_llm_call(tracer, "small", "Remind 9876543210 about the EMI due on Friday, thanks a lot", llm)
+          assert result == {"text": "ok", "input_tokens": 120, "output_tokens": 30}
+          assert seen == [("small", "Remind 9876543210 about the EMI due on Friday, thanks a lot")]
+          span = tracer.spans[0]
+          assert span["name"] == "llm.call"
+          assert span["status"] == "ok"
+          assert span["attrs"] == {
+              "model": "small",
+              "prompt_preview": "Remind [phone] about the EMI due on Frid",
+              "input_tokens": 120,
+              "output_tokens": 30,
+              "total_tokens": 150,
+          }
+
+
+      def test_preview_is_cut_after_redaction():
+          tracer = Tracer(fake_clock())
+          llm = lambda model, prompt: {"text": "", "input_tokens": 1, "output_tokens": 1}
+          traced_llm_call(tracer, "m", "9876543210" * 1 + " " + "x" * 100, llm)
+          assert tracer.spans[0]["attrs"]["prompt_preview"] == "[phone] " + "x" * 32
+
+
+      def test_failure_is_traced_and_raised():
+          tracer = Tracer(fake_clock())
+
+          def llm(model, prompt):
+              raise TimeoutError("provider timeout")
+
+          with pytest.raises(TimeoutError):
+              traced_llm_call(tracer, "small", "hello", llm)
+          assert tracer.spans[0]["status"] == "error"
+          assert "input_tokens" not in tracer.spans[0]["attrs"]
+checks:
+  - kind: pytest_passes
+    label: All tests pass
+    run: pytest -q test_main.py
+hints:
+  - "Redact the whole prompt first, then take `[:40]`. If you cut first, half a phone number can slip through."
+  - "Write the regexes as raw strings, like `re.compile(r\"...\")`. Replace emails first, then phones."
+  - "Open the span with `model` and `prompt_preview`, then add the token counts inside the `with` block once the call returns."
+solution: solution/
+unlocks: [p3-w15-ops-003]
+tags: [tracing, pii, llm-call]

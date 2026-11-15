@@ -1,0 +1,35 @@
+id: p3-w13-agent-006
+title: Feed tool errors back and stop when stuck
+phase: 3
+week: 13
+module: agent-loops
+order: 6
+difficulty: 3
+estimated_minutes: 30
+type: code
+environment: python
+lesson: ../../lessons/02-agent-loops.md
+task: |
+  `agent.py` holds a working loop from the last level. Tool errors already go back to the model as tool messages, so it can fix a bad argument and try again. Now add two more stop conditions.
+
+  1. Stuck: if a tool call fails and the model already made the exact same failing call earlier (same `name` and same `arguments`), stop. Return `stopped: "stuck"` with `answer: None`. Compare arguments with `json.dumps(arguments, sort_keys=True)`.
+  2. Handoff: a registry entry can have `"terminal": True`, like `handoff_to_human`. When a terminal tool runs without error, stop right away. Return `stopped: "handoff"` with `answer: None`.
+
+  In both cases, include `steps` (the model calls made) and `messages` (with the last tool message appended). Keep the `max_steps` and `answer` behaviour.
+starter_files:
+  - path: agent.py
+  - path: dispatcher.py
+  - path: schema_check.py
+  - path: fake_llm.py
+  - path: test_agent.py
+checks:
+  - kind: pytest_passes
+    run: pytest -q test_agent.py
+    label: Stop condition tests pass
+hints:
+  - Keep a `set()` of failed call keys. Build each key as `(name, json.dumps(arguments, sort_keys=True))`.
+  - Check the returned tool message's `is_error` field. Only failed calls count towards stuck.
+  - "`registry.get(name, {}).get(\"terminal\")` is safe even for unknown tool names."
+solution: solution/
+unlocks: [p3-w13-agent-007]
+tags: [agents, agent-loop, error-handling]

@@ -1,0 +1,2 @@
+aws iam create-user --user-name report-reader
+aws iam attach-user-policy --user-name report-reader --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess

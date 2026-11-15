@@ -1,0 +1,77 @@
+id: p3-w11-rag-011
+title: Rerank candidates before answering
+phase: 3
+week: 11
+module: hybrid-search
+order: 11
+difficulty: 3
+estimated_minutes: 20
+type: code
+environment: python
+lesson: ../../lessons/03-hybrid-search-and-citations.md
+task: |
+  Retrieval gets you 20 rough candidates. A reranker looks more closely and keeps the best few.
+  Real rerankers are models; you will build a simple, explainable one.
+
+  Write `rerank(query, candidates, top_n=3)`. Each candidate is `{"id", "text", "retrieval_rank"}`.
+  Use the provided `tokenize` and `STOPWORDS`. Score each candidate:
+
+  - +1 for each distinct non-stopword query term found in the candidate's tokens,
+  - +2 if the whole query (lower case, single-spaced) appears as a phrase inside the lower-cased text,
+  - and break ties by `retrieval_rank` (lower is better).
+
+  Return the ids of the top `top_n` candidates. Drop candidates that score 0.
+starter_files:
+- path: main.py
+  content: |
+    import re
+
+    STOPWORDS = {"the", "a", "an", "is", "for", "of", "to", "in", "on", "my", "what", "how", "kya", "hai"}
+
+
+    def tokenize(text):
+        return re.findall(r"[a-z0-9]+", text.lower())
+
+
+    def rerank(query, candidates, top_n=3):
+        pass
+- path: test_main.py
+  content: |
+    from main import rerank
+
+    CANDIDATES = [
+        {"id": "c1", "text": "Debit card annual fee is ₹499 plus GST.", "retrieval_rank": 1},
+        {"id": "c2", "text": "To block your debit card, call 1800-123 or use the app.", "retrieval_rank": 2},
+        {"id": "c3", "text": "Lost card? Block card from the app under Cards.", "retrieval_rank": 3},
+        {"id": "c4", "text": "Home loan rates start at 8.5%.", "retrieval_rank": 4},
+    ]
+
+
+    def test_phrase_match_wins():
+        assert rerank("block debit card", CANDIDATES) == ["c2", "c1", "c3"]
+
+
+    def test_drops_zero_scores_and_respects_top_n():
+        assert rerank("home loan", CANDIDATES, top_n=5) == ["c4"]
+
+
+    def test_ties_use_retrieval_rank():
+        assert rerank("card", CANDIDATES, top_n=2) == ["c1", "c2"]
+
+
+    def test_stopwords_only():
+        assert rerank("what is the", CANDIDATES) == []
+checks:
+- kind: pytest_passes
+  label: All tests pass
+  run: pytest -q test_main.py
+hints:
+- Turn query terms and candidate tokens into sets, then `len(terms & words)` counts the overlap.
+- Sort by `(-score, retrieval_rank)` so higher scores come first and the original order breaks ties.
+solution: solution/
+unlocks:
+- p3-w11-rag-012
+tags:
+- rag
+- reranking
+mobile_compatible: false
