@@ -1,3 +1,4 @@
+import { plainString } from './plain-string';
 import type { Check } from '@fde/content-schema';
 import type { SqlQueryResult } from './sql-runtime';
 
@@ -36,7 +37,7 @@ export async function gradeSqlLevel(
       actual = JSON.stringify(result.rows, null, 2);
     } else if (kind === 'sql_plan_uses_index') {
       const plan = result.rows.map((row) => Object.values(row).join(' ')).join('\n');
-      const indexName = String(check.index ?? check.expected ?? '').trim();
+      const indexName = plainString(check.index ?? check.expected ?? '').trim();
       actual = plan;
       passed = /\bindex\s+(scan|only scan)\b/i.test(plan) && (!indexName || plan.toLowerCase().includes(indexName.toLowerCase()));
     }
@@ -50,5 +51,6 @@ function stableValue(value: unknown): string {
   if (value !== null && typeof value === 'object') {
     return `{${Object.entries(value).sort(([left], [right]) => left.localeCompare(right)).map(([key, item]) => `${JSON.stringify(key)}:${stableValue(item)}`).join(',')}}`;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- JSON.stringify returns undefined at runtime for undefined/functions despite its typing
   return JSON.stringify(value) ?? 'null';
 }

@@ -98,14 +98,17 @@ function runOne(state: ShellState, line: string, stdin: string): ShellResult {
     return result(state, '');
   }
   if (command === 'cd') {
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string must fall back as well as undefined (shell semantics: empty arg/env is unset)
     const target = resolvePath(args[0] || state.env.HOME || '/home/learner', state);
     if (!isDirectory(state, target))
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string must fall back as well as undefined (shell semantics: empty arg/env is unset)
       return result(state, '', `bash: cd: ${args[0] || target}: No such file or directory\n`, 1);
     state.cwd = target;
     state.env.PWD = target;
     return result(state, '');
   }
   if (command === 'ls') {
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string must fall back as well as undefined (shell semantics: empty arg/env is unset)
     const targetArg = args.find((arg) => !arg.startsWith('-')) || '.';
     const target = resolvePath(targetArg, state);
     if (!Object.hasOwn(state.files, target))
@@ -160,7 +163,7 @@ function runOne(state: ShellState, line: string, stdin: string): ShellResult {
       const resolved = resolvePath(path, state);
       if (!Object.hasOwn(state.files, resolved) || isDirectory(state, resolved))
         return result(state, '', `cat: ${path}: No such file or directory\n`, 1);
-      output += state.files[resolved];
+      output += state.files[resolved] ?? '';
     }
     return result(state, output);
   }
@@ -207,7 +210,7 @@ function runOne(state: ShellState, line: string, stdin: string): ShellResult {
     try {
       let value: unknown = JSON.parse(source);
       for (const key of filter.replace(/^\./, '').split('.').filter(Boolean))
-        value = (value as Record<string, unknown>)?.[key];
+        value = (value as Record<string, unknown> | null | undefined)?.[key];
       return result(
         state,
         `${typeof value === 'string' ? value : JSON.stringify(value, null, 2)}\n`,
@@ -235,7 +238,7 @@ function runOne(state: ShellState, line: string, stdin: string): ShellResult {
         1,
       );
     state.files[destination] = state.files[source]!;
-    if (command === 'mv') delete state.files[source];
+    if (command === 'mv') Reflect.deleteProperty(state.files, source);
     return result(state, '');
   }
   if (command === 'rm') {
@@ -245,7 +248,7 @@ function runOne(state: ShellState, line: string, stdin: string): ShellResult {
       const resolved = resolvePath(path, state);
       if (!Object.hasOwn(state.files, resolved))
         return result(state, '', `rm: cannot remove '${path}': No such file or directory\n`, 1);
-      delete state.files[resolved];
+      Reflect.deleteProperty(state.files, resolved);
     }
     return result(state, '');
   }
@@ -309,6 +312,7 @@ function runTextCommand(
   if (command === 'head')
     return result(
       state,
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string must fall back as well as undefined (shell semantics: empty arg/env is unset)
       `${lines.slice(0, Number(args.find((arg) => /^-\d+$/.test(arg))?.slice(1) || 10)).join('\n')}${lines.length ? '\n' : ''}`,
     );
   if (command === 'wc')
@@ -325,12 +329,14 @@ function runTextCommand(
     );
   const field =
     Number(
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string must fall back as well as undefined (shell semantics: empty arg/env is unset)
       args.find((arg) => arg.startsWith('-f'))?.slice(2) || args[args.indexOf('-f') + 1] || 1,
     ) - 1;
   const delimiterArg = args.find((arg) => arg.startsWith('-d'));
   const delimiter = delimiterArg
     ? delimiterArg.slice(2)
     : args.includes('-d')
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string must fall back as well as undefined (shell semantics: empty arg/env is unset)
       ? args[args.indexOf('-d') + 1] || '\t'
       : '\t';
   return result(
@@ -388,6 +394,7 @@ function directoryParents(path: string): string[] {
 }
 function expand(value: string, state: ShellState): string {
   return value
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string must fall back as well as undefined (shell semantics: empty arg/env is unset)
     .replace(/^~(?=\/|$)/, state.env.HOME || '/home/learner')
     .replace(/\$([A-Za-z_][A-Za-z0-9_]*)/g, (_match, key: string) => state.env[key] ?? '');
 }

@@ -3,8 +3,8 @@
   flex-direction: column;
   height: 100%;
   min-height: 28rem;
-  background: #090a12;
-  color: #d7d9e0;
+  background: var(--terminal-bg);
+  color: var(--terminal-fg);
   font: 12px var(--font-mono, monospace);
 }
 .toolbar {
@@ -13,18 +13,18 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 0.65rem 0.85rem;
-  border-bottom: 1px solid #292c3b;
-  background: #11131d;
+  border-bottom: 1px solid var(--toolbar-border);
+  background: var(--toolbar-bg);
 }
 .title {
   display: flex;
   align-items: center;
   gap: 0.7rem;
   min-width: 0;
-  color: #afb4c6;
+  color: var(--toolbar-fg);
 }
 .prompt {
-  color: #8ba1ff;
+  color: var(--terminal-accent);
   font-weight: 700;
 }
 .actions {
@@ -47,12 +47,12 @@
 }
 .help {
   padding: 0.65rem 0.9rem;
-  border-top: 1px solid #292c3b;
-  color: #969bad;
+  border-top: 1px solid var(--toolbar-border);
+  color: var(--terminal-muted);
 }
 .checks {
   padding: 0.75rem 1rem;
-  border-top: 1px solid #292c3b;
+  border-top: 1px solid var(--toolbar-border);
 }
 .checks h3 {
   margin: 0 0 0.5rem;
@@ -62,20 +62,20 @@
   margin: 0.25rem 0;
 }
 .passed {
-  color: #68d391;
+  color: var(--terminal-ok);
 }
 .failed {
-  color: #feb2b2;
+  color: var(--terminal-err);
 }
 .status {
   margin: 0;
   padding: 0.5rem 0.9rem;
-  color: #b5bdd0;
-  border-top: 1px solid #292c3b;
+  color: var(--toolbar-fg);
+  border-top: 1px solid var(--toolbar-border);
 }
 .loading {
   display: grid;
   min-height: 24rem;
   place-items: center;
-  color: #aab0c2;
+  color: var(--terminal-muted);
 }

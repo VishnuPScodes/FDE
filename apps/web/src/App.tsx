@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -7,18 +8,19 @@ import AppLayout from './layouts/AppLayout';
 
 // Public pages
 import LandingPage from './pages/LandingPage';
-import SignInPage from './pages/SignInPage';
-import PrivacyPage from './pages/PrivacyPage';
-import TermsPage from './pages/TermsPage';
-import ConsentPage from './pages/ConsentPage';
-import NotFoundPage from './pages/NotFoundPage';
+const SignInPage = lazy(() => import('./pages/SignInPage'));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
+const TermsPage = lazy(() => import('./pages/TermsPage'));
+const ConsentPage = lazy(() => import('./pages/ConsentPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 // Protected pages
-import DashboardPage from './pages/DashboardPage';
-import LearnPage from './pages/LearnPage';
-import LevelPage from './pages/LevelPage';
-import ProfilePage from './pages/ProfilePage';
-import SettingsPage from './pages/SettingsPage';
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const LearnPage = lazy(() => import('./pages/LearnPage'));
+const LevelPage = lazy(() => import('./pages/LevelPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
 
 // Guards
 import ProtectedRoute from './components/ProtectedRoute';
@@ -28,6 +30,7 @@ export default function App() {
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
+          <Suspense fallback={null}>
           <Routes>
             {/* ── Public routes ── */}
             <Route path="/" element={<LandingPage />} />
@@ -50,11 +53,13 @@ export default function App() {
               <Route path="/level/:levelId" element={<LevelPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/admin" element={<AdminPage />} />
             </Route>
 
             {/* ── 404 ── */}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
+          </Suspense>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>

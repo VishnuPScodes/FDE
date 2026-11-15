@@ -1,17 +1,21 @@
+import { useTerminalInput } from '../hooks/useTerminalInput';
+import { GIT_COMMANDS } from '../lib/terminal-vocab';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { gradeGitLevel, type GitRemoteState } from '../lib/git-grader';
-import { getGitSnapshot, initializeGitWorkspace, mergeGitBranches, runGitCommand, writeGitFile, type GitSnapshot } from '../lib/git-runtime';
-import { getProgress, saveProgress } from '../lib/progress';
+import { getGitSnapshot, initializeGitWorkspace, mergeGitBranches, resetGitWorkspace, runGitCommand, writeGitFile, type GitSnapshot } from '../lib/git-runtime';
+import { saveProgress } from '../lib/progress';
 import { loadWorkspaceFiles, saveWorkspaceFiles } from '../lib/virtual-files';
 import type { LevelMeta } from '../lib/content-loader';
 import styles from './GitWorkspace.module.css';
+import ResettableWorkspace from './ResettableWorkspace';
+import { useSubmitShortcut, submitButtonProps } from '../hooks/useSubmitShortcut';
 
 interface GitWorkspaceProps { level: LevelMeta; hintsUsed: number; onPassed: () => void }
 const REMOTE_KEY_PREFIX = 'fde-git-remote:';
 const emptyRemote: GitRemoteState = { pullRequests: [] };
 
-export default function GitWorkspace({ level, hintsUsed, onPassed }: GitWorkspaceProps) {
+function GitWorkspaceInner({ level, hintsUsed, onPassed }: GitWorkspaceProps) {
   const { user, session } = useAuth();
   const workspaceKey = `${user?.id ?? 'guest'}:${level.id}`;
   const remoteKey = `${REMOTE_KEY_PREFIX}${workspaceKey}`;
@@ -20,6 +24,8 @@ export default function GitWorkspace({ level, hintsUsed, onPassed }: GitWorkspac
   const [selectedFile, setSelectedFile] = useState('README.md');
   const [draft, setDraft] = useState('');
   const [command, setCommand] = useState('');
+  const [history, setHistory] = useState<string[]>([]);
+  const { onKeyDown, reset: resetHistory } = useTerminalInput({ value: command, setValue: setCommand, phrases: GIT_COMMANDS, files: snapshot?.files.map((file) => file.path), history });
   const [output, setOutput] = useState('Welcome to the Git practice workspace. Type `git help` to see commands.\n');
   const [busy, setBusy] = useState(false);
   const [checks, setChecks] = useState<ReturnType<typeof gradeGitLevel> | null>(null);
@@ -42,7 +48,7 @@ export default function GitWorkspace({ level, hintsUsed, onPassed }: GitWorkspac
       setRemote(nextRemote);
       setSnapshot(next);
       setSelectedFile(next.files[0]?.path ?? '');
-    }).catch((error: Error) => setMessage(error.message));
+    }).catch((error: unknown) => setMessage(error instanceof Error ? error.message : String(error)));
     return () => { active = false; };
   }, [level, remoteKey, workspaceKey]);
 
@@ -60,6 +66,8 @@ export default function GitWorkspace({ level, hintsUsed, onPassed }: GitWorkspac
     if (!input) return;
     setOutput((current) => `${current}\n$ ${input}\n`);
     setCommand('');
+    setHistory((h) => [...h, input].slice(-100));
+    resetHistory();
     setBusy(true);
     try {
       const result = await runGitCommand(workspaceKey, input);
@@ -71,7 +79,7 @@ export default function GitWorkspace({ level, hintsUsed, onPassed }: GitWorkspac
       setOutput((current) => `${current}\u001b[31m${(error as Error).message}\u001b[0m\n`);
       await refresh();
     } finally { setBusy(false); }
-  }, [refresh, workspaceKey]);
+  }, [refresh, resetHistory, workspaceKey]);
 
   const saveFile = useCallback(async () => {
     if (!selectedFile) return;
@@ -133,11 +141,13 @@ export default function GitWorkspace({ level, hintsUsed, onPassed }: GitWorkspac
   const activeFile = useMemo(() => snapshot?.files.find((file) => file.path === selectedFile), [selectedFile, snapshot]);
   const passed = checks?.length ? checks.every((check) => check.passed) : false;
 
+  useSubmitShortcut(submit, !busy && !!snapshot);
+
   return (
     <section className={styles.workspace} aria-label="Git practice workspace">
       <div className={styles.toolbar}>
         <div><strong>Git workspace</strong><span className={styles.branch}>{snapshot?.branch ? `⎇ ${snapshot.branch}` : 'Starting repository…'}</span></div>
-        <div className={styles.actions}><button className="btn btn-secondary" onClick={() => void refresh()}>Refresh</button><button className="btn btn-primary" disabled={busy || !snapshot} onClick={() => void submit()}>Submit</button></div>
+        <div className={styles.actions}><button className="btn btn-secondary" onClick={() => void refresh()}>Refresh</button><button className="btn btn-primary" {...submitButtonProps} disabled={busy || !snapshot} onClick={() => void submit()}>Submit</button></div>
       </div>
       {snapshot?.conflicts && <div className={styles.conflictNotice} role="status">Merge conflict detected. Edit the file to remove conflict markers, save it, then stage and commit the resolution.</div>}
       <div className={styles.main}>
@@ -150,7 +160,7 @@ export default function GitWorkspace({ level, hintsUsed, onPassed }: GitWorkspac
           <pre className={styles.output} aria-live="polite">{output}</pre>
           <form className={styles.commandForm} onSubmit={(event) => { event.preventDefault(); void execute(command); }}>
             <label htmlFor="git-command">learner@fde:{snapshot?.branch ?? 'repo'} $</label>
-            <input id="git-command" value={command} onChange={(event) => setCommand(event.target.value)} placeholder="git status" disabled={busy} autoComplete="off" />
+            <input id="git-command" value={command} onChange={(event) => setCommand(event.target.value)} onKeyDown={onKeyDown} placeholder="git status" disabled={busy} autoComplete="off" />
             <button className="btn btn-secondary" disabled={busy || !command.trim()}>Run</button>
           </form>
         </div>
@@ -164,5 +174,14 @@ export default function GitWorkspace({ level, hintsUsed, onPassed }: GitWorkspac
       {checks && <div className={`${styles.checks} ${passed ? styles.passed : styles.failed}`} aria-live="polite"><h3>{passed ? 'All checks passed' : 'Some checks need work'}</h3>{checks.map((check, index) => <p key={`${check.label}-${index}`}>{check.passed ? '✓' : '×'} {check.label}{!check.passed && <><br /><code>Expected: {check.expected}</code><br /><code>Got: {check.actual}</code></>}</p>)}</div>}
       {message && <p className={styles.message} role="status">{message}</p>}
     </section>
+  );
+}
+
+export default function GitWorkspace(props: Parameters<typeof GitWorkspaceInner>[0]) {
+  const { user } = useAuth();
+  return (
+    <ResettableWorkspace clear={async () => { const k = `${user?.id ?? 'guest'}:${props.level.id}`; await resetGitWorkspace(k); await saveWorkspaceFiles(`${REMOTE_KEY_PREFIX}${k}`, { 'remote.json': JSON.stringify(emptyRemote) }); }}>
+      <GitWorkspaceInner {...props} />
+    </ResettableWorkspace>
   );
 }

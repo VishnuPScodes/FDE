@@ -22,7 +22,20 @@ export default [
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
       '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-non-null-assertion': 'error',
+      // `noUncheckedIndexedAccess` is on, so `match[1]!` after a successful
+      // regex test is a deliberate, reviewed assertion (see DECISIONS.md).
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true, allowBoolean: true }],
+      '@typescript-eslint/no-confusing-void-expression': ['error', { ignoreArrowShorthand: true }],
+      '@typescript-eslint/prefer-regexp-exec': 'off',
+    },
+  },
+  {
+    // Tests stub callbacks and mocks; empty functions are intentional there.
+    files: ['**/test/**/*.{ts,tsx}', '**/*.test.{ts,tsx}', '**/e2e/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
     },
   },
   {
@@ -32,6 +45,6 @@ export default [
     },
   },
   {
-    ignores: ['**/node_modules/**', '**/dist/**', '**/.next/**', '**/build/**', '**/.turbo/**'],
+    ignores: ['**/node_modules/**', '**/dist/**', '**/.next/**', '**/build/**', '**/.turbo/**', 'apps/web/*.config.d.ts', 'apps/web/e2e/**'],
   },
 ];

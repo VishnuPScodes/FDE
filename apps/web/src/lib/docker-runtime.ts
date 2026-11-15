@@ -99,7 +99,7 @@ export function runDockerCommand(previous: DockerState, input: string): DockerRe
     const count = state.images.length;
     const used = new Set(state.containers.map((x) => x.image));
     state.images = state.images.filter((x) => used.has(x.tag));
-    return result(state, 'Deleted Images: ' + (count - state.images.length) + '\nTotal reclaimed space: 0MB\n', '', 0);
+    return result(state, `Deleted Images: ${count - state.images.length}\nTotal reclaimed space: 0MB\n`, '', 0);
   }
   return fail(state, "docker: '" + command + "' is not a docker command. See 'docker --help'.\n");
 }
@@ -119,7 +119,7 @@ function build(state: DockerState, args: string[]): DockerResult {
       const stageBase = stages.find((x) => x.name === base);
       if (!Object.hasOwn(BASES, base) && !stageBase) return fail(state, "pull access denied for " + base + ", repository does not exist or may require 'docker login'\n");
       const asIndex = parts.findIndex((x) => x.toUpperCase() === 'AS');
-      stages.push({ base, name: asIndex < 0 ? 'stage' + stages.length : parts[asIndex + 1] ?? 'stage' + stages.length,
+      stages.push({ base, name: asIndex < 0 ? `stage${stages.length}` : parts[asIndex + 1] ?? `stage${stages.length}`,
         user: stageBase?.user ?? 'root', size: stageBase?.size ?? BASES[base] ?? 0, cmd: [], ports: [], layers: ['FROM ' + base], healthcheck: stageBase?.healthcheck ?? null });
       continue;
     }
@@ -128,7 +128,7 @@ function build(state: DockerState, args: string[]): DockerResult {
     if (op === 'COPY' || op === 'ADD') {
       const from = parts.find((x) => x.startsWith('--from='));
       if (from && !stages.some((x) => x.name === from.slice(7))) return fail(state, 'invalid from flag value ' + from.slice(7) + ': stage not found\n');
-      const source = parts.filter((x) => !x.startsWith('--'))[0];
+      const source = parts.find((x) => !x.startsWith('--'));
       if (!from && source && source !== '.' && !Object.hasOwn(state.files, source) && !Object.keys(state.files).some((x) => x.startsWith(source.replace(/\/$/, '') + '/'))) return fail(state, 'failed to calculate checksum: "' + source + '": not found\n');
       if (from) stage.size += 1;
       else if (source === '.' || source && Object.hasOwn(state.files, source)) stage.size += Math.max(1, Math.ceil(Object.values(state.files).join('').length / 50000));
@@ -146,15 +146,15 @@ function build(state: DockerState, args: string[]): DockerResult {
   }
   const final = stages.at(-1);
   if (!final) return fail(state, 'dockerfile parse error: Dockerfile must start with a FROM instruction\n');
-  const id = state.nextId++.toString(16).padStart(12, '0');
+  const id = (state.nextId++).toString(16).padStart(12, '0');
   const image: DockerImage = { tag, id, sizeMb: final.size, base: final.base, user: final.user, command: final.cmd, ports: final.ports, layers: final.layers, stages: stages.map((x) => x.name), healthcheck: final.healthcheck };
   state.images = [image, ...state.images.filter((x) => x.tag !== tag)];
-  return result(state, 'Step ' + lines.length + '/' + lines.length + ' : build complete\nSuccessfully built ' + id + '\nSuccessfully tagged ' + tag + '\n', '', 0);
+  return result(state, `Step ${lines.length}/${lines.length} : build complete\nSuccessfully built ${id}\nSuccessfully tagged ${tag}\n`, '', 0);
 }
 
 function images(state: DockerState): DockerResult {
   const lines = ['REPOSITORY          TAG       IMAGE ID       SIZE'];
-  for (const image of state.images) lines.push(image.tag.padEnd(20) + image.id + '   ' + image.sizeMb + 'MB (' + image.user + ')');
+  for (const image of state.images) lines.push(`${image.tag.padEnd(20)}${image.id}   ${image.sizeMb}MB (${image.user})`);
   return result(state, lines.join('\n') + '\n', '', 0);
 }
 
@@ -175,13 +175,13 @@ function run(state: DockerState, args: string[]): DockerResult {
   for (let i = 0; i < args.length; i++) if (!options.has(args[i]!) && i > 0 && !args[i]!.startsWith('-') && !options.has(args[i - 1]!)) imageTag = args[i]!;
   const image = state.images.find((x) => x.tag === imageTag);
   if (!image) return fail(state, "Unable to find image '" + imageTag + "' locally\nError response from daemon: pull access denied for " + imageTag + ", repository does not exist or may require 'docker login'.\n");
-  name ||= 'container-' + state.nextId;
+  name ||= `container-${state.nextId}`;
   if (state.containers.some((x) => x.name === name)) return fail(state, 'Error response from daemon: Conflict. The container name "/' + name + '" is already in use.\n');
   for (const mapping of ports) {
     const host = mapping.split(':')[0];
-    if (state.containers.some((x) => x.status === 'running' && x.ports.some((port) => port.startsWith(host + ':')))) return fail(state, 'Error response from daemon: Bind for 0.0.0.0:' + host + ' failed: port is already allocated\n');
+    if (state.containers.some((x) => x.status === 'running' && x.ports.some((port) => port.startsWith(`${host}:`)))) return fail(state, `Error response from daemon: Bind for 0.0.0.0:${host} failed: port is already allocated\n`);
   }
-  const id = state.nextId++.toString(16).padStart(12, '0');
+  const id = (state.nextId++).toString(16).padStart(12, '0');
   const container: DockerContainer = { id, name, image: imageTag, status: 'running', ports, environment, logs: (image.command.join(' ') || 'Container') + ' started\n', health: image.healthcheck ? 'healthy' : 'none' };
   state.containers.unshift(container);
   return result(state, detached ? id + '\n' : container.logs, '', 0);
@@ -215,8 +215,7 @@ function compose(state: DockerState, args: string[]): DockerResult {
     const image = typeof service.image === 'string' ? service.image : name + ':latest';
     if (!state.images.some((x) => x.tag === image)) return fail(state, 'service ' + name + ': image ' + image + ' not found\n');
     if (!state.containers.some((x) => x.name === name)) {
-      const item = state.images.find((x) => x.tag === image)!;
-      state.containers.unshift({ id: state.nextId++.toString(16).padStart(12, '0'), name, image, status: 'running', ports: [], environment: {}, logs: 'Service ' + name + ' started\n', health: 'none' });
+      state.containers.unshift({ id: (state.nextId++).toString(16).padStart(12, '0'), name, image, status: 'running', ports: [], environment: {}, logs: 'Service ' + name + ' started\n', health: 'none' });
     }
   }
   return result(state, 'Network app_default Created\n' + names.map((x) => 'Container ' + x + ' Started').join('\n') + '\n', '', 0);

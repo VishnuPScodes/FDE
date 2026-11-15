@@ -19,7 +19,7 @@ describe('Week 2 SQL curriculum', () => {
       .sort();
     const database = await PGlite.create();
     try {
-      expect(levelDirs).toHaveLength(15);
+      expect(levelDirs).toHaveLength(16);
       for (const levelId of levelDirs) {
         const levelDir = resolve(weekDir, levelId);
         const level = yaml.load(await readFile(resolve(levelDir, 'level.yaml'), 'utf8')) as SqlLevel;
@@ -27,9 +27,9 @@ describe('Week 2 SQL curriculum', () => {
         await database.exec(sharedSetup);
         const run = async (sql: string): Promise<SqlQueryResult> => {
           const statements = await database.exec(sql);
-          const lastWithRows = [...statements].reverse().find((statement) => statement.rows !== undefined);
+          const lastWithRows = statements.at(-1);
           const rows = (lastWithRows?.rows ?? []) as Record<string, unknown>[];
-          const columns = lastWithRows?.fields?.map((field) => field.name) ?? [];
+          const columns = lastWithRows?.fields.map((field) => field.name) ?? [];
           return {
             columns,
             rows,

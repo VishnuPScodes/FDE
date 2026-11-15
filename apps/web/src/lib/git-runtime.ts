@@ -46,7 +46,13 @@ async function ensureDirectory(path: string): Promise<void> {
   let current = '';
   for (const part of path.split('/').filter(Boolean)) {
     current += `/${part}`;
-    if (!await exists(current)) await fs.mkdir(current);
+    if (await exists(current)) continue;
+    try {
+      await fs.mkdir(current);
+    } catch (error) {
+      // A concurrent initialise (e.g. React StrictMode double effect) may have created it first.
+      if ((error as { code?: string }).code !== 'EEXIST') throw error;
+    }
   }
 }
 
@@ -64,7 +70,18 @@ async function walkFiles(path: string, prefix = ''): Promise<GitFile[]> {
   return output.sort((a, b) => a.path.localeCompare(b.path));
 }
 
-export async function initializeGitWorkspace(key: string, starterFiles: Record<string, string>, initialCommit = false): Promise<GitSnapshot> {
+const pendingInits = new Map<string, Promise<GitSnapshot>>();
+
+/** Serialised per key so overlapping calls don't both run `git init` and write starter files. */
+export function initializeGitWorkspace(key: string, starterFiles: Record<string, string>, initialCommit = false): Promise<GitSnapshot> {
+  const pending = pendingInits.get(key);
+  if (pending) return pending;
+  const run = initializeGitWorkspaceOnce(key, starterFiles, initialCommit).finally(() => pendingInits.delete(key));
+  pendingInits.set(key, run);
+  return run;
+}
+
+async function initializeGitWorkspaceOnce(key: string, starterFiles: Record<string, string>, initialCommit: boolean): Promise<GitSnapshot> {
   await ensureDirectory(root);
   const dir = repoDir(key);
   await ensureDirectory(dir);
@@ -196,6 +213,7 @@ export async function runGitCommand(key: string, input: string): Promise<string>
       await git.deleteBranch({ fs, dir, ref: rest[1] });
       return `Deleted branch ${rest[1]}.`;
     }
+    if (!rest[0]) return "fatal: branch name required";
     await git.branch({ fs, dir, ref: rest[0] });
     return `Created branch ${rest[0]}.`;
   }
@@ -249,7 +267,7 @@ async function rebaseBranch(dir: string, current: string, target?: string): Prom
   ]);
   const base = await git.findMergeBase({ fs, dir, oids: [currentOid, targetOid] });
   if (!base.length) throw new Error('Cannot rebase branches without a shared commit.');
-  const baseOid = base[0]!;
+  const baseOid = base[0] as string;
   const commits = await git.log({ fs, dir, ref: current, depth: 30 });
   const replay: typeof commits = [];
   for (const commit of commits) {
@@ -276,4 +294,18 @@ export async function mergeGitBranches(key: string, target: string, source: stri
   const result = await git.merge({ fs, dir, ours: target, theirs: source, abortOnConflict: false, mergeDriver: showConflictMarkers, author: auth, committer: auth, message: `Merge branch '${source}'` });
   if ((await getGitSnapshot(key)).conflicts) throw new Error('Cannot merge this pull request until conflicts are resolved.');
   return result.oid ?? await git.resolveRef({ fs, dir, ref: `refs/heads/${target}` });
+}
+
+async function removeTree(path: string): Promise<void> {
+  const stat = await fs.stat(path);
+  if (stat.isDirectory()) {
+    for (const name of await fs.readdir(path)) await removeTree(`${path}/${name}`);
+    await fs.rmdir(path);
+  } else await fs.unlink(path);
+}
+
+/** Delete the learner's repository so the next initialise starts from the starter files. */
+export async function resetGitWorkspace(key: string): Promise<void> {
+  const dir = repoDir(key);
+  if (await exists(dir)) await removeTree(dir);
 }

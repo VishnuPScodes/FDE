@@ -123,6 +123,31 @@
   --sidebar-width: 280px;
   --header-height: 60px;
   --content-max-width: 1400px;
+
+  /* Workspace chrome (terminal / toolbar / results) */
+  --terminal-bg: #090a12;
+  --terminal-bg-alt: #0b0d15;
+  --terminal-fg: #d7d9e0;
+  --terminal-muted: #969bad;
+  --terminal-accent: #8ba1ff;
+  --terminal-ok: #68d391;
+  --terminal-err: #feb2b2;
+  --toolbar-bg: #11131d;
+  --toolbar-fg: #bfc5d7;
+  --toolbar-border: #292c3b;
+  --terminal-strong: #ffffff;
+  --terminal-active-bg: #292c3b;
+  --terminal-chip-fg: #b6c5ff;
+  --terminal-chip-bg: #242b46;
+  --terminal-warn: #fbbf24;
+  --terminal-ok-strong: #4ade80;
+  --terminal-warn-note: #ffd58a;
+  --terminal-warn-note-bg: #352a17;
+  --terminal-panel: #171927;
+  --terminal-panel-border: #373b50;
+  --terminal-btn-bg: #1b1f30;
+  --terminal-btn-hover: #262b42;
+  --terminal-code: #c3cbff;
 }
 
 /* Light theme */
@@ -145,6 +170,30 @@
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.15);
+
+  --terminal-bg: #f4f5fa;
+  --terminal-bg-alt: #ffffff;
+  --terminal-fg: #1f2335;
+  --terminal-muted: #5c6178;
+  --terminal-accent: #3b54d9;
+  --terminal-ok: #187a42;
+  --terminal-err: #b42318;
+  --toolbar-bg: #e8eaf3;
+  --toolbar-fg: #3a3f55;
+  --toolbar-border: #cfd3e3;
+  --terminal-strong: #0a0a1a;
+  --terminal-active-bg: #d5d9ea;
+  --terminal-chip-fg: #2f45b8;
+  --terminal-chip-bg: #dde2f7;
+  --terminal-warn: #9a5b00;
+  --terminal-ok-strong: #187a42;
+  --terminal-warn-note: #7a4a00;
+  --terminal-warn-note-bg: #fdf0d5;
+  --terminal-panel: #eef0f8;
+  --terminal-panel-border: #cfd3e3;
+  --terminal-btn-bg: #ffffff;
+  --terminal-btn-hover: #eef0f8;
+  --terminal-code: #3b54d9;
 }
 
 /* --------------------------------------------------------------------------

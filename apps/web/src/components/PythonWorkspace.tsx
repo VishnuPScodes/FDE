@@ -14,13 +14,15 @@ import { getProgress, saveProgress } from '../lib/progress';
 import { loadWorkspaceFiles, saveWorkspaceFiles, type WorkspaceFiles } from '../lib/virtual-files';
 import type { LevelMeta } from '../lib/content-loader';
 import styles from './PythonWorkspace.module.css';
+import ResettableWorkspace from './ResettableWorkspace';
+import { useSubmitShortcut, submitButtonProps } from '../hooks/useSubmitShortcut';
 
 interface PythonWorkspaceProps { level: LevelMeta; hintsUsed: number; onPassed: () => void }
 type MonacoGlobal = typeof globalThis & { MonacoEnvironment?: { getWorker: () => Worker } };
 
 (self as MonacoGlobal).MonacoEnvironment = { getWorker: () => new EditorWorker() };
 
-export default function PythonWorkspace({ level, hintsUsed, onPassed }: PythonWorkspaceProps) {
+function PythonWorkspaceInner({ level, hintsUsed, onPassed }: PythonWorkspaceProps) {
   const { user, session } = useAuth();
   const editorHost = useRef<HTMLDivElement>(null);
   const terminalHost = useRef<HTMLDivElement>(null);
@@ -87,7 +89,7 @@ export default function PythonWorkspace({ level, hintsUsed, onPassed }: PythonWo
   useEffect(() => {
     if (!ready || !editorHost.current) return;
     let editor: MonacoEditor.IStandaloneCodeEditor | undefined;
-    async function createEditor(): Promise<void> {
+    function createEditor(): void {
       if (!editorHost.current) return;
       editor = monaco.editor.create(editorHost.current, {
         value: files[activeFile] ?? '', language: 'python', theme: 'vs-dark', automaticLayout: true,
@@ -100,7 +102,7 @@ export default function PythonWorkspace({ level, hintsUsed, onPassed }: PythonWo
         setFiles((previous) => ({ ...previous, [activeFile]: value }));
       });
     }
-    void createEditor();
+    createEditor();
     return () => { editor?.dispose(); editorRef.current = null; };
   }, [ready, activeFile]);
 
@@ -205,8 +207,10 @@ export default function PythonWorkspace({ level, hintsUsed, onPassed }: PythonWo
     } catch (error) { setProgressMessage((error as Error).message); }
   }, [files, level.id]);
 
+  useSubmitShortcut(submit, !running);
   if (!ready) return <div className={styles.loading}>Loading your workspace…</div>;
   const passed = checks?.length ? checks.every((check) => check.passed) : false;
+
   return (
     <section className={styles.workspace} aria-label="Python workspace">
       <div className={styles.toolbar}>
@@ -215,7 +219,7 @@ export default function PythonWorkspace({ level, hintsUsed, onPassed }: PythonWo
         </div>
         <div className={styles.actions}>
           <button className="btn btn-secondary" disabled={running} onClick={() => void runCode()}>Run</button>
-          <button className="btn btn-primary" disabled={running} onClick={() => void submit()}>{running ? 'Running…' : 'Submit'}</button>
+          <button className="btn btn-primary" {...submitButtonProps} disabled={running} onClick={() => void submit()}>{running ? 'Running…' : 'Submit'}</button>
         </div>
       </div>
       <div ref={editorHost} className={styles.editor} aria-label="Code editor" />
@@ -236,3 +240,11 @@ export default function PythonWorkspace({ level, hintsUsed, onPassed }: PythonWo
   );
 }
 
+export default function PythonWorkspace(props: Parameters<typeof PythonWorkspaceInner>[0]) {
+  const { user } = useAuth();
+  return (
+    <ResettableWorkspace clear={() => saveWorkspaceFiles(`${user?.id ?? 'guest'}:${props.level.id}`, {})}>
+      <PythonWorkspaceInner {...props} />
+    </ResettableWorkspace>
+  );
+}

@@ -22,17 +22,20 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 -- Users can read their own profile
+DROP POLICY IF EXISTS "Users can read own profile" ON public.profiles;
 CREATE POLICY "Users can read own profile"
   ON public.profiles FOR SELECT
   USING (auth.uid() = id);
 
 -- Users can update their own profile (but not role)
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 CREATE POLICY "Users can update own profile"
   ON public.profiles FOR UPDATE
   USING (auth.uid() = id)
   WITH CHECK (auth.uid() = id);
 
 -- Insert is handled by the trigger below
+DROP POLICY IF EXISTS "Service role can insert profiles" ON public.profiles;
 CREATE POLICY "Service role can insert profiles"
   ON public.profiles FOR INSERT
   WITH CHECK (true);
@@ -94,16 +97,18 @@ CREATE TABLE IF NOT EXISTS public.login_events (
 
 ALTER TABLE public.login_events ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read own login events" ON public.login_events;
 CREATE POLICY "Users can read own login events"
   ON public.login_events FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Service role can insert login events" ON public.login_events;
 CREATE POLICY "Service role can insert login events"
   ON public.login_events FOR INSERT
   WITH CHECK (true);
 
-CREATE INDEX idx_login_events_user_id ON public.login_events(user_id);
-CREATE INDEX idx_login_events_created_at ON public.login_events(created_at);
+CREATE INDEX IF NOT EXISTS idx_login_events_user_id ON public.login_events(user_id);
+CREATE INDEX IF NOT EXISTS idx_login_events_created_at ON public.login_events(created_at);
 
 -- ============================================================================
 -- 4. DEVICES (deduplicated per user)
@@ -123,10 +128,12 @@ CREATE TABLE IF NOT EXISTS public.devices (
 
 ALTER TABLE public.devices ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read own devices" ON public.devices;
 CREATE POLICY "Users can read own devices"
   ON public.devices FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Service role can manage devices" ON public.devices;
 CREATE POLICY "Service role can manage devices"
   ON public.devices FOR ALL
   WITH CHECK (true);
@@ -149,10 +156,12 @@ CREATE TABLE IF NOT EXISTS public.level_progress (
 
 ALTER TABLE public.level_progress ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read own progress" ON public.level_progress;
 CREATE POLICY "Users can read own progress"
   ON public.level_progress FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can manage own progress" ON public.level_progress;
 CREATE POLICY "Users can manage own progress"
   ON public.level_progress FOR ALL
   USING (auth.uid() = user_id)
@@ -173,15 +182,17 @@ CREATE TABLE IF NOT EXISTS public.submissions (
 
 ALTER TABLE public.submissions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read own submissions" ON public.submissions;
 CREATE POLICY "Users can read own submissions"
   ON public.submissions FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own submissions" ON public.submissions;
 CREATE POLICY "Users can insert own submissions"
   ON public.submissions FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
-CREATE INDEX idx_submissions_user_level ON public.submissions(user_id, level_id);
+CREATE INDEX IF NOT EXISTS idx_submissions_user_level ON public.submissions(user_id, level_id);
 
 -- ============================================================================
 -- 7. CONSENTS
@@ -196,10 +207,12 @@ CREATE TABLE IF NOT EXISTS public.consents (
 
 ALTER TABLE public.consents ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read own consents" ON public.consents;
 CREATE POLICY "Users can read own consents"
   ON public.consents FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Service role can insert consents" ON public.consents;
 CREATE POLICY "Service role can insert consents"
   ON public.consents FOR INSERT
   WITH CHECK (true);
@@ -218,10 +231,12 @@ CREATE TABLE IF NOT EXISTS public.feedback (
 
 ALTER TABLE public.feedback ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read own feedback" ON public.feedback;
 CREATE POLICY "Users can read own feedback"
   ON public.feedback FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own feedback" ON public.feedback;
 CREATE POLICY "Users can insert own feedback"
   ON public.feedback FOR INSERT
   WITH CHECK (auth.uid() = user_id);
@@ -241,10 +256,12 @@ CREATE TABLE IF NOT EXISTS public.realworld_runs (
 
 ALTER TABLE public.realworld_runs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read own realworld runs" ON public.realworld_runs;
 CREATE POLICY "Users can read own realworld runs"
   ON public.realworld_runs FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Service role can insert realworld runs" ON public.realworld_runs;
 CREATE POLICY "Service role can insert realworld runs"
   ON public.realworld_runs FOR INSERT
   WITH CHECK (true);
@@ -263,10 +280,12 @@ CREATE TABLE IF NOT EXISTS public.writing_reviews (
 
 ALTER TABLE public.writing_reviews ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can read own writing reviews" ON public.writing_reviews;
 CREATE POLICY "Users can read own writing reviews"
   ON public.writing_reviews FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own writing reviews" ON public.writing_reviews;
 CREATE POLICY "Users can insert own writing reviews"
   ON public.writing_reviews FOR INSERT
   WITH CHECK (auth.uid() = user_id);

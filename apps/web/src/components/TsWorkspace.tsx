@@ -9,6 +9,8 @@ import { saveProgress } from '../lib/progress';
 import { loadWorkspaceFiles, saveWorkspaceFiles, type WorkspaceFiles } from '../lib/virtual-files';
 import type { LevelMeta } from '../lib/content-loader';
 import styles from './TsWorkspace.module.css';
+import ResettableWorkspace from './ResettableWorkspace';
+import { useSubmitShortcut, submitButtonProps } from '../hooks/useSubmitShortcut';
 
 interface TsWorkspaceProps { level: LevelMeta; hintsUsed: number; onPassed: () => void }
 type MonacoGlobal = typeof globalThis & { MonacoEnvironment?: { getWorker: () => Worker } };
@@ -55,13 +57,16 @@ const SANDBOX_DOCUMENT = `<!doctype html><html><head><meta charset="utf-8"><meta
     const test = (name, fn) => tests.push({ name, fn });
     try {
       const execute = new Function('console', 'test', 'expect', 'React', 'ReactDOM', 'document', event.data.code);
+      const settle = async () => { for (let i = 0; i < 3; i += 1) await new Promise((resolve) => setTimeout(resolve, 0)); };
       await execute(console, test, expect, React, ReactDOM, document);
+      await settle();
       let passed = 0;
       let failed = 0;
       for (const item of tests.splice(0)) {
         try { await item.fn(); logs.push('✓ ' + item.name); passed += 1; }
         catch (error) { logs.push('× ' + item.name + ': ' + (error?.message || String(error))); failed += 1; }
       }
+      await settle();
       send({ stdout: logs.join('\\n'), stderr: '', passed, failed, preview: document.getElementById('root')?.innerText || '' });
     } catch (error) {
       send({ stdout: logs.join('\\n'), stderr: error?.stack || String(error), passed: 0, failed: 1, preview: '' });
@@ -70,7 +75,7 @@ const SANDBOX_DOCUMENT = `<!doctype html><html><head><meta charset="utf-8"><meta
 })();
 <\/script></body></html>`;
 
-export default function TsWorkspace({ level, hintsUsed, onPassed }: TsWorkspaceProps) {
+function TsWorkspaceInner({ level, hintsUsed, onPassed }: TsWorkspaceProps) {
   const { user, session } = useAuth();
   const editorHost = useRef<HTMLDivElement>(null);
   const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
@@ -109,12 +114,14 @@ export default function TsWorkspace({ level, hintsUsed, onPassed }: TsWorkspaceP
     if (!ready || !editorHost.current) return;
     const editor = monaco.editor.create(editorHost.current, {
       value: filesRef.current[activeFile] ?? '', language: activeFile.endsWith('x') ? 'typescript' : activeFile.endsWith('.js') ? 'javascript' : 'typescript',
-      theme: 'vs-dark', automaticLayout: true, minimap: { enabled: false }, fontSize: 14, tabSize: 2,
+      theme: document.documentElement.getAttribute('data-theme') === 'light' ? 'vs' : 'vs-dark', automaticLayout: true, minimap: { enabled: false }, fontSize: 14, tabSize: 2,
       scrollBeyondLastLine: false, ariaLabel: `Code editor: ${activeFile}`,
     });
     editorRef.current = editor;
+    const observer = new MutationObserver(() => monaco.editor.setTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'vs' : 'vs-dark'));
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     const subscription = editor.onDidChangeModelContent(() => setFiles((previous) => ({ ...previous, [activeFile]: editor.getValue() })));
-    return () => { subscription.dispose(); editor.dispose(); editorRef.current = null; };
+    return () => { observer.disconnect(); subscription.dispose(); editor.dispose(); editorRef.current = null; };
   }, [activeFile, ready]);
 
   useEffect(() => {
@@ -156,7 +163,7 @@ export default function TsWorkspace({ level, hintsUsed, onPassed }: TsWorkspaceP
       const sandboxResult = await new Promise<SandboxResult>((resolve) => {
         const timeout = window.setTimeout(() => {
           pendingRef.current = null;
-          if (frame) frame.srcdoc = SANDBOX_DOCUMENT;
+          frame.srcdoc = SANDBOX_DOCUMENT;
           resolve({ id, source, type: 'result', stdout: '', stderr: 'The program took too long and was stopped.', passed: 0, failed: 1, preview: '' });
         }, 5000);
         pendingRef.current = { resolve, timeout };
@@ -186,12 +193,14 @@ export default function TsWorkspace({ level, hintsUsed, onPassed }: TsWorkspaceP
     setMessage(passed ? session?.access_token ? synced ? 'Level passed. Your progress is saved.' : 'Checks passed, but progress could not sync.' : 'Checks passed. Sign in to sync progress across devices.' : 'Some checks need work. Read each result, update your code, and submit again.');
   }, [attempts, execute, files, hintsUsed, level.checks, level.id, onPassed, session?.access_token]);
 
+  useSubmitShortcut(submit, !busy);
   if (!ready) return <div className={styles.loading}>Loading your code workspace…</div>;
   const checkResults = result ? gradeTypeScriptLevel(level.checks, files, result) : [];
   const passed = checkResults.length > 0 && checkResults.every((check) => check.passed);
+
   return (
     <section className={styles.workspace} aria-label="TypeScript workspace">
-      <header className={styles.toolbar}><div><strong>{level.environment === 'js' ? 'JavaScript' : 'TypeScript'} workspace</strong><span>{runtimeStatus}</span></div><div className={styles.actions}><button className="btn btn-secondary" disabled={busy} onClick={() => void execute()}>Run</button><button className="btn btn-primary" disabled={busy} onClick={() => void submit()}>{busy ? 'Running…' : 'Submit'}</button></div></header>
+      <header className={styles.toolbar}><div><strong>{level.environment === 'js' ? 'JavaScript' : 'TypeScript'} workspace</strong><span>{runtimeStatus}</span></div><div className={styles.actions}><button className="btn btn-secondary" disabled={busy} onClick={() => void execute()}>Run</button><button className="btn btn-primary" {...submitButtonProps} disabled={busy} onClick={() => void submit()}>{busy ? 'Running…' : 'Submit'}</button></div></header>
       <div className={styles.files}>{Object.keys(files).map((name) => <button key={name} aria-pressed={name === activeFile} onClick={() => setActiveFile(name)}>{name}</button>)}</div>
       <div ref={editorHost} className={styles.editor} aria-label="TypeScript code editor" />
       <div className={styles.previewHeader}><strong>Isolated output and preview</strong><span>Runs in a sandboxed iframe with network access disabled.</span></div>
@@ -199,5 +208,14 @@ export default function TsWorkspace({ level, hintsUsed, onPassed }: TsWorkspaceP
       {result && <div className={`${styles.output} ${passed ? styles.passed : styles.failed}`} aria-live="polite"><h3>{passed ? 'All checks passed' : 'Run output'}</h3>{result.stdout && <pre>{result.stdout}</pre>}{result.stderr && <pre>{result.stderr}</pre>}{result.preview && <p>Preview text: {result.preview}</p>}{checkResults.map((check, index) => <p key={`${check.label}-${index}`}>{check.passed ? '✓' : '×'} {check.label}{!check.passed && <> · expected <code>{check.expected}</code>, got <code>{check.actual}</code></>}</p>)}</div>}
       {message && <p className={styles.message} role="status">{message}</p>}
     </section>
+  );
+}
+
+export default function TsWorkspace(props: Parameters<typeof TsWorkspaceInner>[0]) {
+  const { user } = useAuth();
+  return (
+    <ResettableWorkspace clear={() => saveWorkspaceFiles(`${user?.id ?? 'guest'}:${props.level.id}`, {})}>
+      <TsWorkspaceInner {...props} />
+    </ResettableWorkspace>
   );
 }

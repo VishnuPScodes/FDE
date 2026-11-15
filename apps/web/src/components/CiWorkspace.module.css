@@ -1,0 +1,34 @@
+.workspace { display: flex; flex-direction: column; min-height: 28rem; height: 100%; color: var(--text-primary); background: var(--bg-base); font-family: var(--font-sans); overflow: auto; }
+.loading { padding: 2rem; color: var(--text-secondary); }
+.toolbar { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; padding: .6rem .85rem; border-bottom: 1px solid var(--border-default); background: var(--bg-surface); }
+.toolbar strong { font-weight: 600; margin-right: auto; }
+.tabs { display: flex; flex-wrap: wrap; gap: .25rem; padding: .4rem .85rem 0; border-bottom: 1px solid var(--border-subtle); background: var(--bg-elevated); }
+.tab { padding: .35rem .7rem; border: 1px solid transparent; border-bottom: 0; border-radius: var(--radius-sm) var(--radius-sm) 0 0; color: var(--text-secondary); background: transparent; font: .85rem var(--font-mono); cursor: pointer; }
+.tab[aria-selected='true'] { color: var(--text-primary); background: var(--bg-surface); border-color: var(--border-default); }
+.tab:focus-visible { outline: 2px solid var(--color-brand-400); outline-offset: -2px; }
+.editor { box-sizing: border-box; width: 100%; min-height: 16rem; resize: vertical; padding: .85rem; border: 0; border-bottom: 1px solid var(--border-subtle); color: var(--text-primary); background: var(--bg-surface); font: 14px/1.6 var(--font-mono); tab-size: 2; }
+.editor:focus-visible { outline: 2px solid var(--color-brand-400); outline-offset: -2px; }
+.commandRow { display: flex; align-items: center; gap: .5rem; padding: .5rem .85rem; border-bottom: 1px solid var(--border-subtle); background: var(--bg-elevated); }
+.commandRow label { font-family: var(--font-mono); color: var(--text-secondary); }
+.commandRow input { flex: 1; min-width: 0; padding: .4rem .55rem; border: 1px solid var(--border-default); border-radius: var(--radius-sm); color: var(--text-primary); background: var(--bg-surface); font: .9rem var(--font-mono); }
+.help { margin: 0; padding: .4rem .85rem; color: var(--text-muted); font-size: .82rem; }
+.panelTitle { margin: 0; padding: .5rem .85rem; border-top: 1px solid var(--border-default); background: var(--bg-elevated); font-size: .9rem; font-weight: 600; }
+.terminal { margin: 0; padding: .6rem .85rem; max-height: 9rem; overflow: auto; border-bottom: 1px solid var(--border-subtle); color: var(--text-primary); background: var(--bg-surface); font: .82rem/1.5 var(--font-mono); white-space: pre-wrap; }
+.runs { display: grid; gap: .5rem; padding: .6rem .85rem; max-height: 26rem; overflow: auto; }
+.empty { margin: 0; padding: .6rem .85rem; color: var(--text-muted); font-size: .9rem; }
+.run { border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-surface); }
+.run > summary { display: flex; flex-wrap: wrap; gap: .5rem; align-items: baseline; padding: .5rem .7rem; cursor: pointer; font-weight: 600; }
+.meta { color: var(--text-secondary); font-weight: 400; font-size: .85rem; }
+.jobs { display: grid; gap: .4rem; padding: 0 .7rem .7rem; }
+.job { border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: var(--bg-base); }
+.job > summary { padding: .35rem .6rem; cursor: pointer; }
+.steps { list-style: none; margin: 0; padding: 0 .6rem .5rem; display: grid; gap: .25rem; }
+.step { font-size: .88rem; }
+.stepLog { margin: .25rem 0 .25rem 1.4rem; padding: .5rem; max-height: 14rem; overflow: auto; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: var(--text-primary); background: var(--bg-elevated); font: .78rem/1.45 var(--font-mono); white-space: pre-wrap; }
+.ok { color: var(--color-success-400); }
+.bad { color: var(--color-error-400); }
+.wait { color: var(--color-warning-400); }
+.skip { color: var(--text-muted); }
+.note { margin: 0; padding: 0 .7rem .5rem; color: var(--color-warning-400); font-size: .85rem; }
+.approve { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; padding: .5rem .7rem; border-top: 1px solid var(--border-subtle); color: var(--text-primary); background: var(--bg-elevated); font-size: .9rem; }
+.footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; padding: .6rem .85rem; border-top: 1px solid var(--border-default); background: var(--bg-surface); }

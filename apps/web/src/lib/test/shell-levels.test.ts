@@ -12,7 +12,7 @@ interface ShellLevel {
   starter_files?: { path: string; content?: string }[];
 }
 
-async function evaluateScript(level: ShellLevel, source: string) {
+function evaluateScript(level: ShellLevel, source: string) {
   const files = Object.fromEntries(
     (level.starter_files ?? []).map((file) => [`/workspace/${file.path}`, file.content ?? '']),
   );
@@ -38,14 +38,14 @@ describe('Week 1 shell curriculum', () => {
       const folder = resolve(levelsDir, id);
       const level = yaml.load(await readFile(resolve(folder, 'level.yaml'), 'utf8')) as ShellLevel;
       const solution = await readFile(resolve(folder, 'solution/main.sh'), 'utf8');
-      const solutionResults = await evaluateScript(level, solution);
+      const solutionResults = evaluateScript(level, solution);
       expect(
         solutionResults.every((result) => result.passed),
         `${id} solution: ${JSON.stringify(solutionResults)}`,
       ).toBe(true);
 
       const wrong = await readFile(resolve(folder, 'wrong/main.sh'), 'utf8');
-      const wrongResults = await evaluateScript(level, wrong);
+      const wrongResults = evaluateScript(level, wrong);
       expect(
         wrongResults.some((result) => !result.passed),
         `${id} wrong example unexpectedly passed`,

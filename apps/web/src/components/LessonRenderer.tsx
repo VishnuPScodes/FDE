@@ -206,7 +206,7 @@ function safeHref(raw: string): string {
 function renderFlowchart(source: string): string {
   const lines = source.split('\n').map((line) => line.trim()).filter((line) => line && !/^(flowchart|graph)\s/.test(line));
   const nodes = new Map<string, string>();
-  const edges: Array<[string, string]> = [];
+  const edges: [string, string][] = [];
   for (const line of lines) {
     const match = line.match(/^([\w-]+)(?:\[(.*?)\])?\s*-->\s*([\w-]+)(?:\[(.*?)\])?$/);
     if (!match) continue;

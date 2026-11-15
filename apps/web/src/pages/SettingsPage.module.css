@@ -16,13 +16,6 @@
 .themeBtnActive { border-color: var(--color-brand-500); color: var(--text-primary); background: rgba(85,104,248,0.08); }
 .themeIcon { font-size: var(--text-lg); }
 
-/* AI */
-.aiPlaceholder {
-  display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); background: var(--bg-surface);
-  border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); font-size: var(--text-sm); color: var(--text-muted);
-}
-.aiIcon { font-size: 1.5rem; }
-
 /* Data */
 .dataActions { display: flex; flex-direction: column; gap: var(--space-4); align-items: flex-start; }
 .deleteBtn { background: transparent; color: var(--color-error-400); border: 1px solid rgba(239,68,68,0.3); }

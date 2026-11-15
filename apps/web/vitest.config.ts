@@ -1,9 +1,10 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { levelIndexPlugin } from './level-index-plugin';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), levelIndexPlugin()],
   test: {
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     environment: 'jsdom',

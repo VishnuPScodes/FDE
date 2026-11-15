@@ -215,3 +215,10 @@ Format: `## YYYY-MM-DD — Decision title`
 **Limitations:** esbuild strips TypeScript syntax but does not type-check it. The preview supports static text and basic elements, not a full React DOM, event system, imports, or a Node runtime. The timeout reloads the sandbox after five seconds. Levels should teach that type-checking limitation and keep exercises within the supported preview surface.
 
 **Verification:** Web type-check, Vitest (22 tests), content validation, and production build pass. Four Week 5 levels cover typed calculations, async data, embedded behavior checks, and a basic TSX admin panel. Preview deployment remains pending because the current deploy workflow targets production on pushes to `main`; no preview deployment was triggered.
+
+## 2026-11-09 — ESLint rule tuning
+
+- `no-non-null-assertion` off: `noUncheckedIndexedAccess` is enabled, so indexed reads after a guard (e.g. regex groups) need `!`; the TS compiler setting is the stronger safety net.
+- `restrict-template-expressions` allows numbers/booleans; `no-confusing-void-expression` ignores arrow shorthand; `prefer-regexp-exec` off (stylistic).
+- Type-aware rules that catch real bugs (`no-floating-promises`, `no-misused-promises`, `no-unsafe-*`, `no-base-to-string`) stay as errors.
+- `apps/web` gained `src/vite-env.d.ts`; without it ESLint saw every CSS module and `import.meta.env` as unresolved (`any`).

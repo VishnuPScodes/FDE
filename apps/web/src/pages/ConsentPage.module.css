@@ -143,3 +143,4 @@
 .acceptBtn {
   width: 100%;
 }
+.error { margin-top: .75rem; color: var(--color-error-400); }

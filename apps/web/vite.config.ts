@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
+import { levelIndexPlugin } from './level-index-plugin';
 
 export default defineConfig({
   publicDir: false,
@@ -20,6 +21,7 @@ export default defineConfig({
   worker: { format: 'es' },
   plugins: [
     react(),
+    levelIndexPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       showMaximumFileSizeToCacheInBytesWarning: true,

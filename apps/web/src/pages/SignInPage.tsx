@@ -27,7 +27,7 @@ export default function SignInPage() {
             We only support Google Sign-In. No email, no password, no hassle.
           </p>
         </div>
-        <button className={styles.googleBtn} onClick={signInWithGoogle} id="google-sign-in">
+        <button className={styles.googleBtn} onClick={() => void signInWithGoogle()} id="google-sign-in">
           <svg viewBox="0 0 24 24" width="20" height="20" className={styles.googleIcon}>
             <path
               fill="#4285F4"

@@ -1,20 +1,33 @@
 import { useAuth } from '../contexts/AuthContext';
 import { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import styles from './ConsentPage.module.css';
 
 const CONSENT_VERSION = '1.0';
 
 export default function ConsentPage() {
-  const { acceptConsent, profile } = useAuth();
+  const { acceptConsent, profile, user, loading } = useAuth();
+  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [error, setError] = useState('');
 
-  if (!profile) return null;
+  if (!loading && !user) return <Navigate to="/sign-in" replace />;
+  if (profile?.consent_version === CONSENT_VERSION && !submitting) return <Navigate to="/dashboard" replace />;
+  if (!profile) {
+    return <div className={styles.page}><div className={styles.card} role="status">Loading your account…</div></div>;
+  }
 
   const handleAccept = async () => {
     setSubmitting(true);
-    await acceptConsent(CONSENT_VERSION);
-    setSubmitting(false);
+    setError('');
+    try {
+      await acceptConsent(CONSENT_VERSION);
+      void navigate('/dashboard', { replace: true });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not record your consent. Please try again.');
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -85,12 +98,13 @@ export default function ConsentPage() {
 
         <button
           className={`btn btn-primary ${styles.acceptBtn}`}
-          onClick={handleAccept}
+          onClick={() => void handleAccept()}
           disabled={!checked || submitting}
           id="consent-accept"
         >
           {submitting ? 'Saving…' : 'Continue to dashboard'}
         </button>
+        {error && <p role="alert" className={styles.error}>{error}</p>}
       </div>
     </div>
   );

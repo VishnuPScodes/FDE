@@ -1,6 +1,7 @@
 import type { Check, FeedbackRule } from '@fde/content-schema';
 import type { PythonRunResult } from './python-runtime';
 import type { WorkspaceFiles } from './virtual-files';
+import { checkText, toText } from './check-values';
 
 export interface CheckResult { kind: string; label: string; passed: boolean; actual: string; expected: string; feedback?: string }
 
@@ -15,18 +16,18 @@ export async function gradePythonLevel(level: { checks: Check[]; feedback?: Feed
 async function evaluateCheck(check: Check, files: WorkspaceFiles, run: (command: string) => Promise<PythonRunResult>, feedbackRules: FeedbackRule[] = []): Promise<CheckResult> {
   const kind = check.kind;
   const label = typeof check.label === 'string' ? check.label : kind.replaceAll('_', ' ');
-  const expected = check.expected === undefined ? '' : String(check.expected);
+  const expected = check.expected === undefined ? '' : toText(check.expected);
   let actual = '';
   let output = '';
   let errors = '';
   let passed = false;
   if (kind === 'file_exists') {
-    const path = String(check.path ?? '');
+    const path = checkText(check.path);
     actual = String(Object.hasOwn(files, path));
     passed = actual === 'true' && check.expected !== false;
   } else if (kind === 'file_contains') {
-    actual = files[String(check.path ?? '')] ?? '';
-    const needle = String(check.expected ?? '');
+    actual = files[checkText(check.path)] ?? '';
+    const needle = checkText(check.expected);
     passed = actual.includes(needle);
   } else if (kind === 'pytest_passes') {
     const result = await run(typeof check.run === 'string' ? check.run : 'pytest -q');
@@ -44,7 +45,7 @@ async function evaluateCheck(check: Check, files: WorkspaceFiles, run: (command:
       passed = actual === target;
     } else if (kind === 'stdout_matches') {
       actual = result.stdout;
-      try { passed = new RegExp(String(check.expected ?? '')).test(actual); } catch { passed = false; }
+      try { passed = new RegExp(checkText(check.expected)).test(actual); } catch { passed = false; }
     } else if (kind === 'stderr_contains') {
       actual = result.stderr;
       passed = actual.includes(expected);

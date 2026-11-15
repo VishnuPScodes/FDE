@@ -10,7 +10,7 @@ export const meRouter = new Hono<AppEnv>();
  * Exports all user data as JSON (DPDP Act right to data portability).
  */
 meRouter.get('/export', authMiddleware, async (c) => {
-  const userId = c.get('userId') as string;
+  const userId = c.get('userId');
   const supabase = getSupabaseAdmin(c);
 
   const [profile, logins, devices, progress, submissions, consents, feedback] =
@@ -25,7 +25,7 @@ meRouter.get('/export', authMiddleware, async (c) => {
     ]);
 
   return c.json({
-    profile: profile.data,
+    profile: profile.data as unknown,
     login_events: logins.data ?? [],
     devices: devices.data ?? [],
     level_progress: progress.data ?? [],
@@ -42,7 +42,7 @@ meRouter.get('/export', authMiddleware, async (c) => {
  * Uses Supabase admin client to delete from auth.users, which cascades.
  */
 meRouter.delete('/', authMiddleware, async (c) => {
-  const userId = c.get('userId') as string;
+  const userId = c.get('userId');
   const supabase = getSupabaseAdmin(c);
 
   // Delete from auth.users — CASCADE handles all related tables

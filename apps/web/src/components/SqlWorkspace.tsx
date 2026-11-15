@@ -1,3 +1,4 @@
+import { plainString } from '../lib/plain-string';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FitAddon } from '@xterm/addon-fit';
 import { Terminal } from '@xterm/xterm';
@@ -14,6 +15,7 @@ import { getProgress, saveProgress } from '../lib/progress';
 import { loadWorkspaceFiles, saveWorkspaceFiles } from '../lib/virtual-files';
 import type { LevelMeta } from '../lib/content-loader';
 import styles from './SqlWorkspace.module.css';
+import { useSubmitShortcut, submitButtonProps } from '../hooks/useSubmitShortcut';
 
 interface SqlWorkspaceProps { level: LevelMeta; hintsUsed: number; onPassed: () => void }
 type MonacoGlobal = typeof globalThis & { MonacoEnvironment?: { getWorker: () => Worker } };
@@ -234,6 +236,7 @@ export default function SqlWorkspace({ level, hintsUsed, onPassed }: SqlWorkspac
     } catch (error) { setProgressMessage((error as Error).message); }
   }, [level.id]);
 
+  useSubmitShortcut(submit, !running && databaseReady);
   if (!ready) return <div className={styles.loading}>Loading your SQL workspace…</div>;
   const passed = checks?.length ? checks.every((check) => check.passed) : false;
   const activeTable = tables.find((table) => table.name === selectedTable);
@@ -244,7 +247,7 @@ export default function SqlWorkspace({ level, hintsUsed, onPassed }: SqlWorkspac
         <div className={styles.title}><span className={styles.prompt}>SQL</span><span>{status}</span></div>
         <div className={styles.actions}>
           <button className="btn btn-secondary" disabled={running || !databaseReady} onClick={() => void runQuery()}>Run query</button>
-          <button className="btn btn-primary" disabled={running || !databaseReady} onClick={() => void submit()}>{running ? 'Running…' : 'Submit'}</button>
+          <button className="btn btn-primary" {...submitButtonProps} disabled={running || !databaseReady} onClick={() => void submit()}>{running ? 'Running…' : 'Submit'}</button>
           <button className="btn btn-ghost" disabled={running} onClick={() => void startDatabase()}>Reset database</button>
         </div>
       </div>
@@ -291,5 +294,5 @@ export default function SqlWorkspace({ level, hintsUsed, onPassed }: SqlWorkspac
 function displayValue(value: unknown): string {
   if (value === null || value === undefined) return 'NULL';
   if (typeof value === 'object') return JSON.stringify(value);
-  return String(value);
+  return plainString(value);
 }

@@ -10,6 +10,8 @@ import { getProgress, saveProgress } from '../lib/progress';
 import { loadWorkspaceFiles, saveWorkspaceFiles } from '../lib/virtual-files';
 import type { LevelMeta } from '../lib/content-loader';
 import styles from './ShellWorkspace.module.css';
+import ResettableWorkspace from './ResettableWorkspace';
+import { useSubmitShortcut, submitButtonProps } from '../hooks/useSubmitShortcut';
 
 const V86LinuxPanel = lazy(() => import('./V86LinuxPanel'));
 
@@ -20,7 +22,7 @@ interface ShellWorkspaceProps {
 }
 const META_KEY = '__fde_shell_session__';
 
-export default function ShellWorkspace({ level, hintsUsed, onPassed }: ShellWorkspaceProps) {
+function ShellWorkspaceInner({ level, hintsUsed, onPassed }: ShellWorkspaceProps) {
   const { user, session } = useAuth();
   const terminalHost = useRef<HTMLDivElement>(null);
   const terminalRef = useRef<Terminal | null>(null);
@@ -116,12 +118,18 @@ export default function ShellWorkspace({ level, hintsUsed, onPassed }: ShellWork
 
   useEffect(() => {
     if (!ready || !terminalHost.current) return;
+    const cssVar = (name: string, fallback: string) =>
+      getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
     const terminal = new Terminal({
       convertEol: true,
       fontFamily: 'var(--font-mono)',
       fontSize: 13,
       cursorBlink: true,
-      theme: { background: '#090a12', foreground: '#d7d9e0', cursor: '#7c8cff' },
+      theme: {
+        background: cssVar('--terminal-bg', '#090a12'),
+        foreground: cssVar('--terminal-fg', '#d7d9e0'),
+        cursor: cssVar('--terminal-accent', '#7c8cff'),
+      },
     });
     const fit = new FitAddon();
     terminal.loadAddon(fit);
@@ -265,8 +273,10 @@ export default function ShellWorkspace({ level, hintsUsed, onPassed }: ShellWork
     }
   }, [attempts, hintsUsed, level.checks, level.id, onPassed, session?.access_token]);
 
+  useSubmitShortcut(submit, !vmMode);
   if (!ready) return <div className={styles.loading}>Starting practice shell…</div>;
   const passed = checks?.length ? checks.every((check) => check.passed) : false;
+
   return (
     <section className={styles.workspace} aria-label="Linux shell workspace">
       <div className={styles.toolbar}>
@@ -277,7 +287,7 @@ export default function ShellWorkspace({ level, hintsUsed, onPassed }: ShellWork
         <div className={styles.actions}>
           <button className={vmMode ? 'btn btn-secondary' : 'btn btn-primary'} onClick={() => setVmMode(false)} aria-pressed={!vmMode}>Practice shell</button>
           <button className={vmMode ? 'btn btn-primary' : 'btn btn-secondary'} onClick={() => setVmMode(true)} aria-pressed={vmMode}>Linux VM</button>
-          {!vmMode && <button className="btn btn-primary" onClick={() => void submit()}>Submit</button>}
+          {!vmMode && <button className="btn btn-primary" {...submitButtonProps} onClick={() => void submit()}>Submit</button>}
         </div>
       </div>
       <div className={vmMode ? styles.hidden : styles.modeContent}>
@@ -324,5 +334,14 @@ export default function ShellWorkspace({ level, hintsUsed, onPassed }: ShellWork
         </p>
       )}
     </section>
+  );
+}
+
+export default function ShellWorkspace(props: Parameters<typeof ShellWorkspaceInner>[0]) {
+  const { user } = useAuth();
+  return (
+    <ResettableWorkspace clear={() => saveWorkspaceFiles(`${user?.id ?? 'guest'}:${props.level.id}:shell`, {})}>
+      <ShellWorkspaceInner {...props} />
+    </ResettableWorkspace>
   );
 }

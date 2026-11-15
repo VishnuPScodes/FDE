@@ -1,16 +1,18 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { useOnlineStatus } from '../hooks/useOnlineStatus';
 import styles from './AppLayout.module.css';
 
 export default function AppLayout() {
   const { profile, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const online = useOnlineStatus();
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/');
+    void navigate('/');
   };
 
   return (
@@ -51,6 +53,12 @@ export default function AppLayout() {
           )}
         </div>
       </header>
+
+      {!online && (
+        <div className={styles.offlineBanner} role="status" id="offline-indicator">
+          You are offline. Progress is saved in this browser and will sync when you reconnect.
+        </div>
+      )}
 
       {/* ── Sidebar ── */}
       <nav className={styles.sidebar} aria-label="Main navigation" id="app-sidebar">
@@ -95,9 +103,21 @@ export default function AppLayout() {
             <span className={styles.sidebarIcon}>👤</span>
             <span>Profile</span>
           </NavLink>
+          {profile?.role === 'admin' && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                `${styles.sidebarLink} ${isActive ? styles.sidebarLinkActive : ''}`
+              }
+              id="nav-admin"
+            >
+              <span className={styles.sidebarIcon}>🛡️</span>
+              <span>Admin</span>
+            </NavLink>
+          )}
         </div>
         <div className={styles.sidebarBottom}>
-          <button className={styles.signOutBtn} onClick={handleSignOut} id="sign-out-btn">
+          <button className={styles.signOutBtn} onClick={() => void handleSignOut()} id="sign-out-btn">
             <span className={styles.sidebarIcon}>🚪</span>
             <span>Sign out</span>
           </button>

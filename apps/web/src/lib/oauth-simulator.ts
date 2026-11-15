@@ -40,10 +40,10 @@ export function createOAuthState(): string {
   return base64Url(crypto.getRandomValues(new Uint8Array(18)));
 }
 
-export async function authorizeWithPkce(input: PendingAuthorization & { state: string }): Promise<{ code: string; state: string }> {
+export function authorizeWithPkce(input: PendingAuthorization & { state: string }): Promise<{ code: string; state: string }> {
   const code = createOAuthState();
   pendingCodes.set(code, input);
-  return { code, state: input.state };
+  return Promise.resolve({ code, state: input.state });
 }
 
 export async function exchangeAuthorizationCode(input: {
@@ -132,7 +132,7 @@ function decodeBase64Url(value: string): string {
   return new TextDecoder().decode(decodeBase64UrlBytes(value));
 }
 
-function decodeBase64UrlBytes(value: string): Uint8Array {
+function decodeBase64UrlBytes(value: string): Uint8Array<ArrayBuffer> {
   const base64 = value.replaceAll('-', '+').replaceAll('_', '/') + '='.repeat((4 - value.length % 4) % 4);
   return Uint8Array.from(atob(base64), (character) => character.charCodeAt(0));
 }

@@ -22,14 +22,15 @@ const STORAGE_KEY = 'fde-theme';
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window === 'undefined') return 'dark';
-    const stored = localStorage.getItem(STORAGE_KEY);
+    let stored: string | null = null;
+    try { stored = localStorage.getItem(STORAGE_KEY); } catch { /* storage blocked */ }
     if (stored === 'light' || stored === 'dark') return stored;
     return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
   });
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem(STORAGE_KEY, theme);
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch { /* storage blocked */ }
   }, [theme]);
 
   const toggleTheme = useCallback(() => {

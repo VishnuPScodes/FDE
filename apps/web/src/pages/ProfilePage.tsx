@@ -31,11 +31,13 @@ export default function ProfilePage() {
   const [loginEvents, setLoginEvents] = useState<LoginEvent[]>([]);
   const [devices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
     if (!user) return;
 
     const fetchData = async () => {
+      try {
       const [eventsRes, devicesRes] = await Promise.all([
         supabase
           .from('login_events')
@@ -48,9 +50,14 @@ export default function ProfilePage() {
           .order('last_seen', { ascending: false }),
       ]);
 
-      if (eventsRes.data) setLoginEvents(eventsRes.data as LoginEvent[]);
+      if (eventsRes.data) setLoginEvents(eventsRes.data);
       if (devicesRes.data) setDevices(devicesRes.data as Device[]);
-      setLoading(false);
+      if (eventsRes.error ?? devicesRes.error) setLoadError('Could not load your login history right now.');
+      } catch {
+        setLoadError('Could not load your login history right now.');
+      } finally {
+        setLoading(false);
+      }
     };
 
     void fetchData();
@@ -92,6 +99,8 @@ export default function ProfilePage() {
         </p>
         {loading ? (
           <div className={styles.loading}>Loading...</div>
+        ) : loadError ? (
+          <p className={styles.empty} role="alert">{loadError}</p>
         ) : devices.length === 0 ? (
           <p className={styles.empty}>No device data yet. This will populate after your first sign-in with the API connected.</p>
         ) : (
@@ -122,6 +131,8 @@ export default function ProfilePage() {
         </p>
         {loading ? (
           <div className={styles.loading}>Loading...</div>
+        ) : loadError ? (
+          <p className={styles.empty} role="alert">{loadError}</p>
         ) : loginEvents.length === 0 ? (
           <p className={styles.empty}>No login events yet.</p>
         ) : (

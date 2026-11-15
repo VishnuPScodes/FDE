@@ -1,0 +1,7 @@
+.wrap { display: flex; flex-direction: column; gap: 0.4rem; padding: 0.6rem 0.9rem; }
+.label { font-size: 0.85rem; color: inherit; }
+.track { height: 6px; border-radius: 3px; overflow: hidden; background: rgba(128, 128, 150, 0.3); }
+.bar { height: 100%; background: var(--color-brand-500, #5568f8); transition: width 0.2s ease; }
+.indeterminate { width: 35%; animation: slide 1.2s ease-in-out infinite; }
+@keyframes slide { from { margin-left: -35%; } to { margin-left: 100%; } }
+@media (prefers-reduced-motion: reduce) { .indeterminate { animation: none; width: 100%; opacity: 0.5; } }

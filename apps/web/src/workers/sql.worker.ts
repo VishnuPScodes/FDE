@@ -10,7 +10,7 @@ type SqlRequest =
   | { id: number; type: 'inspect' };
 
 let database: PGlite | undefined;
-const workerScope = self as DedicatedWorkerGlobalScope;
+const workerScope = self as unknown as Worker;
 
 function send(message: Record<string, unknown>): void {
   workerScope.postMessage(message);
@@ -40,6 +40,27 @@ async function inspectSchema(db: PGlite): Promise<SqlTable[]> {
   return tables;
 }
 
+async function readWithProgress(response: Response): Promise<Blob> {
+  const total = Number(response.headers.get('content-length')) || 0;
+  if (!response.body || !total) return response.blob();
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let loaded = 0;
+  let lastPercent = -1;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    loaded += value.length;
+    const percent = Math.min(100, Math.floor((loaded / total) * 100));
+    if (percent !== lastPercent) {
+      lastPercent = percent;
+      send({ type: 'status', status: `Downloading SQL engine data (first run only) · ${percent}%` });
+    }
+  }
+  return new Blob(chunks as BlobPart[]);
+}
+
 async function loadPGliteAssets(): Promise<{ pgliteWasmModule: WebAssembly.Module; initdbWasmModule: WebAssembly.Module; fsBundle: Blob }> {
   const [pgliteWasmModule, initdbWasmModule, fsBundleResponse] = await Promise.all([
     fetch(pgliteWasmUrl).then(async (response) => {
@@ -53,10 +74,10 @@ async function loadPGliteAssets(): Promise<{ pgliteWasmModule: WebAssembly.Modul
     fetch(fsBundleUrl),
   ]);
   if (!fsBundleResponse.ok) throw new Error(`Could not load the SQL dataset (${fsBundleResponse.status}).`);
-  return { pgliteWasmModule, initdbWasmModule, fsBundle: await fsBundleResponse.blob() };
+  return { pgliteWasmModule, initdbWasmModule, fsBundle: await readWithProgress(fsBundleResponse) };
 }
 
-workerScope.addEventListener('message', async (event: MessageEvent<SqlRequest>) => {
+async function handleMessage(event: MessageEvent<SqlRequest>): Promise<void> {
   const request = event.data;
   try {
     if (request.type === 'init') {
@@ -73,8 +94,8 @@ workerScope.addEventListener('message', async (event: MessageEvent<SqlRequest>) 
       return;
     }
     const statements = await database.exec(request.sql);
-    const result = [...statements].reverse().find((statement) => statement.rows !== undefined);
-    const columns = result?.fields?.map((field) => field.name) ?? [];
+    const result = statements.at(-1);
+    const columns = result?.fields.map((field) => field.name) ?? [];
     const rows = jsonSafe((result?.rows ?? []) as Record<string, unknown>[]);
     const rowCount = columns.length > 0 ? rows.length : (result?.affectedRows ?? 0);
     const queryResult: SqlQueryResult = { columns, rows, rowCount };
@@ -83,4 +104,8 @@ workerScope.addEventListener('message', async (event: MessageEvent<SqlRequest>) 
     const message = error instanceof Error ? error.message : String(error);
     send({ id: request.id, type: 'error', message });
   }
+}
+
+workerScope.addEventListener('message', (event: MessageEvent<SqlRequest>) => {
+  void handleMessage(event);
 });

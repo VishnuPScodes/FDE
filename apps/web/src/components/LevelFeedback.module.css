@@ -1,0 +1,11 @@
+.box { margin-top: 1.5rem; padding: .85rem 1rem; border: 1px solid var(--border-default); border-radius: 10px; background: var(--bg-surface); display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; }
+.question { font-weight: 600; }
+.thumbs { display: flex; gap: .5rem; }
+.thumbs button { padding: .35rem .75rem; border: 1px solid var(--border-default); border-radius: 999px; background: transparent; color: var(--text-primary); cursor: pointer; font: inherit; }
+.thumbs button.active { border-color: var(--color-brand-500); background: rgba(85, 104, 248, .12); }
+.form { flex-basis: 100%; display: flex; flex-direction: column; gap: .4rem; }
+.form textarea { width: 100%; padding: .5rem .65rem; border: 1px solid var(--border-default); border-radius: 8px; background: var(--bg-base); color: var(--text-primary); font: inherit; resize: vertical; }
+.form button { align-self: flex-start; }
+.note { margin: 0; font-size: .8rem; color: var(--text-muted); }
+.error { margin: 0; color: var(--color-error-400); font-size: .85rem; }
+.thanks { margin-top: 1.5rem; color: var(--text-secondary); font-size: .9rem; }

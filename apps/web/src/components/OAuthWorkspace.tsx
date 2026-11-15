@@ -1,9 +1,12 @@
+import { plainString } from '../lib/plain-string';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { DEMO_CLIENT_ID, DEMO_CLIENT_SECRET, DEMO_REDIRECT_URI, authorizeWithPkce, createOAuthState, createPkcePair, exchangeAuthorizationCode, requestClientCredentialsToken, verifyMockJwt, type OAuthTokenResponse, type TokenVerification } from '../lib/oauth-simulator';
 import { saveProgress } from '../lib/progress';
 import type { LevelMeta } from '../lib/content-loader';
 import styles from './OAuthWorkspace.module.css';
+import ResettableWorkspace from './ResettableWorkspace';
+import { useSubmitShortcut, submitButtonProps } from '../hooks/useSubmitShortcut';
 
 interface OAuthWorkspaceProps { level: LevelMeta; hintsUsed: number; onPassed: () => void }
 interface OAuthCheckResult { label: string; passed: boolean; expected: string; actual: string }
@@ -12,7 +15,7 @@ function isAuthorizationCodeLevel(level: LevelMeta): boolean {
   return level.module === 'oauth-oidc' && level.order === 1;
 }
 
-export default function OAuthWorkspace({ level, hintsUsed, onPassed }: OAuthWorkspaceProps) {
+function OAuthWorkspaceInner({ level, hintsUsed, onPassed }: OAuthWorkspaceProps) {
   const { session } = useAuth();
   const authorizationCodeFlow = isAuthorizationCodeLevel(level);
   const [clientId, setClientId] = useState(DEMO_CLIENT_ID);
@@ -95,17 +98,17 @@ export default function OAuthWorkspace({ level, hintsUsed, onPassed }: OAuthWork
   const submit = useCallback(async () => {
     const verifiedClaims = verification?.claims;
     const results: OAuthCheckResult[] = level.checks.map((check) => {
-      const action = String(check.action ?? 'token_verified');
+      const action = plainString(check.action ?? 'token_verified');
       const expected = check.expected;
       let actual: unknown = false;
       if (action === 'pkce_flow_complete') actual = Boolean(code && verifier && challenge && returnedState === stateValue && verification?.valid && verifiedClaims?.nonce === nonce);
-      else if (action === 'client_credentials_scope') actual = Boolean(verification?.valid && String(verifiedClaims?.scope ?? '').split(/\s+/).includes(String(check.scope)));
+      else if (action === 'client_credentials_scope') actual = Boolean(verification?.valid && plainString(verifiedClaims?.scope ?? '').split(/\s+/).includes(String(check.scope)));
       else if (action === 'token_verified') actual = Boolean(verification?.valid);
       else if (action === 'claim_present') actual = Boolean(verifiedClaims?.[String(check.claim)]);
       else if (action === 'claim_equals') actual = verifiedClaims?.[String(check.claim)];
-      else if (action === 'scope_exact') actual = verification?.valid ? String(verifiedClaims?.scope ?? '') : '';
+      else if (action === 'scope_exact') actual = verification?.valid ? plainString(verifiedClaims?.scope ?? '') : '';
       const passed = actual === expected;
-      return { label: String(check.label ?? action.replaceAll('_', ' ')), passed, expected: String(expected ?? true), actual: String(actual) };
+      return { label: check.label ?? action.replaceAll('_', ' '), passed, expected: plainString(expected ?? true), actual: String(actual) };
     });
     setChecks(results);
     const passed = results.length > 0 && results.every((result) => result.passed);
@@ -120,9 +123,11 @@ export default function OAuthWorkspace({ level, hintsUsed, onPassed }: OAuthWork
     setMessage(passed ? session?.access_token ? synced ? 'Level passed. Your progress is saved.' : 'Checks passed, but progress could not sync.' : 'Checks passed. Sign in to sync progress across devices.' : 'Complete the flow and verify the token, then submit again.');
   }, [attempts, challenge, code, hintsUsed, level.checks, level.id, nonce, onPassed, returnedState, session?.access_token, stateValue, tokens, verification, verifier]);
 
+  useSubmitShortcut(submit, true);
+
   return (
     <section className={styles.workspace} aria-label="OAuth and JWT practice workspace">
-      <header className={styles.header}><div><strong>{authorizationCodeFlow ? 'OAuth 2.0 + OIDC · Authorization Code with PKCE' : 'OAuth 2.0 · Client Credentials'}</strong><p>Simulated identity provider at <code>login.fde.test</code>. No real account or network request.</p></div><button className="btn btn-primary" onClick={() => void submit()}>Submit</button></header>
+      <header className={styles.header}><div><strong>{authorizationCodeFlow ? 'OAuth 2.0 + OIDC · Authorization Code with PKCE' : 'OAuth 2.0 · Client Credentials'}</strong><p>Simulated identity provider at <code>login.fde.test</code>. No real account or network request.</p></div><button className="btn btn-primary" {...submitButtonProps} onClick={() => void submit()}>Submit</button></header>
       <div className={styles.config}>
         <label>Client ID<input value={clientId} onChange={(event) => setClientId(event.target.value)} /></label>
         {!authorizationCodeFlow && <label>Client secret<input type="text" value={clientSecret} onChange={(event) => setClientSecret(event.target.value)} /></label>}
@@ -140,5 +145,13 @@ export default function OAuthWorkspace({ level, hintsUsed, onPassed }: OAuthWork
       {checks && <div className={`${styles.checks} ${checks.every((check) => check.passed) ? styles.valid : styles.invalid}`} aria-live="polite"><h3>{checks.every((check) => check.passed) ? 'All checks passed' : 'Some checks need work'}</h3>{checks.map((check, index) => <p key={`${check.label}-${index}`}>{check.passed ? '✓' : '×'} {check.label}{!check.passed && <><br /><code>Expected: {check.expected}</code><br /><code>Got: {check.actual}</code></>}</p>)}</div>}
       {message && <p className={styles.message} role="status">{message}</p>}
     </section>
+  );
+}
+
+export default function OAuthWorkspace(props: Parameters<typeof OAuthWorkspaceInner>[0]) {
+  return (
+    <ResettableWorkspace clear={() => Promise.resolve()}>
+      <OAuthWorkspaceInner {...props} />
+    </ResettableWorkspace>
   );
 }

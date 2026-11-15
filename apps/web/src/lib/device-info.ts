@@ -47,8 +47,7 @@ function getDeviceType(): 'desktop' | 'tablet' | 'mobile' {
   const ua = navigator.userAgent.toLowerCase();
   // Check User-Agent Client Hints first (Chrome/Edge)
   const mobile =
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (navigator as any).userAgentData?.mobile === true;
+    (navigator as Navigator & { userAgentData?: { mobile?: boolean; platform?: string } }).userAgentData?.mobile === true;
   if (mobile) return 'mobile';
 
   // Fallback to UA string
@@ -59,11 +58,10 @@ function getDeviceType(): 'desktop' | 'tablet' | 'mobile' {
 
 function getDeviceModel(): string {
   // Try User-Agent Client Hints (Chrome 90+)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const uaData = (navigator as any).userAgentData;
+  const uaData = (navigator as Navigator & { userAgentData?: { mobile?: boolean; platform?: string } }).userAgentData;
   if (uaData) {
     // Low-entropy hints available synchronously
-    return uaData.platform || '';
+    return uaData.platform ?? '';
   }
   // Fallback: extract from UA string
   const ua = navigator.userAgent;

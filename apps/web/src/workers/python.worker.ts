@@ -44,9 +44,9 @@ function commandParts(command: string): string[] {
   return command.match(/[^\s"']+|"[^"]*"|'[^']*'/g)?.map((part) => part.replace(/^['"]|['"]$/g, '')) ?? [];
 }
 
-self.addEventListener('message', async (event: MessageEvent<RunRequest>) => {
+async function handleMessage(event: MessageEvent<RunRequest>): Promise<void> {
   const request = event.data;
-  if (request.type !== 'run') return;
+  if ((request.type as string) !== 'run') return;
   currentId = request.id;
   stdout = '';
   stderr = '';
@@ -144,4 +144,8 @@ await _fde_run_tests()
     if (exitCode !== 0) emit('stderr', `${message}\n`);
     send({ id: currentId, type: 'result', result: { stdout, stderr, exitCode } });
   }
+}
+
+self.addEventListener('message', (event: MessageEvent<RunRequest>) => {
+  void handleMessage(event);
 });

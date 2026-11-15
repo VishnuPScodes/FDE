@@ -6,22 +6,30 @@ import { sessionRouter } from './routes/session';
 import { consentRouter } from './routes/consent';
 import { meRouter } from './routes/me';
 import { progressRouter } from './routes/progress';
+import { checkerRouter } from './routes/checker';
+import { checksRouter } from './routes/checks';
+import { usageRouter } from './routes/usage';
+import { errorsRouter } from './routes/errors';
+import { adminRouter } from './routes/admin';
 
-export type Bindings = {
+export interface Bindings {
   ENVIRONMENT: string;
   SUPABASE_URL: string;
   SUPABASE_SERVICE_ROLE_KEY: string;
-  SUPABASE_JWT_SECRET: string;
-};
+  /** Only for legacy HS256 projects. Projects on asymmetric JWT signing keys are verified via JWKS. */
+  SUPABASE_JWT_SECRET?: string;
+}
 
-export type AppEnv = {
+export interface AppEnv {
   Bindings: Bindings;
   Variables: { userId: string; userEmail: string; userRole: string };
-};
+}
 
 const app = new Hono<AppEnv>();
 
 // Middleware
+// Capstone usage pings come from learners' own deployed apps (any origin, no credentials).
+app.use('/usage/ping', cors({ origin: '*', allowMethods: ['POST', 'OPTIONS'], allowHeaders: ['Content-Type'], maxAge: 86400 }));
 app.use(
   '*',
   cors({
@@ -48,6 +56,12 @@ app.route('/session', sessionRouter);
 app.route('/consent', consentRouter);
 app.route('/me', meRouter);
 app.route('/progress', progressRouter);
+app.route('/checker', checkerRouter);
+app.route('/realworld/checker', checkerRouter); // alias matching the build prompt's endpoint table
+app.route('/checks', checksRouter);
+app.route('/usage', usageRouter);
+app.route('/errors', errorsRouter);
+app.route('/admin', adminRouter);
 
 
 // 404 handler

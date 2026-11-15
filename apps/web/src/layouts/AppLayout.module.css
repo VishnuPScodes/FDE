@@ -215,3 +215,26 @@
     padding: var(--space-4);
   }
 }
+
+/* ── Offline indicator (fixed pill; does not affect grid) ── */
+.offlineBanner {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  z-index: 1000;
+  max-width: calc(100vw - 2rem);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 0.85rem;
+  background: #422006;
+  color: #fde68a;
+  border: 1px solid #b45309;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+:global([data-theme='light']) .offlineBanner {
+  background: #fef3c7;
+  color: #78350f;
+  border-color: #f59e0b;
+}

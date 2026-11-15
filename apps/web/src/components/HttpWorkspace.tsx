@@ -2,10 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { gradeHttpLevel } from '../lib/http-grader';
 import { MOCK_WEBHOOK_SECRET, mockHttpRequest, scenarioForHttpLevel, signWebhookBody, type MockHttpExchange } from '../lib/http-simulator';
-import { getProgress, saveProgress } from '../lib/progress';
+import { saveProgress } from '../lib/progress';
 import { loadWorkspaceFiles, saveWorkspaceFiles } from '../lib/virtual-files';
 import type { LevelMeta } from '../lib/content-loader';
 import styles from './HttpWorkspace.module.css';
+import ResettableWorkspace from './ResettableWorkspace';
+import { useSubmitShortcut, submitButtonProps } from '../hooks/useSubmitShortcut';
 
 interface HttpWorkspaceProps { level: LevelMeta; hintsUsed: number; onPassed: () => void }
 const historyPrefix = 'fde-http-workspace:';
@@ -26,7 +28,7 @@ function initialBody(levelId: string): string {
   return '';
 }
 
-export default function HttpWorkspace({ level, hintsUsed, onPassed }: HttpWorkspaceProps) {
+function HttpWorkspaceInner({ level, hintsUsed, onPassed }: HttpWorkspaceProps) {
   const { user, session } = useAuth();
   const key = `${historyPrefix}${user?.id ?? 'guest'}:${level.id}`;
   const scenario = useMemo(() => scenarioForHttpLevel(level.id), [level.id]);
@@ -113,11 +115,13 @@ export default function HttpWorkspace({ level, hintsUsed, onPassed }: HttpWorksp
     } catch (error) { setMessage((error as Error).message || 'Could not sign this payload.'); }
   }, [body, headersText]);
 
+  useSubmitShortcut(submit, loaded && !busy);
+
   return (
     <section className={styles.workspace} aria-label="HTTP practice workspace">
       <header className={styles.header}>
         <div><strong>Mock API client</strong><p>Requests stay inside this browser. No external service is contacted.</p></div>
-        <button className="btn btn-primary" disabled={!loaded || busy} onClick={() => void submit()}>Submit</button>
+        <button className="btn btn-primary" {...submitButtonProps} disabled={!loaded || busy} onClick={() => void submit()}>Submit</button>
       </header>
       <div className={styles.request}>
         <select aria-label="HTTP method" value={method} onChange={(event) => setMethod(event.target.value)}>
@@ -138,5 +142,14 @@ export default function HttpWorkspace({ level, hintsUsed, onPassed }: HttpWorksp
       {checks && <div className={`${styles.checks} ${checks.every((check) => check.passed) ? styles.passed : styles.failed}`} aria-live="polite"><h3>{checks.every((check) => check.passed) ? 'All checks passed' : 'Some checks need work'}</h3>{checks.map((check, index) => <p key={`${check.label}-${index}`}>{check.passed ? '✓' : '×'} {check.label}{!check.passed && <><br /><code>Expected: {check.expected}</code><br /><code>Got: {check.actual}</code></>}</p>)}</div>}
       {message && <p className={styles.message} role="status">{message}</p>}
     </section>
+  );
+}
+
+export default function HttpWorkspace(props: Parameters<typeof HttpWorkspaceInner>[0]) {
+  const { user } = useAuth();
+  return (
+    <ResettableWorkspace clear={() => saveWorkspaceFiles(`${historyPrefix}${user?.id ?? 'guest'}:${props.level.id}`, { 'history.json': '[]' })}>
+      <HttpWorkspaceInner {...props} />
+    </ResettableWorkspace>
   );
 }

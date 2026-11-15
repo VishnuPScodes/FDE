@@ -4,5 +4,9 @@
 ENVIRONMENT=development
 SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
-SUPABASE_JWT_SECRET=your-jwt-secret-here
+# Only needed for legacy HS256 projects. Projects on (new) JWT signing keys are verified
+# via the public JWKS at SUPABASE_URL/auth/v1/.well-known/jwks.json, so leave this unset.
+# SUPABASE_JWT_SECRET=your-legacy-jwt-secret
+# Generate with: openssl rand -hex 32
+CHECKER_KEY_SECRET=at-least-32-random-chars
 # GITHUB_TOKEN=ghp_optional_for_realworld_checks

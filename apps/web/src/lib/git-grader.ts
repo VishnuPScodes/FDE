@@ -1,5 +1,6 @@
 import type { Check } from '@fde/content-schema';
 import type { GitSnapshot } from './git-runtime';
+import { plainString } from './plain-string';
 
 export interface GitCheckResult {
   label: string;
@@ -14,8 +15,8 @@ export interface GitRemoteState {
 
 export function gradeGitLevel(checks: Check[], snapshot: GitSnapshot, remote: GitRemoteState): GitCheckResult[] {
   return checks.map((check) => {
-    const state = String(check.state ?? '');
-    const label = String(check.label ?? state.replaceAll('_', ' '));
+    const state = plainString(check.state ?? '');
+    const label = plainString(check.label ?? state.replaceAll('_', ' '));
     const expectedValue = check.expected;
     let actualValue: unknown = '';
     switch (state) {
@@ -37,7 +38,7 @@ export function gradeGitLevel(checks: Check[], snapshot: GitSnapshot, remote: Gi
     return {
       label,
       passed,
-      expected: numericMin === undefined ? String(expectedValue ?? '') : `at least ${numericMin}`,
+      expected: numericMin === undefined ? plainString(expectedValue ?? '') : `at least ${numericMin}`,
       actual: String(actualValue),
     };
   });

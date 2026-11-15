@@ -206,13 +206,14 @@ export async function loadModuleLevels(moduleId: string): Promise<LevelMeta[]> {
   return levels.filter((level) => level.module === moduleId).sort((a, b) => a.order - b.order);
 }
 
+let allLevelsCache: LevelMeta[] | null = null;
+
+/** Levels come from the build-time index (see levelIndexPlugin in vite.config.ts), loaded lazily. */
 export async function loadAllLevels(): Promise<LevelMeta[]> {
-  const paths = Object.keys(yamlFiles).filter((path) => path.includes('/levels/') && path.endsWith('/level.yaml'));
-  const levels = await Promise.all(paths.map(async (file) => {
-    const parsed = validateLevel(yaml.load(await yamlFiles[file]!()));
-    return parsed.success ? parsed.data as LevelMeta : null;
-  }));
-  return levels.filter((level): level is LevelMeta => level !== null);
+  if (allLevelsCache) return allLevelsCache;
+  const { default: raw } = await import('virtual:level-index');
+  allLevelsCache = (raw as (LevelMeta | null)[]).filter((level): level is LevelMeta => typeof level?.id === 'string');
+  return allLevelsCache;
 }
 
 /**
@@ -221,5 +222,6 @@ export async function loadAllLevels(): Promise<LevelMeta[]> {
 export function clearContentCache(): void {
   curriculumCache = null;
   levelCache.clear();
+  allLevelsCache = null;
   lessonCache.clear();
 }

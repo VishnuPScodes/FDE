@@ -24,7 +24,7 @@ export function gradeDockerLevel(checks: Check[], state: DockerState): DockerChe
     } else if (kind === 'sim_state') {
       const path = readString(check.path);
       if (path === 'images') {
-        actual = state.images.map((image) => image.tag + ' ' + image.sizeMb + 'MB user=' + image.user + ' stages=' + image.stages.join(',')).join('\n');
+        actual = state.images.map((image) => `${image.tag} ${image.sizeMb}MB user=${image.user} stages=${image.stages.join(',')}`).join('\n');
       } else if (path === 'containers') {
         actual = state.containers.map((item) => item.name + ' ' + item.status + ' ' + item.image + ' ports=' + item.ports.join(',') + ' health=' + item.health + ' env=' + Object.entries(item.environment).map(([key, value]) => key + '=' + value).join(',')).join('\n');
       } else if (path === 'registry') {

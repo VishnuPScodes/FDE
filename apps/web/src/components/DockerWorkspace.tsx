@@ -1,3 +1,6 @@
+import { useTerminalInput } from '../hooks/useTerminalInput';
+import CodeEditor from './CodeEditor';
+import { DOCKER_COMMANDS } from '../lib/terminal-vocab';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { createDockerState, runDockerCommand, type DockerState } from '../lib/docker-runtime';
@@ -6,11 +9,13 @@ import { getProgress, saveProgress } from '../lib/progress';
 import { loadWorkspaceFiles, saveWorkspaceFiles } from '../lib/virtual-files';
 import type { LevelMeta } from '../lib/content-loader';
 import styles from './DockerWorkspace.module.css';
+import ResettableWorkspace from './ResettableWorkspace';
+import { useSubmitShortcut, submitButtonProps } from '../hooks/useSubmitShortcut';
 
 interface Props { level: LevelMeta; hintsUsed: number; onPassed: () => void }
 const META_KEY = '__fde_docker_state__';
 
-export default function DockerWorkspace({ level, hintsUsed, onPassed }: Props) {
+function DockerWorkspaceInner({ level, hintsUsed, onPassed }: Props) {
   const { user, session } = useAuth();
   const fileKey = (user?.id ?? 'guest') + ':' + level.id + ':docker';
   const stateRef = useRef<DockerState>(createDockerState());
@@ -19,6 +24,8 @@ export default function DockerWorkspace({ level, hintsUsed, onPassed }: Props) {
   const [ready, setReady] = useState(false);
   const [activeFile, setActiveFile] = useState('Dockerfile');
   const [command, setCommand] = useState('');
+  const [history, setHistory] = useState<string[]>([]);
+  const { onKeyDown, reset: resetHistory } = useTerminalInput({ value: command, setValue: setCommand, phrases: DOCKER_COMMANDS, history });
   const [transcript, setTranscript] = useState('Docker simulator ready. Type docker --help to see supported commands.\n');
   const [checks, setChecks] = useState<DockerCheckResult[] | null>(null);
   const [status, setStatus] = useState('');
@@ -85,7 +92,9 @@ export default function DockerWorkspace({ level, hintsUsed, onPassed }: Props) {
     const printed = '$ ' + line + '\n' + (result.stdout || result.stderr || (result.exitCode === 0 ? '' : 'command failed')) + (result.stdout || result.stderr ? '' : '\n');
     setTranscript((previous) => (previous + printed).split('\n').slice(-240).join('\n'));
     setCommand('');
-    setStatus('Exit code ' + result.exitCode);
+    setHistory((h) => [...h, line].slice(-100));
+    resetHistory();
+    setStatus(`Exit code ${result.exitCode}`);
     setChecks(null);
     void persist(result.state);
   };
@@ -104,6 +113,7 @@ export default function DockerWorkspace({ level, hintsUsed, onPassed }: Props) {
     } else setStatus(passed ? 'Checks passed. Sign in to sync progress.' : 'Keep going. Your workspace is saved on this device.');
   };
 
+  useSubmitShortcut(submit, ready);
   if (!ready) return <div className={styles.loading}>Starting Docker simulator…</div>;
   const files = Object.keys(stateRef.current.files);
   const passed = checks?.length ? checks.every((check) => check.passed) : false;
@@ -111,7 +121,7 @@ export default function DockerWorkspace({ level, hintsUsed, onPassed }: Props) {
     <section className={styles.workspace} aria-label="Docker simulator workspace">
       <div className={styles.toolbar}>
         <strong>Docker · simulated local engine and registry</strong>
-        <button className="btn btn-primary" onClick={() => void submit()}>Submit</button>
+        <button className="btn btn-primary" {...submitButtonProps} onClick={() => void submit()}>Submit</button>
       </div>
       <div className={styles.editorToolbar}>
         <label htmlFor="docker-file">Workspace file</label>
@@ -120,20 +130,29 @@ export default function DockerWorkspace({ level, hintsUsed, onPassed }: Props) {
         </select>
         <span>Files stay in this browser workspace.</span>
       </div>
-      <textarea className={styles.editor} aria-label={'Edit ' + activeFile} spellCheck={false} value={stateRef.current.files[activeFile] ?? ''} onChange={(event) => editFile(event.target.value)} />
+      <CodeEditor className={styles.editor} ariaLabel={'Edit ' + activeFile} path={activeFile} value={stateRef.current.files[activeFile] ?? ''} onChange={editFile} />
       <div className={styles.terminalTitle}>Terminal</div>
       <pre className={styles.transcript} aria-label="Docker terminal output" aria-live="polite">{transcript}</pre>
       <form className={styles.commandRow} onSubmit={(event) => { event.preventDefault(); execute(); }}>
         <label htmlFor="docker-command">$</label>
-        <input id="docker-command" aria-label="Docker command" value={command} onChange={(event) => setCommand(event.target.value)} placeholder="docker build -t app:local ." autoComplete="off" />
+        <input id="docker-command" aria-label="Docker command" value={command} onChange={(event) => setCommand(event.target.value)} onKeyDown={onKeyDown} placeholder="docker build -t app:local ." autoComplete="off" />
         <button className="btn btn-secondary" type="submit">Run</button>
       </form>
       <p className={styles.help}>Commands operate on simulated images, containers, networks, volumes, and a private training registry. They never run on your computer.</p>
-      {(checks || status) && <div className={styles.results} aria-live="polite">
+      {(checks ?? status) && <div className={styles.results} aria-live="polite">
         {checks && <><h3 className={passed ? styles.passed : styles.failed}>{passed ? 'All checks passed' : 'Some checks need work'}</h3>
-          {checks.map((check, index) => <p key={check.kind + index}>{check.passed ? '✓' : '×'} {check.label}{!check.passed && <><br /><code>Expected: {check.expected || '(no specific value)'}</code><br /><code>Got: {check.actual || '(empty)'}</code></>}</p>)}</>}
+          {checks.map((check, index) => <p key={`${check.kind}${index}`}>{check.passed ? '✓' : '×'} {check.label}{!check.passed && <><br /><code>Expected: {check.expected || '(no specific value)'}</code><br /><code>Got: {check.actual || '(empty)'}</code></>}</p>)}</>}
         {status && <p>{status}</p>}
       </div>}
     </section>
+  );
+}
+
+export default function DockerWorkspace(props: Parameters<typeof DockerWorkspaceInner>[0]) {
+  const { user } = useAuth();
+  return (
+    <ResettableWorkspace clear={() => saveWorkspaceFiles(`${user?.id ?? 'guest'}:${props.level.id}:docker`, {})}>
+      <DockerWorkspaceInner {...props} />
+    </ResettableWorkspace>
   );
 }

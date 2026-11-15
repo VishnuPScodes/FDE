@@ -147,3 +147,5 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+.phaseCard { display: block; color: inherit; text-decoration: none; }
+.header :global(.btn) { margin-top: var(--space-4); }

@@ -4,9 +4,9 @@ import wasmUrl from 'esbuild-wasm/esbuild.wasm?url';
 interface CompileRequest { id: number; type: 'compile'; code: string; loader: 'ts' | 'tsx' | 'js' | 'jsx' }
 let initialized: Promise<void> | undefined;
 
-self.addEventListener('message', async (event: MessageEvent<CompileRequest>) => {
+async function handleMessage(event: MessageEvent<CompileRequest>): Promise<void> {
   const request = event.data;
-  if (request.type !== 'compile') return;
+  if ((request.type as string) !== 'compile') return;
   try {
     initialized ??= esbuild.initialize({ wasmURL: wasmUrl, worker: false });
     await initialized;
@@ -24,4 +24,8 @@ self.addEventListener('message', async (event: MessageEvent<CompileRequest>) => 
   } catch (error) {
     self.postMessage({ id: request.id, type: 'compile-error', error: error instanceof Error ? error.message : String(error) });
   }
+}
+
+self.addEventListener('message', (event: MessageEvent<CompileRequest>) => {
+  void handleMessage(event);
 });

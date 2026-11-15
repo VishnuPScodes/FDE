@@ -21,7 +21,7 @@ progressRouter.get('/', authMiddleware, async (c) => {
     .select('level_id,status,attempts,hints_used,first_opened_at,passed_at,time_spent_sec')
     .eq('user_id', userId);
   if (error) return c.json({ error: 'Could not load progress' }, 500);
-  return c.json({ progress: data ?? [] });
+  return c.json({ progress: data });
 });
 
 progressRouter.post('/', authMiddleware, async (c) => {
@@ -35,7 +35,7 @@ progressRouter.post('/', authMiddleware, async (c) => {
     .select('status,passed_at,first_opened_at,attempts,hints_used,time_spent_sec')
     .eq('user_id', userId)
     .eq('level_id', parsed.data.level_id)
-    .maybeSingle();
+    .maybeSingle<{ status: string; passed_at: string | null; first_opened_at: string | null; attempts: number | null; hints_used: number | null; time_spent_sec: number | null }>();
   if (readError) return c.json({ error: 'Could not update progress' }, 500);
 
   const now = new Date().toISOString();
