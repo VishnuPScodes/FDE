@@ -6,9 +6,8 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "types": ["@cloudflare/workers-types"],
-    "outDir": "./dist",
-    "rootDir": "./src"
+    "noEmit": true
   },
-  "include": ["src"],
+  "include": ["src", "api"],
   "exclude": ["node_modules", "dist"]
 }

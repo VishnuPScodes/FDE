@@ -154,7 +154,7 @@ export default function SettingsPage() {
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Data & privacy</h2>
         <p className={styles.sectionDesc}>
-          We collect your Google profile, login device data, and learning progress. You can view,
+          We collect your account details, login device data, and learning progress. You can view,
           export, or delete everything at any time. We never sell or share your data.
         </p>
         <div className={styles.dataActions}>

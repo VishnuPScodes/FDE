@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "pnpm run type-check && mkdir -p public",
+  "outputDirectory": "public",
+  "regions": ["hnd1"],
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
+  "crons": [{ "path": "/cron/keep-alive", "schedule": "0 8 * * *" }]
+}

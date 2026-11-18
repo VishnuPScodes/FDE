@@ -175,7 +175,7 @@ export default function LandingPage() {
             </a>
           </div>
           <p className={styles.heroFineprint}>
-            Sign in with Google. No email or password. No credit card. Ever.
+            Free account with just an email and password. No credit card. Ever.
           </p>
         </div>
       </section>
@@ -327,7 +327,7 @@ export default function LandingPage() {
             <div className={styles.faqItem}>
               <h3>What data do you collect?</h3>
               <p>
-                We collect your Google profile (name, email, avatar) and login device data (browser,
+                We collect your account details (name and email) and login device data (browser,
                 OS, IP, location). All of it is shown to you on your profile page. You can export or
                 delete your account at any time. No ads, no third-party trackers, no selling data.
               </p>

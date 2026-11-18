@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import app from '../index';
+import { app } from '../index';
 
 const env = { ENVIRONMENT: 'test', SUPABASE_URL: 'http://localhost', SUPABASE_SERVICE_ROLE_KEY: 'x', SUPABASE_JWT_SECRET: 'x' };
 

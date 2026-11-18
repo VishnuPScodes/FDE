@@ -11,8 +11,9 @@ export default function PrivacyPage() {
         <section>
           <h2>What we collect and why</h2>
           <p>
-            When you sign in with Google, we receive your name, email address, and profile picture
-            from Google. We use this to create your account and show your name in the platform.
+            When you create an account, we store your name and email address. If you sign in with
+            Google instead, we receive your name, email address, and profile picture from Google. We
+            use this to create your account and show your name in the platform.
           </p>
           <p>
             On every sign-in and session restore, we collect device and browser information: browser
@@ -40,7 +41,7 @@ export default function PrivacyPage() {
             <li>We never sell or share your data with third parties</li>
             <li>We have no advertising, no third-party trackers, no analytics scripts</li>
             <li>We never access your AI API key — it stays in your browser's IndexedDB</li>
-            <li>We never store your Google password — authentication is handled entirely by Google</li>
+            <li>We never see or store your password in plain text — it is hashed by our authentication provider (Supabase), and Google sign-in passwords stay with Google</li>
           </ul>
         </section>
 

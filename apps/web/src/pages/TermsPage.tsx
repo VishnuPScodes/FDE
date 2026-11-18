@@ -20,8 +20,8 @@ export default function TermsPage() {
         <section>
           <h2>Your account</h2>
           <p>
-            You sign in with your Google account. You are responsible for keeping your Google
-            account secure. One person, one account. Do not share your account.
+            You sign in with your email and password (or a Google account, where offered). You are
+            responsible for keeping your password and account secure. One person, one account. Do not share your account.
           </p>
         </section>
 

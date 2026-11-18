@@ -5,7 +5,7 @@ import { deriveSigningKey, sha256Hex, signPayload, verifyPayloadSignature, encry
 let db: FakeDb;
 vi.mock('../lib/supabase', () => ({ getSupabaseAdmin: () => fakeClient(db) }));
 
-const { default: app } = await import('../index');
+const { app } = await import('../index');
 
 const USER = '11111111-1111-4111-8111-111111111111';
 const OTHER = '22222222-2222-4222-8222-222222222222';

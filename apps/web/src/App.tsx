@@ -9,6 +9,7 @@ import AppLayout from './layouts/AppLayout';
 // Public pages
 import LandingPage from './pages/LandingPage';
 const SignInPage = lazy(() => import('./pages/SignInPage'));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const ConsentPage = lazy(() => import('./pages/ConsentPage'));
@@ -35,6 +36,7 @@ export default function App() {
             {/* ── Public routes ── */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/sign-in" element={<SignInPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/consent" element={<ConsentPage />} />

@@ -26,11 +26,54 @@ interface AuthContextValue {
   profile: UserProfile | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  /** True once Supabase reports the Google provider as enabled; the button stays hidden until then. */
+  googleEnabled: boolean;
+  signUpWithPassword: (email: string, password: string, fullName: string) => Promise<SignUpResult>;
+  signInWithPassword: (email: string, password: string) => Promise<void>;
+  resendConfirmation: (email: string) => Promise<void>;
+  sendPasswordReset: (email: string) => Promise<void>;
+  updatePassword: (newPassword: string) => Promise<void>;
+  /** True after the user arrives from a password-reset email link (PASSWORD_RECOVERY event). */
+  passwordRecovery: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   needsConsent: boolean;
   acceptConsent: (version: string) => Promise<void>;
 }
+
+export type SignUpResult = 'confirm_email' | 'signed_in';
+
+/** Error with a message safe to show in the UI. */
+export class AuthError extends Error {
+  constructor(
+    message: string,
+    readonly code: 'email_not_confirmed' | 'invalid_credentials' | 'weak_password' | 'rate_limited' | 'other' = 'other',
+  ) {
+    super(message);
+    this.name = 'AuthError';
+  }
+}
+
+function toAuthError(err: { message?: string; code?: string; status?: number } | null | undefined): AuthError {
+  const code = err?.code ?? '';
+  const msg = err?.message ?? 'Something went wrong. Please try again.';
+  if (code === 'email_not_confirmed' || /email not confirmed/i.test(msg)) {
+    return new AuthError('Please confirm your email first. Check your inbox for the link.', 'email_not_confirmed');
+  }
+  if (code === 'invalid_credentials' || /invalid login credentials/i.test(msg)) {
+    return new AuthError('Incorrect email or password.', 'invalid_credentials');
+  }
+  if (code === 'weak_password' || /password/i.test(msg) && /(weak|short|at least|characters)/i.test(msg)) {
+    return new AuthError(msg, 'weak_password');
+  }
+  if (err?.status === 429 || code.includes('rate_limit') || /rate limit/i.test(msg)) {
+    return new AuthError('Too many attempts or emails sent. Please wait a few minutes and try again.', 'rate_limited');
+  }
+  return new AuthError(msg);
+}
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? '';
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? import.meta.env.VITE_SUPABASE_ANON_KEY ?? '';
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -48,6 +91,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [profileChecked, setProfileChecked] = useState(false);
+  const [googleEnabled, setGoogleEnabled] = useState(false);
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
+
+  // Show "Continue with Google" only when the provider is actually enabled in Supabase.
+  useEffect(() => {
+    if (MOCK_AUTH_ENABLED || !SUPABASE_URL || !SUPABASE_KEY) return;
+    let cancelled = false;
+    fetch(`${SUPABASE_URL}/auth/v1/settings`, { headers: { apikey: SUPABASE_KEY } })
+      .then((r) => (r.ok ? (r.json() as Promise<{ external?: Record<string, boolean> }>) : null))
+      .then((d) => {
+        if (!cancelled) setGoogleEnabled(Boolean(d?.external?.google));
+      })
+      .catch(() => {
+        /* offline or blocked: keep the Google button hidden */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -118,6 +180,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, s) => {
       if (!mounted) return;
+      if (_event === 'PASSWORD_RECOVERY') setPasswordRecovery(true);
       setSession(s);
       setUser(s?.user ?? null);
       if (s?.user) {
@@ -149,6 +212,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         redirectTo: `${window.location.origin}/dashboard`,
       },
     });
+  };
+
+  const authRedirect = (path: string) => `${window.location.origin}${path}`;
+
+  const signUpWithPassword = async (email: string, password: string, fullName: string): Promise<SignUpResult> => {
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: {
+        data: { full_name: fullName.trim() },
+        emailRedirectTo: authRedirect('/dashboard'),
+      },
+    });
+    if (error) throw toAuthError(error);
+    // With "Confirm email" on, Supabase returns no session until the link is clicked.
+    // (For an address that is already registered it also returns no session, on purpose,
+    // so the UI shows the same "check your email" message and does not reveal accounts.)
+    return data.session ? 'signed_in' : 'confirm_email';
+  };
+
+  const signInWithPassword = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    if (error) throw toAuthError(error);
+  };
+
+  const resendConfirmation = async (email: string) => {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email.trim(),
+      options: { emailRedirectTo: authRedirect('/dashboard') },
+    });
+    if (error) throw toAuthError(error);
+  };
+
+  const sendPasswordReset = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: authRedirect('/reset-password'),
+    });
+    if (error) throw toAuthError(error);
+  };
+
+  const updatePassword = async (newPassword: string) => {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) throw toAuthError(error);
+    setPasswordRecovery(false);
   };
 
   const signOut = async () => {
@@ -202,6 +310,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         profile,
         loading: loading || (user !== null && !profileChecked),
         signInWithGoogle,
+        googleEnabled,
+        signUpWithPassword,
+        signInWithPassword,
+        resendConfirmation,
+        sendPasswordReset,
+        updatePassword,
+        passwordRecovery,
         signOut,
         refreshProfile: fetchProfile,
         needsConsent,

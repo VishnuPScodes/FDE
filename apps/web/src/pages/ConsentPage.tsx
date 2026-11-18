@@ -43,8 +43,8 @@ export default function ConsentPage() {
           <div className={styles.item}>
             <span className={styles.itemIcon}>👤</span>
             <div>
-              <strong>Google profile</strong>
-              <p>Name, email, and profile picture from Google. Used to identify your account.</p>
+              <strong>Account details</strong>
+              <p>Your name and email address (and profile picture, if you use Google sign-in). Used to identify your account.</p>
             </div>
           </div>
           <div className={styles.item}>
