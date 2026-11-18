@@ -31,6 +31,8 @@ interface AuthContextValue {
   signUpWithPassword: (email: string, password: string, fullName: string) => Promise<SignUpResult>;
   signInWithPassword: (email: string, password: string) => Promise<void>;
   resendConfirmation: (email: string) => Promise<void>;
+  /** Confirms a new account with the code from the sign-up email; signs the user in on success. */
+  verifyEmailCode: (email: string, code: string) => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
   updatePassword: (newPassword: string) => Promise<void>;
   /** True after the user arrives from a password-reset email link (PASSWORD_RECOVERY event). */
@@ -47,7 +49,7 @@ export type SignUpResult = 'confirm_email' | 'signed_in';
 export class AuthError extends Error {
   constructor(
     message: string,
-    readonly code: 'email_not_confirmed' | 'invalid_credentials' | 'weak_password' | 'rate_limited' | 'other' = 'other',
+    readonly code: 'email_not_confirmed' | 'invalid_credentials' | 'weak_password' | 'rate_limited' | 'invalid_code' | 'other' = 'other',
   ) {
     super(message);
     this.name = 'AuthError';
@@ -58,13 +60,16 @@ function toAuthError(err: { message?: string; code?: string; status?: number } |
   const code = err?.code ?? '';
   const msg = err?.message ?? 'Something went wrong. Please try again.';
   if (code === 'email_not_confirmed' || /email not confirmed/i.test(msg)) {
-    return new AuthError('Please confirm your email first. Check your inbox for the link.', 'email_not_confirmed');
+    return new AuthError('Please confirm your email first with the code we emailed you.', 'email_not_confirmed');
   }
   if (code === 'invalid_credentials' || /invalid login credentials/i.test(msg)) {
     return new AuthError('Incorrect email or password.', 'invalid_credentials');
   }
   if (code === 'weak_password' || /password/i.test(msg) && /(weak|short|at least|characters)/i.test(msg)) {
     return new AuthError(msg, 'weak_password');
+  }
+  if (code === 'otp_expired' || /token has expired|otp.*(expired|invalid)|invalid.*(otp|token)/i.test(msg)) {
+    return new AuthError('That code is wrong or has expired. Check it, or send a new code.', 'invalid_code');
   }
   if (err?.status === 429 || code.includes('rate_limit') || /rate limit/i.test(msg)) {
     return new AuthError('Too many attempts or emails sent. Please wait a few minutes and try again.', 'rate_limited');
@@ -246,6 +251,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw toAuthError(error);
   };
 
+  const verifyEmailCode = async (email: string, code: string) => {
+    // type 'email' matches both sign-up confirmation codes and sign-in codes.
+    const { error } = await supabase.auth.verifyOtp({ email: email.trim(), token: code.trim(), type: 'email' });
+    if (error) throw toAuthError(error);
+  };
+
   const sendPasswordReset = async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
       redirectTo: authRedirect('/reset-password'),
@@ -314,6 +325,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signUpWithPassword,
         signInWithPassword,
         resendConfirmation,
+        verifyEmailCode,
         sendPasswordReset,
         updatePassword,
         passwordRecovery,

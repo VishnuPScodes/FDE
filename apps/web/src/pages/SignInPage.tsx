@@ -16,6 +16,7 @@ export default function SignInPage() {
     signInWithPassword,
     signUpWithPassword,
     resendConfirmation,
+    verifyEmailCode,
     sendPasswordReset,
   } = useAuth();
 
@@ -24,6 +25,7 @@ export default function SignInPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [needsConfirm, setNeedsConfirm] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -48,6 +50,7 @@ export default function SignInPage() {
     setNeedsConfirm(false);
     setPassword('');
     setConfirm('');
+    setCode('');
   };
 
   const run = async (action: () => Promise<void>) => {
@@ -101,8 +104,20 @@ export default function SignInPage() {
     void run(async () => {
       await resendConfirmation(email);
       setNeedsConfirm(false);
-      setNotice('Confirmation email sent again. Check your inbox (and spam folder).');
+      setCode('');
+      setMode('check-email');
+      setNotice('We sent you a new code. Check your inbox (and spam folder).');
     });
+
+  const onVerify = (e: SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!/^\d{6,10}$/.test(code.trim())) {
+      setError('Enter the code from the email (numbers only).');
+      return;
+    }
+    // On success Supabase signs the user in and the redirect above takes them to the dashboard.
+    void run(() => verifyEmailCode(email, code));
+  };
 
   const heading: Record<Mode, string> = {
     signin: 'Sign in to keep learning',
@@ -120,21 +135,44 @@ export default function SignInPage() {
           <h1 className={styles.title}>{heading[mode]}</h1>
         </div>
 
-        {mode === 'check-email' || mode === 'reset-sent' ? (
+        {mode === 'check-email' ? (
+          <form className={styles.form} onSubmit={onVerify} noValidate>
+            <p>
+              We sent a verification code to <strong>{email}</strong>. Enter it below to activate your account.
+            </p>
+            <label className={styles.field}>
+              <span>Verification code</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={10}
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                autoFocus
+              />
+            </label>
+            <p className={styles.hint}>Not there after a minute? Check your spam folder.</p>
+            {notice && <p className={styles.notice}>{notice}</p>}
+            {error && <p className={styles.error} role="alert">{error}</p>}
+            <button type="submit" className={styles.primaryBtn} disabled={busy}>
+              {busy ? 'Please wait…' : 'Verify and continue'}
+            </button>
+            <button type="button" className={styles.linkBtn} onClick={onResend} disabled={busy}>
+              Send a new code
+            </button>
+            <button type="button" className={styles.linkBtn} onClick={() => switchMode('signin')}>
+              Back to sign in
+            </button>
+          </form>
+        ) : mode === 'reset-sent' ? (
           <div className={styles.sent} role="status">
             <p>
-              {mode === 'check-email'
-                ? <>We sent a confirmation link to <strong>{email}</strong>. Click it to activate your account, then sign in.</>
-                : <>If an account exists for <strong>{email}</strong>, we sent a link to set a new password.</>}
+              If an account exists for <strong>{email}</strong>, we sent a link to set a new password.
             </p>
             <p className={styles.hint}>Not there after a minute? Check your spam folder.</p>
             {notice && <p className={styles.notice}>{notice}</p>}
             {error && <p className={styles.error} role="alert">{error}</p>}
-            {mode === 'check-email' && (
-              <button type="button" className={styles.linkBtn} onClick={onResend} disabled={busy}>
-                Resend confirmation email
-              </button>
-            )}
             <button type="button" className={styles.primaryBtn} onClick={() => switchMode('signin')}>
               Back to sign in
             </button>
@@ -219,7 +257,7 @@ export default function SignInPage() {
               {notice && <p className={styles.notice}>{notice}</p>}
               {needsConfirm && (
                 <button type="button" className={styles.linkBtn} onClick={onResend} disabled={busy}>
-                  Resend confirmation email
+                  Email me a verification code
                 </button>
               )}
 
