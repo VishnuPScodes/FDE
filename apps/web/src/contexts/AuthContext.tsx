@@ -18,6 +18,8 @@ interface UserProfile {
   consent_version: string | null;
   consent_at: string | null;
   role: string;
+  /** Admin-set override: every level is open for this user. */
+  unlock_all_levels?: boolean;
 }
 
 interface AuthContextValue {

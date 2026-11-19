@@ -20,9 +20,12 @@ export function prerequisitesFor(level: LevelMeta, allLevels: LevelMeta[]): stri
   return [...prereqs];
 }
 
-/** A level is unlocked when it has no prerequisites or any prerequisite passed. */
-export function isLevelUnlocked(level: LevelMeta, allLevels: LevelMeta[], passed: ReadonlySet<string>): boolean {
-  if (UNLOCK_ALL || passed.has(level.id)) return true;
+/**
+ * A level is unlocked when it has no prerequisites or any prerequisite passed.
+ * `unlockAll` is the per-user override from profiles.unlock_all_levels.
+ */
+export function isLevelUnlocked(level: LevelMeta, allLevels: LevelMeta[], passed: ReadonlySet<string>, unlockAll = false): boolean {
+  if (UNLOCK_ALL || unlockAll || passed.has(level.id)) return true;
   const prereqs = prerequisitesFor(level, allLevels);
   return prereqs.length === 0 || prereqs.some((id) => passed.has(id));
 }

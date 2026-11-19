@@ -59,7 +59,7 @@ export default function LevelPage() {
     else return;
     event.preventDefault();
   }, []);
-  const { session } = useAuth();
+  const { session, profile } = useAuth();
   const [allLevels, setAllLevels] = useState<LevelMeta[]>([]);
   const [moduleOrder, setModuleOrder] = useState<string[]>([]);
   const [passedIds, setPassedIds] = useState<Set<string>>(() => new Set(getLocalProgress().filter((row) => row.status === 'passed').map((row) => row.level_id)));
@@ -189,7 +189,7 @@ export default function LevelPage() {
     );
   }
 
-  const locked = allLevels.length > 0 && !openAnyway && !isLevelUnlocked(level, allLevels, passedIds);
+  const locked = allLevels.length > 0 && !openAnyway && !isLevelUnlocked(level, allLevels, passedIds, profile?.unlock_all_levels);
   const prerequisites = locked ? prerequisitesFor(level, allLevels).map((id) => allLevels.find((item) => item.id === id)).filter((item): item is LevelMeta => item !== undefined) : [];
   const nextLevel = findNextLevel(level, allLevels, moduleOrder);
   const moduleLevels = allLevels.filter((item) => item.module === level.module).sort((a, b) => a.order - b.order);

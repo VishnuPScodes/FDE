@@ -29,7 +29,7 @@ const PHASE_ICONS: Record<number, string> = {
 };
 export default function LearnPage() {
   const { moduleId } = useParams<{ moduleId: string }>();
-  const { session } = useAuth();
+  const { session, profile } = useAuth();
   const [curriculum, setCurriculum] = useState<Curriculum | null>(null);
   const [allLevels, setAllLevels] = useState<LevelMeta[]>([]);
   const [passedLevels, setPassedLevels] = useState<Set<string>>(() => new Set(getLocalProgress().filter((row) => row.status === 'passed').map((row) => row.level_id)));
@@ -162,7 +162,7 @@ export default function LearnPage() {
             <div className={styles.moduleList}>
               {moduleLevels.map((level, index) => {
                 const passed = passedLevels.has(level.id);
-                const unlocked = isLevelUnlocked(level, allLevels, passedLevels);
+                const unlocked = isLevelUnlocked(level, allLevels, passedLevels, profile?.unlock_all_levels);
                 const optional = level.order >= 90;
                 return <NavLink key={level.id} to={`/level/${level.id}`} className={`${styles.moduleLink} ${unlocked ? '' : styles.lockedLink}`} aria-label={`${level.title}${passed ? ', passed' : unlocked ? '' : ', locked'}`}>
                   <span aria-hidden="true">{passed ? '✅' : unlocked ? '▶️' : '🔒'}</span><span>{optional ? 'Real world' : index + 1}. {level.title}</span><small>{passed ? 'Passed' : `${level.type} · ~${level.estimated_minutes} min`}</small>

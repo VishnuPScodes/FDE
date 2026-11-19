@@ -59,7 +59,7 @@ export default function DashboardPage() {
   const ordered = [...coreLevels].sort((a, b) => (moduleOrder.indexOf(a.module) - moduleOrder.indexOf(b.module)) || (a.order - b.order));
   const lastLevelId = (() => { try { return localStorage.getItem('fde-last-level'); } catch { return null; } })();
   const lastLevel = lastLevelId ? levels.find((level) => level.id === lastLevelId && !passed.has(level.id)) : undefined;
-  const nextLevel = lastLevel ?? ordered.find((level) => !passed.has(level.id) && isLevelUnlocked(level, levels, passed));
+  const nextLevel = lastLevel ?? ordered.find((level) => !passed.has(level.id) && isLevelUnlocked(level, levels, passed, profile?.unlock_all_levels));
   const timeSpent = rows.reduce((sum, row) => sum + (row.time_spent_sec || 0), 0);
   const completed = coreLevels.filter((level) => passed.has(level.id)).length;
 
