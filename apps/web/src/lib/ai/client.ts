@@ -112,11 +112,14 @@ async function errorFromResponse(response: Response, host: string): Promise<AiEr
   try {
     const text = await response.text();
     try {
-      const parsed = JSON.parse(text) as { error?: { message?: string } | string; message?: string };
-      detail = typeof parsed.error === 'string' ? parsed.error : parsed.error?.message ?? parsed.message ?? '';
+      const raw = JSON.parse(text) as unknown;
+      // Gemini's OpenAI-compatible endpoint wraps errors in an array.
+      const parsed = (Array.isArray(raw) ? raw[0] : raw) as { error?: { message?: string } | string; message?: string } | null;
+      detail = typeof parsed?.error === 'string' ? parsed.error : parsed?.error?.message ?? parsed?.message ?? '';
     } catch {
-      detail = text.slice(0, 200);
+      detail = '';
     }
+    if (!detail) detail = text.trim().slice(0, 200);
   } catch {
     detail = '';
   }
@@ -188,7 +191,8 @@ export function deltaFromEvent(kind: AiProviderKind, event: SseEvent): string {
 }
 
 /** Create a client from explicit settings. Exported for tests and Settings. */
-export function createAiClient(settings: AiSettings, options: ClientOptions = {}): StreamingAiClient {
+export function createAiClient(rawSettings: AiSettings, options: ClientOptions = {}): StreamingAiClient {
+  const settings: AiSettings = { ...rawSettings, model: rawSettings.model.trim(), apiKey: rawSettings.apiKey.trim() };
   const kind = providerKind(settings);
   const fetchImpl = options.fetchImpl ?? ((input: RequestInfo | URL, init?: RequestInit) => fetch(input, init));
   const sleep = options.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));

@@ -54,6 +54,26 @@ describe('OpenAI-compatible client', () => {
     expect(error.message).toContain('Invalid API Key');
   });
 
+  it('shows the provider message when the error body is a JSON array (Gemini)', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse([{ error: { code: 404, message: 'models/foo is not found', status: 'NOT_FOUND' } }], 404));
+    const error = await failure(createAiClient(groq, { fetchImpl }).complete({ messages: [{ role: 'user', content: 'Hi' }] }));
+    expect(error.kind).toBe('http');
+    expect(error.message).toContain('Provider said: models/foo is not found');
+  });
+
+  it('shows the raw body when a JSON error has no message field', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ detail: 'Not Found' }, 404));
+    const error = await failure(createAiClient(groq, { fetchImpl }).complete({ messages: [{ role: 'user', content: 'Hi' }] }));
+    expect(error.message).toContain('Provider said: {"detail":"Not Found"}');
+  });
+
+  it('trims spaces around the model name', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ choices: [{ message: { content: 'ok' } }] }));
+    await createAiClient({ ...groq, model: ' llama-3.1-8b-instant \n' }, { fetchImpl }).complete({ messages: [{ role: 'user', content: 'Hi' }] });
+    const [, init] = fetchImpl.mock.calls[0] as [string, RequestInit];
+    expect((JSON.parse(init.body as string) as { model: string }).model).toBe('llama-3.1-8b-instant');
+  });
+
   it('retries a 429 once after Retry-After, then succeeds', async () => {
     const fetchImpl = vi.fn()
       .mockResolvedValueOnce(jsonResponse({ error: { message: 'slow down' } }, 429, { 'retry-after': '3' }))
