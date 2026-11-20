@@ -67,6 +67,34 @@ describe('OpenAI-compatible client', () => {
     expect(error.message).toContain('Provider said: {"detail":"Not Found"}');
   });
 
+  it('retries a 503 (model overloaded) once, then succeeds', async () => {
+    const busy = () => jsonResponse([{ error: { code: 503, message: 'This model is currently experiencing high demand.' } }], 503);
+    const fetchImpl = vi.fn().mockResolvedValueOnce(busy()).mockResolvedValueOnce(jsonResponse({ choices: [{ message: { content: 'ok' } }] }));
+    const sleep = vi.fn().mockResolvedValue(undefined);
+    const text = await createAiClient(groq, { fetchImpl, sleep }).complete({ messages: [{ role: 'user', content: 'Hi' }] });
+    expect(text).toBe('ok');
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it('explains a 503 when the retry is also busy', async () => {
+    const busy = () => jsonResponse([{ error: { code: 503, message: 'This model is currently experiencing high demand.' } }], 503);
+    const fetchImpl = vi.fn().mockImplementation(async () => busy());
+    const error = await failure(createAiClient(groq, { fetchImpl, sleep: async () => {} }).complete({ messages: [{ role: 'user', content: 'Hi' }] }));
+    expect(error.kind).toBe('unavailable');
+    expect(error.status).toBe(503);
+    expect(error.message).toMatch(/busy/);
+    expect(error.message).toContain('high demand');
+  });
+
+  it('gives up with a timeout error when the provider never answers', async () => {
+    const fetchImpl = vi.fn().mockImplementation((_url: string, init: RequestInit) => new Promise((_resolve, reject) => {
+      init.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')));
+    }));
+    const error = await failure(createAiClient(groq, { fetchImpl, timeoutMs: 10 }).complete({ messages: [{ role: 'user', content: 'Hi' }] }));
+    expect(error.kind).toBe('timeout');
+    expect(error.message).toMatch(/did not answer/);
+  });
+
   it('trims spaces around the model name', async () => {
     const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ choices: [{ message: { content: 'ok' } }] }));
     await createAiClient({ ...groq, model: ' llama-3.1-8b-instant \n' }, { fetchImpl }).complete({ messages: [{ role: 'user', content: 'Hi' }] });

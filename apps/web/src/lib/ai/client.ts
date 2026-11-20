@@ -9,7 +9,10 @@ const DEFAULT_MAX_TOKENS = 1024;
 /** Longest Retry-After we will wait for automatically before giving up. */
 const MAX_AUTO_WAIT_SECONDS = 20;
 
-export type AiErrorKind = 'config' | 'auth' | 'rate_limit' | 'network' | 'http' | 'bad_response';
+/** How long to wait for the provider to start answering before giving up. */
+const DEFAULT_TIMEOUT_MS = 30_000;
+
+export type AiErrorKind = 'config' | 'auth' | 'rate_limit' | 'unavailable' | 'timeout' | 'network' | 'http' | 'bad_response';
 
 /** An error with a message that is safe to show the learner as-is. */
 export class AiError extends Error {
@@ -37,8 +40,10 @@ export interface StreamingAiClient extends AiClient {
 export interface ClientOptions {
   fetchImpl?: typeof fetch;
   sleep?: (ms: number) => Promise<void>;
-  /** How many times to retry a 429 automatically. */
+  /** How many times to retry a 429 or 503 automatically. */
   maxRetries?: number;
+  /** Milliseconds to wait for the provider's response before giving up. */
+  timeoutMs?: number;
 }
 
 function providerKind(settings: AiSettings): AiProviderKind {
@@ -132,6 +137,10 @@ async function errorFromResponse(response: Response, host: string): Promise<AiEr
     const wait = retryAfterSeconds !== undefined ? `Wait about ${retryAfterSeconds} seconds` : 'Wait a minute';
     return new AiError('rate_limit', `Rate limit reached on ${host} (429). ${wait} and try again, or switch provider in Settings.${suffix}`, { status: 429, retryAfterSeconds });
   }
+  if (response.status === 503) {
+    const retryAfterSeconds = parseRetryAfter(response.headers.get('retry-after'));
+    return new AiError('unavailable', `The model is busy on ${host} (503). Try again in a few minutes, or pick a different model in Settings.${suffix}`, { status: 503, retryAfterSeconds });
+  }
   return new AiError('http', `${host} returned HTTP ${response.status}.${suffix || ' Check the base URL and model name in Settings.'}`, { status: response.status });
 }
 
@@ -197,6 +206,7 @@ export function createAiClient(rawSettings: AiSettings, options: ClientOptions =
   const fetchImpl = options.fetchImpl ?? ((input: RequestInfo | URL, init?: RequestInit) => fetch(input, init));
   const sleep = options.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
   const maxRetries = options.maxRetries ?? 1;
+  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const preset = findPreset(settings.providerId);
   const label = `${preset?.label ?? 'Custom provider'} · ${settings.model}`;
 
@@ -213,15 +223,24 @@ export function createAiClient(rawSettings: AiSettings, options: ClientOptions =
     try { host = new URL(http.url).host; } catch { throw new AiError('config', `The base URL "${settings.baseUrl}" is not a valid URL.`); }
     for (let attempt = 0; ; attempt += 1) {
       let response: Response;
+      const controller = new AbortController();
+      let timedOut = false;
+      const timer = setTimeout(() => { timedOut = true; controller.abort(); }, timeoutMs);
       try {
-        response = await fetchImpl(http.url, { method: 'POST', headers: http.headers, body: JSON.stringify(http.body) });
+        response = await fetchImpl(http.url, { method: 'POST', headers: http.headers, body: JSON.stringify(http.body), signal: controller.signal });
       } catch {
+        if (timedOut) {
+          throw new AiError('timeout', `${host} did not answer within ${Math.round(timeoutMs / 1000)} seconds. The model may be overloaded; try again or pick a different model in Settings.`);
+        }
         throw networkError(host, kind);
+      } finally {
+        clearTimeout(timer);
       }
       if (response.ok) return response;
       const error = await errorFromResponse(response, host);
       const wait = error.retryAfterSeconds ?? 2 ** attempt;
-      if (error.kind === 'rate_limit' && attempt < maxRetries && wait <= MAX_AUTO_WAIT_SECONDS) {
+      const retryable = error.kind === 'rate_limit' || error.kind === 'unavailable';
+      if (retryable && attempt < maxRetries && wait <= MAX_AUTO_WAIT_SECONDS) {
         await sleep(wait * 1000);
         continue;
       }

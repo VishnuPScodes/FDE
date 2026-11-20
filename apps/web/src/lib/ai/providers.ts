@@ -27,7 +27,7 @@ export interface AiProviderPreset {
 }
 
 /** Date these presets were last checked by a human. */
-export const PRESETS_LAST_VERIFIED = '2026-11-09';
+export const PRESETS_LAST_VERIFIED = '2026-11-20';
 
 export const AI_PROVIDER_PRESETS: AiProviderPreset[] = [
   {
@@ -46,7 +46,7 @@ export const AI_PROVIDER_PRESETS: AiProviderPreset[] = [
     label: 'Google Gemini (OpenAI-compatible)',
     kind: 'openai',
     baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
-    defaultModel: 'gemini-2.5-flash',
+    defaultModel: 'gemini-flash-latest',
     needsKey: true,
     keyUrl: 'https://aistudio.google.com/apikey',
     pricing: { inputPerMTok: 0, outputPerMTok: 0 },
