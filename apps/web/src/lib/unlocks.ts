@@ -1,6 +1,7 @@
 import type { LevelMeta } from './content-loader';
 
-const UNLOCK_ALL = import.meta.env.VITE_UNLOCK_ALL_LEVELS === 'true';
+/** Every level is open for everyone. Set VITE_UNLOCK_ALL_LEVELS=false to re-enable progression locks. */
+const UNLOCK_ALL = import.meta.env.VITE_UNLOCK_ALL_LEVELS !== 'false';
 
 /** Real-world levels are optional extras (order ≥ 90) and never gated. */
 const OPTIONAL_ORDER = 90;
